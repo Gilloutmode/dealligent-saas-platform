@@ -1,0 +1,1401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DEALIGENT - Strategic Analysis Portfolio</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        @page {
+            size: A4;
+            margin: 12mm;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #10b981;
+            --accent: #f59e0b;
+            --dark: #0f172a;
+            --dark-light: #1e293b;
+            --text: #334155;
+            --text-light: #64748b;
+            --bg: #ffffff;
+            --bg-light: #f8fafc;
+            --border: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 11pt;
+            line-height: 1.6;
+            color: var(--text);
+            background: var(--bg);
+        }
+
+        .page {
+            width: 100%;
+            max-width: 210mm;
+            padding: 15mm;
+            margin: 0 auto;
+            background: white;
+            page-break-after: always;
+            break-after: page;
+        }
+
+        .page:last-child {
+            page-break-after: auto;
+            break-after: auto;
+        }
+
+        /* Cover Page */
+        .cover {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            min-height: 250mm;
+            background: linear-gradient(135deg, var(--dark) 0%, var(--dark-light) 100%);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cover::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(99,102,241,0.3) 0%, transparent 70%);
+        }
+
+        .cover-logo {
+            font-size: 48pt;
+            font-weight: 800;
+            letter-spacing: -2px;
+            background: linear-gradient(135deg, #6366f1, #a855f7, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10mm;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cover-subtitle {
+            font-size: 18pt;
+            font-weight: 300;
+            color: #94a3b8;
+            margin-bottom: 20mm;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cover-title {
+            font-size: 28pt;
+            font-weight: 700;
+            margin-bottom: 8mm;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cover-description {
+            font-size: 12pt;
+            color: #cbd5e1;
+            max-width: 400px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cover-footer {
+            position: absolute;
+            bottom: 20mm;
+            font-size: 10pt;
+            color: #64748b;
+        }
+
+        /* Section Headers */
+        .section-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 8mm 10mm;
+            border-radius: 8px;
+            margin-bottom: 8mm;
+        }
+
+        .section-number {
+            font-size: 10pt;
+            font-weight: 600;
+            opacity: 0.8;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 2mm;
+        }
+
+        .section-title {
+            font-size: 22pt;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        /* Prompt Box */
+        .prompt-box {
+            background: var(--dark);
+            color: #10b981;
+            padding: 6mm;
+            border-radius: 6px;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 9pt;
+            line-height: 1.7;
+            margin-bottom: 6mm;
+            white-space: pre-wrap;
+            border-left: 4px solid var(--secondary);
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+
+        .prompt-label {
+            display: inline-block;
+            background: var(--secondary);
+            color: white;
+            padding: 1mm 3mm;
+            border-radius: 3px;
+            font-size: 8pt;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 3mm;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Content Sections */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5mm;
+            margin-bottom: 6mm;
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+
+        .content-card {
+            background: var(--bg-light);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 5mm;
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+
+        .content-card h4 {
+            font-size: 11pt;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 3mm;
+            display: flex;
+            align-items: center;
+            gap: 2mm;
+        }
+
+        .content-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .content-card li {
+            font-size: 9pt;
+            padding: 1.5mm 0;
+            padding-left: 4mm;
+            position: relative;
+            color: var(--text);
+        }
+
+        .content-card li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--secondary);
+            font-weight: 600;
+        }
+
+        /* Table Styling */
+        .styled-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 5mm;
+            font-size: 9pt;
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+
+        .styled-table th {
+            background: var(--dark);
+            color: white;
+            padding: 3mm 4mm;
+            text-align: left;
+            font-weight: 600;
+            font-size: 8pt;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .styled-table th:first-child {
+            border-radius: 4px 0 0 0;
+        }
+
+        .styled-table th:last-child {
+            border-radius: 0 4px 0 0;
+        }
+
+        .styled-table td {
+            padding: 3mm 4mm;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .styled-table tr:nth-child(even) {
+            background: var(--bg-light);
+        }
+
+        .styled-table tr:last-child td:first-child {
+            border-radius: 0 0 0 4px;
+        }
+
+        .styled-table tr:last-child td:last-child {
+            border-radius: 0 0 4px 0;
+        }
+
+        /* Report Template */
+        .template-box {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border: 1px solid #f59e0b;
+            border-radius: 6px;
+            padding: 5mm;
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+
+        .template-box h4 {
+            color: #92400e;
+            font-size: 10pt;
+            font-weight: 700;
+            margin-bottom: 3mm;
+        }
+
+        .template-item {
+            display: flex;
+            gap: 3mm;
+            padding: 2mm 0;
+            border-bottom: 1px dashed #d97706;
+            font-size: 9pt;
+        }
+
+        .template-item:last-child {
+            border-bottom: none;
+        }
+
+        .template-number {
+            background: #92400e;
+            color: white;
+            width: 5mm;
+            height: 5mm;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 7pt;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .template-content strong {
+            color: #92400e;
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 1mm 2.5mm;
+            border-radius: 3px;
+            font-size: 7pt;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-live { background: #dcfce7; color: #166534; }
+        .badge-p1 { background: #fee2e2; color: #991b1b; }
+        .badge-p2 { background: #fef3c7; color: #92400e; }
+        .badge-p3 { background: #e0e7ff; color: #3730a3; }
+        .badge-p4 { background: #f1f5f9; color: #475569; }
+
+        /* Footer */
+        .page-footer {
+            position: absolute;
+            bottom: 10mm;
+            left: 20mm;
+            right: 20mm;
+            display: flex;
+            justify-content: space-between;
+            font-size: 8pt;
+            color: var(--text-light);
+            border-top: 1px solid var(--border);
+            padding-top: 3mm;
+        }
+
+        /* TOC */
+        .toc-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 3mm 0;
+            border-bottom: 1px dotted var(--border);
+            font-size: 10pt;
+        }
+
+        .toc-item:hover {
+            background: var(--bg-light);
+        }
+
+        .toc-number {
+            color: var(--primary);
+            font-weight: 600;
+            margin-right: 3mm;
+        }
+
+        /* Utility */
+        h3 {
+            font-size: 13pt;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 4mm;
+            margin-top: 5mm;
+        }
+
+        p {
+            margin-bottom: 3mm;
+            font-size: 10pt;
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, #a5f3fc 0%, #a5f3fc 100%);
+            padding: 0 2mm;
+            border-radius: 2px;
+        }
+
+        @media print {
+            .page {
+                margin: 0;
+                padding: 15mm;
+                box-shadow: none;
+                page-break-after: always;
+                page-break-inside: auto;
+            }
+
+            .page:last-child {
+                page-break-after: auto;
+            }
+
+            .template-box {
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+                page-break-before: auto;
+            }
+
+            .prompt-box {
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+            }
+
+            .content-grid {
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+            }
+
+            .section-header {
+                page-break-after: avoid !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- COVER PAGE -->
+<div class="page cover">
+    <div class="cover-logo">DEALIGENT</div>
+    <div class="cover-subtitle">Intelligence Platform</div>
+    <div class="cover-title">Strategic Analysis Portfolio</div>
+    <div class="cover-description">
+        Complete catalog of AI-powered analysis types with customizable prompts for market intelligence
+    </div>
+    <div class="cover-footer">
+        Strategic Document • January 2025 • Version 3.0
+    </div>
+</div>
+
+<!-- TABLE OF CONTENTS -->
+<div class="page">
+    <div class="section-header" style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%);">
+        <div class="section-number">Contents</div>
+        <h1 class="section-title">Table of Contents</h1>
+    </div>
+
+    <div style="margin-top: 10mm;">
+        <div class="toc-item"><span><span class="toc-number">01</span>Competitor Intelligence</span><span>3</span></div>
+        <div class="toc-item"><span><span class="toc-number">02</span>Product Intelligence</span><span>4</span></div>
+        <div class="toc-item"><span><span class="toc-number">03</span>Client Intelligence</span><span>5</span></div>
+        <div class="toc-item"><span><span class="toc-number">04</span>Executive Intelligence</span><span>6</span></div>
+        <div class="toc-item"><span><span class="toc-number">05</span>Market Intelligence</span><span>7</span></div>
+        <div class="toc-item"><span><span class="toc-number">06</span>Industry Dynamics</span><span>8</span></div>
+        <div class="toc-item"><span><span class="toc-number">07</span>Technology Assessment</span><span>9</span></div>
+        <div class="toc-item"><span><span class="toc-number">08</span>Security & Compliance</span><span>10</span></div>
+        <div class="toc-item"><span><span class="toc-number">09</span>M&A Intelligence</span><span>11</span></div>
+        <div class="toc-item"><span><span class="toc-number">10</span>Innovation Tracking</span><span>12</span></div>
+        <div class="toc-item"><span><span class="toc-number">11</span>Ecosystem Mapping</span><span>13</span></div>
+        <div class="toc-item"><span><span class="toc-number">12</span>Report Levels (I-IV)</span><span>14</span></div>
+        <div class="toc-item"><span><span class="toc-number">13</span>Implementation Roadmap</span><span>15</span></div>
+    </div>
+</div>
+
+<!-- ANALYSIS 1: COMPETITOR INTELLIGENCE -->
+<div class="page">
+    <div class="section-header">
+        <div class="section-number">Analysis 01</div>
+        <h1 class="section-title">Competitor Intelligence</h1>
+    </div>
+
+    <div class="prompt-label">System Prompt</div>
+    <div class="prompt-box">You are a competitive intelligence researcher specializing in market analysis and competitor profiling for the CAD/CAM/PLM software industry.
+
+Your task is to analyze the specified competitor company and provide comprehensive intelligence including:
+
+1. Company overview and market positioning
+2. Product/service portfolio analysis
+3. Financial health and market capitalization
+4. Geographic presence and expansion strategy
+5. Key partnerships and ecosystem relationships
+6. Technology stack and innovation capabilities
+7. Leadership team and organizational structure
+8. Competitive advantages and vulnerabilities
+9. Pricing strategy and business model
+10. Recent news, announcements, and strategic moves
+
+Provide factual, evidence-based analysis with sources. Highlight strategic implications for competitive positioning.</div>
+
+    <div class="content-grid">
+        <div class="content-card">
+            <h4>📋 Definition</h4>
+            <p style="font-size: 9pt;">Complete analysis of a competitor company to understand strategic positioning, strengths, weaknesses, and market trajectory. Enables proactive competitive response.</p>
+        </div>
+        <div class="content-card">
+            <h4>🎯 Capabilities</h4>
+            <ul>
+                <li>360° competitor profiling</li>
+                <li>SWOT analysis generation</li>
+                <li>Real-time monitoring alerts</li>
+                <li>Comparative benchmarking</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="template-box">
+        <h4>📄 Report Template Structure</h4>
+        <div class="template-item">
+            <div class="template-number">1</div>
+            <div class="template-content"><strong>Executive Brief</strong> — 5 key points, threat score (1-10), immediate actions</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">2</div>
+            <div class="template-content"><strong>Company Profile</strong> — Identity, history, key figures (revenue, headcount)</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">3</div>
+            <div class="template-content"><strong>Strategic Analysis</strong> — Business model, competitive advantages, vulnerabilities</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">4</div>
+            <div class="template-content"><strong>Product Portfolio</strong> — Complete offering, pricing, known roadmap</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">5</div>
+            <div class="template-content"><strong>Go-to-Market</strong> — Distribution channels, sales strategy, references</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">6</div>
+            <div class="template-content"><strong>Recommendations</strong> — Attack opportunities, risks, action plan</div>
+        </div>
+    </div>
+</div>
+
+<!-- ANALYSIS 2: PRODUCT INTELLIGENCE -->
+<div class="page">
+    <div class="section-header" style="background: linear-gradient(135deg, #059669 0%, #047857 100%);">
+        <div class="section-number">Analysis 02</div>
+        <h1 class="section-title">Product Intelligence</h1>
+    </div>
+
+    <div class="prompt-label">System Prompt</div>
+    <div class="prompt-box">You are a product intelligence analyst specializing in software solutions and technology products in the CAD/CAM/PLM industry.
+
+Your task is to analyze the specified product and provide comprehensive intelligence including:
+
+1. Product overview and core value proposition
+2. Feature set and capabilities breakdown
+3. Pricing tiers and licensing model
+4. Target market segments and ideal customer profile
+5. Integration ecosystem and API capabilities
+6. Technology architecture and platform
+7. User experience and adoption metrics
+8. Competitive differentiation vs alternatives
+9. Product roadmap and recent updates
+10. Customer reviews and satisfaction indicators
+
+Focus on technical accuracy and market positioning. Compare with competing products when relevant.</div>
+
+    <div class="content-grid">
+        <div class="content-card">
+            <h4>📋 Definition</h4>
+            <p style="font-size: 9pt;">Deep analysis of a specific product or solution to understand capabilities, positioning, and evolution. Enables informed product strategy and differentiation.</p>
+        </div>
+        <div class="content-card">
+            <h4>🎯 Capabilities</h4>
+            <ul>
+                <li>Complete feature mapping</li>
+                <li>Pricing model analysis</li>
+                <li>UX benchmarking</li>
+                <li>Integration ecosystem review</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="template-box">
+        <h4>📄 Report Template Structure</h4>
+        <div class="template-item">
+            <div class="template-number">1</div>
+            <div class="template-content"><strong>Product Summary</strong> — Value proposition, target market, maturity</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">2</div>
+            <div class="template-content"><strong>Functional Analysis</strong> — Feature matrix (Must-have / Nice-to-have / Unique)</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">3</div>
+            <div class="template-content"><strong>Economic Model</strong> — Pricing structure, perceived value, TCO</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">4</div>
+            <div class="template-content"><strong>Ecosystem</strong> — Native integrations, tech partners, marketplace</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">5</div>
+            <div class="template-content"><strong>Roadmap & Innovation</strong> — Recent releases, public roadmap, patents</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">6</div>
+            <div class="template-content"><strong>Recommendations</strong> — Differentiation opportunities, priority features</div>
+        </div>
+    </div>
+</div>
+
+<!-- ANALYSIS 3: CLIENT INTELLIGENCE -->
+<div class="page">
+    <div class="section-header" style="background: linear-gradient(135deg, #db2777 0%, #be185d 100%);">
+        <div class="section-number">Analysis 03</div>
+        <h1 class="section-title">Client Intelligence</h1>
+    </div>
+
+    <div class="prompt-label">System Prompt</div>
+    <div class="prompt-box">You are a customer intelligence analyst specializing in B2B market segmentation and client analysis for the CAD/CAM/PLM software industry.
+
+Your task is to analyze the customer base and client relationships including:
+
+1. Customer segments and industry verticals served
+2. Key accounts and reference customers
+3. Company size distribution (SMB, Mid-market, Enterprise)
+4. Geographic distribution of customer base
+5. Use cases and applications by segment
+6. Customer acquisition patterns and channels
+7. Retention indicators and churn signals
+8. Customer satisfaction and NPS indicators
+9. Revenue concentration and key accounts
+10. Expansion opportunities and upsell patterns
+
+Identify patterns that reveal market positioning and growth opportunities.</div>
+
+    <div class="content-grid">
+        <div class="content-card">
+            <h4>📋 Definition</h4>
+            <p style="font-size: 9pt;">Analysis of competitor's customer base to identify adoption patterns, conquest opportunities, and retention risks. Enables targeted commercial strategy.</p>
+        </div>
+        <div class="content-card">
+            <h4>🎯 Capabilities</h4>
+            <ul>
+                <li>Customer segmentation</li>
+                <li>Win/Loss analysis</li>
+                <li>Reference mapping</li>
+                <li>Churn signal detection</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="template-box">
+        <h4>📄 Report Template Structure</h4>
+        <div class="template-item">
+            <div class="template-number">1</div>
+            <div class="template-content"><strong>Overview</strong> — Estimated customer base size, segment breakdown</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">2</div>
+            <div class="template-content"><strong>Segmentation</strong> — By industry, company size, geography, use case</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">3</div>
+            <div class="template-content"><strong>Buyer Profiles</strong> — Decision-maker persona, buying journey, criteria</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">4</div>
+            <div class="template-content"><strong>Opportunities</strong> — Dissatisfied accounts, underserved segments</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">5</div>
+            <div class="template-content"><strong>Conquest Strategy</strong> — Arguments by segment, approach channels</div>
+        </div>
+    </div>
+</div>
+
+<!-- ANALYSIS 4: EXECUTIVE INTELLIGENCE -->
+<div class="page">
+    <div class="section-header" style="background: linear-gradient(135deg, #0891b2 0%, #0e7490 100%);">
+        <div class="section-number">Analysis 04</div>
+        <h1 class="section-title">Executive Intelligence</h1>
+    </div>
+
+    <div class="prompt-label">System Prompt</div>
+    <div class="prompt-box">You are a professional intelligence analyst specializing in executive profiling and industry expert analysis.
+
+Your task is to analyze the specified individual(s) and provide intelligence including:
+
+1. Professional background and career trajectory
+2. Current role and responsibilities
+3. Educational background and credentials
+4. Areas of expertise and specialization
+5. Published content, patents, and thought leadership
+6. Conference appearances and speaking engagements
+7. Professional network and industry influence
+8. Recent career moves or role changes
+9. Social media presence and engagement
+10. Notable achievements and recognition
+
+Maintain professional objectivity. Focus on publicly available professional information.</div>
+
+    <div class="content-grid">
+        <div class="content-card">
+            <h4>📋 Definition</h4>
+            <p style="font-size: 9pt;">Analysis of key individuals (executives, experts) to understand leadership dynamics and anticipate strategic decisions. Enables networking and partnerships.</p>
+        </div>
+        <div class="content-card">
+            <h4>🎯 Capabilities</h4>
+            <ul>
+                <li>Leadership profiling</li>
+                <li>Network mapping</li>
+                <li>Movement tracking</li>
+                <li>Influence assessment</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="template-box">
+        <h4>📄 Report Template Structure</h4>
+        <div class="template-item">
+            <div class="template-number">1</div>
+            <div class="template-content"><strong>Executive Profile</strong> — Career path, education, management style</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">2</div>
+            <div class="template-content"><strong>Network & Influence</strong> — Key connections, board positions, publications</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">3</div>
+            <div class="template-content"><strong>Track Record</strong> — Notable achievements, decision patterns</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">4</div>
+            <div class="template-content"><strong>Strategic Implications</strong> — Impact on strategy, engagement opportunities</div>
+        </div>
+    </div>
+</div>
+
+<!-- ANALYSIS 5: MARKET INTELLIGENCE -->
+<div class="page">
+    <div class="section-header" style="background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);">
+        <div class="section-number">Analysis 05</div>
+        <h1 class="section-title">Market Intelligence</h1>
+    </div>
+
+    <div class="prompt-label">System Prompt</div>
+    <div class="prompt-box">You are a market intelligence analyst specializing in geographic and sector market analysis for the CAD/CAM/PLM software industry.
+
+Your task is to analyze the specified market or region including:
+
+1. Market size, growth rate, and projections
+2. Key players and market share distribution
+3. Market dynamics and competitive intensity
+4. Regulatory environment and compliance requirements
+5. Entry barriers and market access challenges
+6. Technology adoption trends and maturity
+7. Customer preferences and buying patterns
+8. Distribution channels and go-to-market models
+9. Pricing benchmarks and margin structures
+10. Emerging opportunities and threats
+
+Provide quantified insights where possible with credible sources.</div>
+
+    <div class="content-grid">
+        <div class="content-card">
+            <h4>📋 Definition</h4>
+            <p style="font-size: 9pt;">Analysis of geographic or sector market to understand dynamics, opportunities, and barriers. Enables expansion and investment decisions.</p>
+        </div>
+        <div class="content-card">
+            <h4>🎯 Capabilities</h4>
+            <ul>
+                <li>Market sizing (TAM/SAM/SOM)</li>
+                <li>Competitive landscape mapping</li>
+                <li>Regulatory analysis</li>
+                <li>Entry strategy recommendations</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="template-box">
+        <h4>📄 Report Template Structure</h4>
+        <div class="template-item">
+            <div class="template-number">1</div>
+            <div class="template-content"><strong>Market Overview</strong> — Size, growth (TAM/SAM/SOM), 3-5 year projections</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">2</div>
+            <div class="template-content"><strong>Competitive Landscape</strong> — Players, market shares, positioning</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">3</div>
+            <div class="template-content"><strong>Environment</strong> — Regulatory framework, cultural factors, infrastructure</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">4</div>
+            <div class="template-content"><strong>Opportunities & Risks</strong> — High-potential segments, barriers, threats</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">5</div>
+            <div class="template-content"><strong>Recommendations</strong> — Go/No-Go, entry mode, investment, timeline</div>
+        </div>
+    </div>
+</div>
+
+<!-- ANALYSIS 6: INDUSTRY DYNAMICS -->
+<div class="page">
+    <div class="section-header" style="background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);">
+        <div class="section-number">Analysis 06</div>
+        <h1 class="section-title">Industry Dynamics</h1>
+    </div>
+
+    <div class="prompt-label">System Prompt</div>
+    <div class="prompt-box">You are an industry analyst specializing in sector dynamics and trend analysis for the CAD/CAM/PLM software industry.
+
+Your task is to analyze the specified industry including:
+
+1. Industry structure and value chain mapping
+2. Key trends reshaping the industry
+3. Technology disruptions and innovations
+4. Regulatory changes and their impact
+5. Consolidation patterns and M&A activity
+6. Emerging business models
+7. Talent dynamics and skill gaps
+8. Supply chain considerations
+9. Sustainability and ESG factors
+10. Future outlook and scenarios
+
+Apply Porter's Five Forces and strategic frameworks where relevant.</div>
+
+    <div class="content-grid">
+        <div class="content-card">
+            <h4>📋 Definition</h4>
+            <p style="font-size: 9pt;">Analysis of structural forces shaping an industry, including trends, disruptions, and regulation. Enables long-term strategic positioning.</p>
+        </div>
+        <div class="content-card">
+            <h4>🎯 Capabilities</h4>
+            <ul>
+                <li>Porter's Five Forces analysis</li>
+                <li>PESTEL assessment</li>
+                <li>Disruption tracking</li>
+                <li>Scenario planning</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="template-box">
+        <h4>📄 Report Template Structure</h4>
+        <div class="template-item">
+            <div class="template-number">1</div>
+            <div class="template-content"><strong>Five Forces</strong> — Competitive intensity assessment</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">2</div>
+            <div class="template-content"><strong>PESTEL Trends</strong> — Political, Economic, Social, Tech, Environmental, Legal</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">3</div>
+            <div class="template-content"><strong>Disruptions</strong> — Active disruptions and emerging threats</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">4</div>
+            <div class="template-content"><strong>Future Scenarios</strong> — 3-5 year outlook with probability</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">5</div>
+            <div class="template-content"><strong>Strategic Implications</strong> — Required adaptations, investment priorities</div>
+        </div>
+    </div>
+</div>
+
+<!-- ANALYSIS 7: TECHNOLOGY ASSESSMENT -->
+<div class="page">
+    <div class="section-header" style="background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);">
+        <div class="section-number">Analysis 07</div>
+        <h1 class="section-title">Technology Assessment</h1>
+    </div>
+
+    <div class="prompt-label">System Prompt</div>
+    <div class="prompt-box">You are a technology analyst specializing in software architecture and cloud infrastructure analysis.
+
+Your task is to analyze the technology aspects including:
+
+1. Core technology stack and architecture
+2. Cloud infrastructure and deployment models
+3. API capabilities and integration patterns
+4. Performance characteristics and scalability
+5. Security architecture and certifications
+6. Data handling and privacy compliance
+7. AI/ML capabilities and implementation
+8. DevOps and development practices
+9. Technical debt and modernization needs
+10. Innovation pipeline and R&D investments
+
+Focus on technical accuracy and architectural insights.</div>
+
+    <div class="content-grid">
+        <div class="content-card">
+            <h4>📋 Definition</h4>
+            <p style="font-size: 9pt;">Evaluation of technology maturity, stacks, and innovation capabilities. Enables build vs buy decisions and tech partnerships.</p>
+        </div>
+        <div class="content-card">
+            <h4>🎯 Capabilities</h4>
+            <ul>
+                <li>Stack analysis</li>
+                <li>Cloud assessment</li>
+                <li>API evaluation</li>
+                <li>Innovation radar</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="template-box">
+        <h4>📄 Report Template Structure</h4>
+        <div class="template-item">
+            <div class="template-number">1</div>
+            <div class="template-content"><strong>Technology Stack</strong> — Core technologies, frameworks, languages</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">2</div>
+            <div class="template-content"><strong>Cloud & Scalability</strong> — Infrastructure, deployment, performance</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">3</div>
+            <div class="template-content"><strong>Innovation & R&D</strong> — AI/ML capabilities, patents, research focus</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">4</div>
+            <div class="template-content"><strong>Integrations & API</strong> — Ecosystem connectivity, API maturity</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">5</div>
+            <div class="template-content"><strong>Tech Recommendations</strong> — Gaps, opportunities, partnerships</div>
+        </div>
+    </div>
+</div>
+
+<!-- ANALYSIS 8: SECURITY & COMPLIANCE -->
+<div class="page">
+    <div class="section-header" style="background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);">
+        <div class="section-number">Analysis 08</div>
+        <h1 class="section-title">Security & Compliance</h1>
+    </div>
+
+    <div class="prompt-label">System Prompt</div>
+    <div class="prompt-box">You are a security analyst specializing in enterprise software security and compliance assessment.
+
+Your task is to analyze security and compliance aspects including:
+
+1. Security certifications and standards (SOC2, ISO27001, etc.)
+2. Data protection and privacy compliance (GDPR, CCPA, etc.)
+3. Authentication and access control mechanisms
+4. Encryption standards and data security
+5. Vulnerability management and incident history
+6. Third-party security assessments
+7. Compliance with industry-specific regulations
+8. Security architecture and best practices
+9. Data residency and sovereignty options
+10. Business continuity and disaster recovery
+
+Provide objective assessment based on publicly available information.</div>
+
+    <div class="content-grid">
+        <div class="content-card">
+            <h4>📋 Definition</h4>
+            <p style="font-size: 9pt;">Evaluation of security practices, certifications, and compliance. Enables risk management and enterprise qualification.</p>
+        </div>
+        <div class="content-card">
+            <h4>🎯 Capabilities</h4>
+            <ul>
+                <li>Certification mapping</li>
+                <li>Compliance assessment</li>
+                <li>Risk evaluation</li>
+                <li>Gap analysis</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="template-box">
+        <h4>📄 Report Template Structure</h4>
+        <div class="template-item">
+            <div class="template-number">1</div>
+            <div class="template-content"><strong>Certifications</strong> — SOC2, ISO27001, industry credentials</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">2</div>
+            <div class="template-content"><strong>Regulatory Compliance</strong> — GDPR, CCPA, sector regulations</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">3</div>
+            <div class="template-content"><strong>Security Architecture</strong> — Auth, encryption, access control</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">4</div>
+            <div class="template-content"><strong>Incident History</strong> — Known breaches, vulnerability disclosures</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">5</div>
+            <div class="template-content"><strong>Gap Analysis</strong> — Missing requirements, recommendations</div>
+        </div>
+    </div>
+</div>
+
+<!-- ANALYSIS 9: M&A INTELLIGENCE -->
+<div class="page">
+    <div class="section-header" style="background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);">
+        <div class="section-number">Analysis 09</div>
+        <h1 class="section-title">M&A Intelligence</h1>
+    </div>
+
+    <div class="prompt-label">System Prompt</div>
+    <div class="prompt-box">You are an M&A analyst specializing in technology sector transactions and corporate development.
+
+Your task is to analyze M&A and investment activities including:
+
+1. Recent acquisitions and their strategic rationale
+2. Merger activities and integration progress
+3. Investment rounds and valuations
+4. Strategic investors and their thesis
+5. Divestiture activities and spin-offs
+6. Partnership announcements with M&A implications
+7. Market consolidation patterns
+8. Potential acquisition targets
+9. Financial capacity for acquisitions
+10. Post-merger integration success indicators
+
+Provide transaction details with strategic context and market implications.</div>
+
+    <div class="content-grid">
+        <div class="content-card">
+            <h4>📋 Definition</h4>
+            <p style="font-size: 9pt;">Analysis of M&A activities, investments, and consolidation. Enables proactive acquisition strategy and defensive positioning.</p>
+        </div>
+        <div class="content-card">
+            <h4>🎯 Capabilities</h4>
+            <ul>
+                <li>Deal flow tracking</li>
+                <li>Valuation analysis</li>
+                <li>Target identification</li>
+                <li>Synergy assessment</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="template-box">
+        <h4>📄 Report Template Structure</h4>
+        <div class="template-item">
+            <div class="template-number">1</div>
+            <div class="template-content"><strong>Deal Flow</strong> — Recent transactions (12 months)</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">2</div>
+            <div class="template-content"><strong>Key Transactions</strong> — Detailed analysis of significant deals</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">3</div>
+            <div class="template-content"><strong>Valuations</strong> — Multiples, comparables, pricing trends</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">4</div>
+            <div class="template-content"><strong>Potential Targets</strong> — Acquisition candidate profiles</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">5</div>
+            <div class="template-content"><strong>Synergies & Risks</strong> — Integration opportunities and challenges</div>
+        </div>
+    </div>
+</div>
+
+<!-- ANALYSIS 10: INNOVATION TRACKING -->
+<div class="page">
+    <div class="section-header" style="background: linear-gradient(135deg, #c026d3 0%, #a21caf 100%);">
+        <div class="section-number">Analysis 10</div>
+        <h1 class="section-title">Innovation Tracking</h1>
+    </div>
+
+    <div class="prompt-label">System Prompt</div>
+    <div class="prompt-box">You are a product strategy analyst specializing in roadmap analysis and innovation tracking.
+
+Your task is to analyze roadmap and innovation aspects including:
+
+1. Publicly announced roadmap items and timelines
+2. Recent product releases and feature updates
+3. Patent filings and intellectual property
+4. R&D investments and focus areas
+5. Technology partnerships for innovation
+6. Beta programs and early access features
+7. Customer-requested features and priorities
+8. Industry analyst predictions
+9. Competitive response patterns
+10. Strategic direction indicators
+
+Base analysis on official announcements, patents, and credible sources.</div>
+
+    <div class="content-grid">
+        <div class="content-card">
+            <h4>📋 Definition</h4>
+            <p style="font-size: 9pt;">Tracking of roadmaps, patents, and R&D investments. Enables proactive product strategy and competitive anticipation.</p>
+        </div>
+        <div class="content-card">
+            <h4>🎯 Capabilities</h4>
+            <ul>
+                <li>Roadmap analysis</li>
+                <li>Patent monitoring</li>
+                <li>R&D intelligence</li>
+                <li>Innovation radar</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="template-box">
+        <h4>📄 Report Template Structure</h4>
+        <div class="template-item">
+            <div class="template-number">1</div>
+            <div class="template-content"><strong>Public Roadmaps</strong> — Announced features, timelines, themes</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">2</div>
+            <div class="template-content"><strong>Recent Patents</strong> — Filed IP, technology focus areas</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">3</div>
+            <div class="template-content"><strong>R&D Investments</strong> — Research partnerships, lab focus</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">4</div>
+            <div class="template-content"><strong>Innovation Partnerships</strong> — Technology alliances, accelerators</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">5</div>
+            <div class="template-content"><strong>Innovation Radar</strong> — What's next predictions, implications</div>
+        </div>
+    </div>
+</div>
+
+<!-- ANALYSIS 11: ECOSYSTEM MAPPING -->
+<div class="page">
+    <div class="section-header" style="background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);">
+        <div class="section-number">Analysis 11</div>
+        <h1 class="section-title">Ecosystem Mapping</h1>
+    </div>
+
+    <div class="prompt-label">System Prompt</div>
+    <div class="prompt-box">You are a strategic analyst specializing in competitive landscape mapping and ecosystem analysis.
+
+Your task is to provide a comprehensive landscape analysis including:
+
+1. Complete market map with all players categorized
+2. Competitive positioning matrix
+3. Ecosystem relationships and partnerships
+4. Value chain participants and their roles
+5. Emerging players and disruptors
+6. Technology platform ecosystem
+7. Channel and distribution landscape
+8. Geographic coverage mapping
+9. Investment and funding landscape
+10. Future landscape evolution scenarios
+
+Create a holistic view of the competitive and partnership ecosystem.</div>
+
+    <div class="content-grid">
+        <div class="content-card">
+            <h4>📋 Definition</h4>
+            <p style="font-size: 9pt;">Comprehensive view of competitive and partnership ecosystem. Enables strategic positioning and alliance strategy.</p>
+        </div>
+        <div class="content-card">
+            <h4>🎯 Capabilities</h4>
+            <ul>
+                <li>Market mapping</li>
+                <li>Positioning matrix</li>
+                <li>Partnership network</li>
+                <li>White space analysis</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="template-box">
+        <h4>📄 Report Template Structure</h4>
+        <div class="template-item">
+            <div class="template-number">1</div>
+            <div class="template-content"><strong>Market Map</strong> — Visual cartography of all players by category</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">2</div>
+            <div class="template-content"><strong>Positioning Matrix</strong> — 2x2 competitive positioning analysis</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">3</div>
+            <div class="template-content"><strong>Partnership Network</strong> — Alliance ecosystem visualization</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">4</div>
+            <div class="template-content"><strong>Value Chain</strong> — Role mapping across the value chain</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">5</div>
+            <div class="template-content"><strong>Alliance Opportunities</strong> — Strategic partnership recommendations</div>
+        </div>
+    </div>
+</div>
+
+<!-- REPORT LEVELS -->
+<div class="page">
+    <div class="section-header" style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%);">
+        <div class="section-number">Reference</div>
+        <h1 class="section-title">Report Depth Levels</h1>
+    </div>
+
+    <p style="font-size: 10pt; margin-bottom: 8mm;">Each analysis can be generated at four depth levels depending on the business context and decision urgency:</p>
+
+    <table class="styled-table">
+        <thead>
+            <tr>
+                <th>Level</th>
+                <th>Name</th>
+                <th>Time</th>
+                <th>Format</th>
+                <th>Usage</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><span class="badge badge-live">I</span></td>
+                <td><strong>Flash Brief</strong></td>
+                <td>2-3 min</td>
+                <td>5-7 bullet points</td>
+                <td>Daily standup, quick update, mobile</td>
+            </tr>
+            <tr>
+                <td><span class="badge badge-p1">II</span></td>
+                <td><strong>Executive Summary</strong></td>
+                <td>10 min</td>
+                <td>2-3 structured pages</td>
+                <td>Weekly review, team meeting</td>
+            </tr>
+            <tr>
+                <td><span class="badge badge-p2">III</span></td>
+                <td><strong>Strategic Analysis</strong></td>
+                <td>20 min</td>
+                <td>5-8 pages with sources</td>
+                <td>Board prep, investment decision</td>
+            </tr>
+            <tr>
+                <td><span class="badge badge-p3">IV</span></td>
+                <td><strong>Deep Dive Report</strong></td>
+                <td>45+ min</td>
+                <td>15-25 exhaustive pages</td>
+                <td>Due diligence, strategic planning</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3 style="margin-top: 10mm;">Audience Mapping</h3>
+    <div class="content-grid">
+        <div class="content-card">
+            <h4>Level I-II</h4>
+            <ul>
+                <li>Operations teams</li>
+                <li>Managers</li>
+                <li>Field sales</li>
+                <li>Quick decisions</li>
+            </ul>
+        </div>
+        <div class="content-card">
+            <h4>Level III-IV</h4>
+            <ul>
+                <li>Directors</li>
+                <li>C-Level executives</li>
+                <li>Board members</li>
+                <li>Strategic decisions</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- IMPLEMENTATION ROADMAP -->
+<div class="page">
+    <div class="section-header" style="background: linear-gradient(135deg, #059669 0%, #047857 100%);">
+        <div class="section-number">Roadmap</div>
+        <h1 class="section-title">Implementation Priority</h1>
+    </div>
+
+    <table class="styled-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Analysis Type</th>
+                <th>Priority</th>
+                <th>Status</th>
+                <th>Strategic Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1</td>
+                <td>Competitor Intelligence</td>
+                <td><span class="badge badge-live">P0</span></td>
+                <td><span class="badge badge-live">LIVE</span></td>
+                <td>Anticipate competitive moves</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>Product Intelligence</td>
+                <td><span class="badge badge-p1">P1</span></td>
+                <td>To Build</td>
+                <td>Understand rival offerings</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td>Market Intelligence</td>
+                <td><span class="badge badge-p1">P1</span></td>
+                <td>To Build</td>
+                <td>Size opportunities</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>Client Intelligence</td>
+                <td><span class="badge badge-p2">P2</span></td>
+                <td>To Build</td>
+                <td>Target right accounts</td>
+            </tr>
+            <tr>
+                <td>9</td>
+                <td>M&A Intelligence</td>
+                <td><span class="badge badge-p2">P2</span></td>
+                <td>To Build</td>
+                <td>Acquisition intelligence</td>
+            </tr>
+            <tr>
+                <td>11</td>
+                <td>Ecosystem Mapping</td>
+                <td><span class="badge badge-p2">P2</span></td>
+                <td>To Build</td>
+                <td>360° market view</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td>Executive Intelligence</td>
+                <td><span class="badge badge-p3">P3</span></td>
+                <td>To Build</td>
+                <td>Leadership intelligence</td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td>Industry Dynamics</td>
+                <td><span class="badge badge-p3">P3</span></td>
+                <td>To Build</td>
+                <td>Sector dynamics</td>
+            </tr>
+            <tr>
+                <td>10</td>
+                <td>Innovation Tracking</td>
+                <td><span class="badge badge-p3">P3</span></td>
+                <td>To Build</td>
+                <td>Anticipate roadmaps</td>
+            </tr>
+            <tr>
+                <td>7</td>
+                <td>Technology Assessment</td>
+                <td><span class="badge badge-p4">P4</span></td>
+                <td>To Build</td>
+                <td>Tech assessment</td>
+            </tr>
+            <tr>
+                <td>8</td>
+                <td>Security & Compliance</td>
+                <td><span class="badge badge-p4">P4</span></td>
+                <td>To Build</td>
+                <td>Compliance & risk</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3 style="margin-top: 10mm;">Recommended Phases</h3>
+    <div class="content-grid">
+        <div class="content-card" style="border-left: 4px solid #059669;">
+            <h4 style="color: #059669;">Phase 1 (M1-M2)</h4>
+            <p style="font-size: 9pt; font-weight: 600;">Competitor + Product + Market</p>
+            <p style="font-size: 8pt; color: var(--text-light);">Core competitive intelligence foundation</p>
+        </div>
+        <div class="content-card" style="border-left: 4px solid #f59e0b;">
+            <h4 style="color: #f59e0b;">Phase 2 (M3-M4)</h4>
+            <p style="font-size: 9pt; font-weight: 600;">Client + Ecosystem + M&A</p>
+            <p style="font-size: 8pt; color: var(--text-light);">Commercial intelligence expansion</p>
+        </div>
+        <div class="content-card" style="border-left: 4px solid #6366f1;">
+            <h4 style="color: #6366f1;">Phase 3 (M5-M6)</h4>
+            <p style="font-size: 9pt; font-weight: 600;">Innovation + Executive + Industry</p>
+            <p style="font-size: 8pt; color: var(--text-light);">Strategic intelligence layer</p>
+        </div>
+        <div class="content-card" style="border-left: 4px solid #64748b;">
+            <h4 style="color: #64748b;">Phase 4 (M7+)</h4>
+            <p style="font-size: 9pt; font-weight: 600;">Technology + Security</p>
+            <p style="font-size: 8pt; color: var(--text-light);">Technical due diligence capabilities</p>
+        </div>
+    </div>
+
+    <div style="margin-top: 15mm; text-align: center; padding: 8mm; background: var(--bg-light); border-radius: 8px;">
+        <p style="font-size: 10pt; font-weight: 600; color: var(--dark);">DEALIGENT Intelligence Platform</p>
+        <p style="font-size: 9pt; color: var(--text-light);">Strategic Document for Review and Prompt Customization</p>
+        <p style="font-size: 8pt; color: var(--text-light); margin-top: 3mm;">January 2025 • Version 3.0</p>
+    </div>
+</div>
+
+</body>
+</html>

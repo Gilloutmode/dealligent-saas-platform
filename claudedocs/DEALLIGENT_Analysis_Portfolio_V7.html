@@ -1,0 +1,2646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DEALLIGENT - Market Intelligence Analysis Portfolio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        @page {
+            size: A4;
+            margin: 12mm 15mm 15mm 15mm;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 9pt;
+            line-height: 1.5;
+            color: #1e293b;
+            background: white;
+        }
+
+        /* ══════════════════════════════════════════════════════════════════
+           COVER PAGE - FIXED TITLE (no gradient text)
+           ══════════════════════════════════════════════════════════════════ */
+        .cover-page {
+            height: 297mm;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f172a 100%);
+            color: white;
+            text-align: center;
+            page-break-after: always;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cover-page::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(circle at 20% 30%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(147, 51, 234, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .cover-content {
+            position: relative;
+            z-index: 1;
+            max-width: 600px;
+            padding: 40px;
+        }
+
+        .logo-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            padding: 12px 24px;
+            border-radius: 50px;
+            border: 1px solid rgba(255,255,255,0.2);
+            margin-bottom: 30px;
+        }
+
+        .logo-icon {
+            font-size: 28pt;
+        }
+
+        .logo-text {
+            font-size: 14pt;
+            font-weight: 700;
+            letter-spacing: 3px;
+        }
+
+        /* FIXED: Solid white text instead of gradient */
+        .cover-title {
+            font-size: 36pt;
+            font-weight: 800;
+            margin-bottom: 20px;
+            color: #ffffff;
+            line-height: 1.2;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .cover-subtitle {
+            font-size: 16pt;
+            font-weight: 400;
+            color: #94a3b8;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        .cover-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-size: 10pt;
+            font-weight: 600;
+            letter-spacing: 1px;
+            margin-bottom: 30px;
+        }
+
+        .cover-stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 40px;
+        }
+
+        .cover-stat {
+            text-align: center;
+        }
+
+        .cover-stat-number {
+            font-size: 32pt;
+            font-weight: 800;
+            color: #60a5fa;
+        }
+
+        .cover-stat-label {
+            font-size: 9pt;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .cover-footer {
+            position: absolute;
+            bottom: 30px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            color: #64748b;
+            font-size: 8pt;
+        }
+
+        /* ══════════════════════════════════════════════════════════════════
+           ANALYSIS PAGES
+           ══════════════════════════════════════════════════════════════════ */
+        .analysis-page {
+            page-break-before: always;
+            padding: 5mm 0;
+        }
+
+        .analysis-header {
+            background: linear-gradient(135deg, #1e3a5f 0%, #0f172a 100%);
+            color: white;
+            padding: 5mm 6mm;
+            border-radius: 8px;
+            margin-bottom: 4mm;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .analysis-icon {
+            font-size: 24pt;
+        }
+
+        .analysis-title-block {
+            flex: 1;
+        }
+
+        .analysis-number {
+            font-size: 7pt;
+            font-weight: 600;
+            color: #60a5fa;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 2px;
+        }
+
+        .analysis-title {
+            font-size: 14pt;
+            font-weight: 700;
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        .analysis-badge {
+            background: rgba(59, 130, 246, 0.3);
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 7pt;
+            font-weight: 600;
+            border: 1px solid rgba(59, 130, 246, 0.5);
+        }
+
+        /* ══════════════════════════════════════════════════════════════════
+           DEFINITION BOX (Green) - Compact
+           ══════════════════════════════════════════════════════════════════ */
+        .definition-box {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            border: 1px solid #22c55e;
+            border-left: 4px solid #22c55e;
+            border-radius: 6px;
+            padding: 4mm 5mm;
+            margin-bottom: 3mm;
+        }
+
+        .definition-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 2mm;
+        }
+
+        .definition-icon {
+            font-size: 12pt;
+        }
+
+        .definition-title {
+            font-size: 9pt;
+            font-weight: 700;
+            color: #15803d;
+        }
+
+        .definition-content {
+            font-size: 8pt;
+            line-height: 1.5;
+            color: #166534;
+        }
+
+        /* ══════════════════════════════════════════════════════════════════
+           CAPABILITIES BOX (Purple) - Compact
+           ══════════════════════════════════════════════════════════════════ */
+        .capabilities-box {
+            background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+            border: 1px solid #a855f7;
+            border-left: 4px solid #a855f7;
+            border-radius: 6px;
+            padding: 4mm 5mm;
+            margin-bottom: 3mm;
+        }
+
+        .capabilities-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 2mm;
+        }
+
+        .capabilities-icon {
+            font-size: 12pt;
+        }
+
+        .capabilities-title {
+            font-size: 9pt;
+            font-weight: 700;
+            color: #7e22ce;
+        }
+
+        .capabilities-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2mm;
+        }
+
+        .capability-item {
+            background: white;
+            padding: 2mm;
+            border-radius: 4px;
+            border: 1px solid #e9d5ff;
+        }
+
+        .capability-name {
+            font-size: 7.5pt;
+            font-weight: 600;
+            color: #7e22ce;
+        }
+
+        .capability-desc {
+            font-size: 7pt;
+            color: #6b21a8;
+            line-height: 1.35;
+        }
+
+        /* ══════════════════════════════════════════════════════════════════
+           TECHNOLOGY STACK BOX (Orange)
+           ══════════════════════════════════════════════════════════════════ */
+        .tech-stack-box {
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+            border: 1px solid #f59e0b;
+            border-left: 4px solid #f59e0b;
+            border-radius: 6px;
+            padding: 4mm 5mm;
+            margin-bottom: 3mm;
+        }
+
+        .tech-stack-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 2mm;
+        }
+
+        .tech-stack-icon {
+            font-size: 12pt;
+        }
+
+        .tech-stack-title {
+            font-size: 9pt;
+            font-weight: 700;
+            color: #b45309;
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 2mm;
+        }
+
+        .tech-item {
+            background: white;
+            padding: 2mm;
+            border-radius: 4px;
+            border: 1px solid #fcd34d;
+            text-align: center;
+        }
+
+        .tech-item-icon {
+            font-size: 10pt;
+        }
+
+        .tech-item-name {
+            font-size: 7pt;
+            font-weight: 700;
+            color: #b45309;
+        }
+
+        .tech-item-desc {
+            font-size: 6.5pt;
+            color: #92400e;
+        }
+
+        /* ══════════════════════════════════════════════════════════════════
+           RAG CONTEXT BOX (Blue)
+           ══════════════════════════════════════════════════════════════════ */
+        .rag-context-box {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border: 1px solid #3b82f6;
+            border-left: 4px solid #3b82f6;
+            border-radius: 6px;
+            padding: 4mm 5mm;
+            margin-bottom: 3mm;
+        }
+
+        .rag-context-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 2mm;
+        }
+
+        .rag-context-icon {
+            font-size: 12pt;
+        }
+
+        .rag-context-title {
+            font-size: 9pt;
+            font-weight: 700;
+            color: #1d4ed8;
+        }
+
+        .rag-context-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2mm;
+        }
+
+        .rag-item {
+            background: white;
+            padding: 2mm;
+            border-radius: 4px;
+            text-align: center;
+            border: 1px solid #93c5fd;
+        }
+
+        .rag-item-label {
+            font-size: 6.5pt;
+            color: #1d4ed8;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .rag-item-value {
+            font-size: 7pt;
+            color: #1e40af;
+            font-family: 'SF Mono', Consolas, monospace;
+        }
+
+        /* ══════════════════════════════════════════════════════════════════
+           SYSTEM PROMPT BOX (Dark) - Compact
+           ══════════════════════════════════════════════════════════════════ */
+        .prompt-section {
+            margin-bottom: 3mm;
+        }
+
+        .prompt-header {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: white;
+            padding: 2.5mm 4mm;
+            border-radius: 6px 6px 0 0;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .prompt-icon {
+            font-size: 10pt;
+        }
+
+        .prompt-title {
+            font-size: 8pt;
+            font-weight: 700;
+        }
+
+        .prompt-badge {
+            margin-left: auto;
+            background: rgba(59, 130, 246, 0.3);
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-size: 6pt;
+            font-weight: 600;
+        }
+
+        .prompt-content {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 3mm 4mm;
+            border-radius: 0 0 6px 6px;
+            font-family: 'SF Mono', 'Fira Code', Consolas, monospace;
+            font-size: 6.5pt;
+            line-height: 1.45;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        /* ══════════════════════════════════════════════════════════════════
+           REPORT TEMPLATE BOX (Teal)
+           ══════════════════════════════════════════════════════════════════ */
+        .template-section {
+            margin-bottom: 3mm;
+        }
+
+        .template-header {
+            background: linear-gradient(135deg, #0f766e 0%, #115e59 100%);
+            color: white;
+            padding: 2.5mm 4mm;
+            border-radius: 6px 6px 0 0;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .template-icon {
+            font-size: 10pt;
+        }
+
+        .template-title {
+            font-size: 8pt;
+            font-weight: 700;
+        }
+
+        .template-content {
+            background: #f0fdfa;
+            border: 1px solid #99f6e4;
+            border-top: none;
+            padding: 3mm 4mm;
+            border-radius: 0 0 6px 6px;
+            font-family: 'SF Mono', 'Fira Code', Consolas, monospace;
+            font-size: 6.5pt;
+            line-height: 1.4;
+            white-space: pre-wrap;
+            color: #0f766e;
+        }
+
+        /* ══════════════════════════════════════════════════════════════════
+           PAGE BREAK CONTROLS
+           ══════════════════════════════════════════════════════════════════ */
+        .page-break {
+            page-break-before: always;
+        }
+
+        /* ══════════════════════════════════════════════════════════════════
+           TOC PAGE
+           ══════════════════════════════════════════════════════════════════ */
+        .toc-page {
+            page-break-before: always;
+            padding: 8mm 0;
+        }
+
+        .toc-header {
+            text-align: center;
+            margin-bottom: 8mm;
+        }
+
+        .toc-title {
+            font-size: 18pt;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 2mm;
+        }
+
+        .toc-subtitle {
+            font-size: 9pt;
+            color: #64748b;
+        }
+
+        .toc-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3mm;
+        }
+
+        .toc-item {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 3mm;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toc-number {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 9pt;
+            flex-shrink: 0;
+        }
+
+        .toc-text {
+            flex: 1;
+        }
+
+        .toc-name {
+            font-size: 8pt;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .toc-desc {
+            font-size: 6.5pt;
+            color: #64748b;
+        }
+    </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     COVER PAGE
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<div class="cover-page">
+    <div class="cover-content">
+        <div class="logo-badge">
+            <span class="logo-icon">🎯</span>
+            <span class="logo-text">DEALLIGENT</span>
+        </div>
+
+        <h1 class="cover-title">Market Intelligence<br>Analysis Portfolio</h1>
+
+        <p class="cover-subtitle">
+            Comprehensive AI-Powered Competitive Intelligence System<br>
+            Powered by Advanced RAG Architecture & Multi-Agent Orchestration
+        </p>
+
+        <div class="cover-badge">ENTERPRISE EDITION V11.2</div>
+
+        <div class="cover-stats">
+            <div class="cover-stat">
+                <div class="cover-stat-number">12</div>
+                <div class="cover-stat-label">Analysis Types</div>
+            </div>
+            <div class="cover-stat">
+                <div class="cover-stat-number">6</div>
+                <div class="cover-stat-label">AI Technologies</div>
+            </div>
+            <div class="cover-stat">
+                <div class="cover-stat-number">∞</div>
+                <div class="cover-stat-label">RAG Sources</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="cover-footer">
+        DEALLIGENT Market Intelligence Platform • Confidential Documentation • 2025
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     TABLE OF CONTENTS
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<div class="toc-page">
+    <div class="toc-header">
+        <h2 class="toc-title">Analysis Portfolio</h2>
+        <p class="toc-subtitle">12 Specialized Intelligence Analysis Types</p>
+    </div>
+
+    <div class="toc-grid">
+        <div class="toc-item">
+            <div class="toc-number">1</div>
+            <div class="toc-text">
+                <div class="toc-name">Competitor Intelligence</div>
+                <div class="toc-desc">Deep competitor profiling with RAG-filtered relevance</div>
+            </div>
+        </div>
+        <div class="toc-item">
+            <div class="toc-number">2</div>
+            <div class="toc-text">
+                <div class="toc-name">Market Trends</div>
+                <div class="toc-desc">Industry evolution and emerging patterns</div>
+            </div>
+        </div>
+        <div class="toc-item">
+            <div class="toc-number">3</div>
+            <div class="toc-text">
+                <div class="toc-name">Technology Watch</div>
+                <div class="toc-desc">Disruptive technology and innovation tracking</div>
+            </div>
+        </div>
+        <div class="toc-item">
+            <div class="toc-number">4</div>
+            <div class="toc-text">
+                <div class="toc-name">Strategic Opportunities</div>
+                <div class="toc-desc">Market gaps and expansion potential</div>
+            </div>
+        </div>
+        <div class="toc-item">
+            <div class="toc-number">5</div>
+            <div class="toc-text">
+                <div class="toc-name">Customer Intelligence</div>
+                <div class="toc-desc">Buyer behavior and decision journey</div>
+            </div>
+        </div>
+        <div class="toc-item">
+            <div class="toc-number">6</div>
+            <div class="toc-text">
+                <div class="toc-name">Pricing Analysis</div>
+                <div class="toc-desc">Competitive pricing strategies</div>
+            </div>
+        </div>
+        <div class="toc-item">
+            <div class="toc-number">7</div>
+            <div class="toc-text">
+                <div class="toc-name">SWOT Analysis</div>
+                <div class="toc-desc">Strategic positioning assessment</div>
+            </div>
+        </div>
+        <div class="toc-item">
+            <div class="toc-number">8</div>
+            <div class="toc-text">
+                <div class="toc-name">Industry News</div>
+                <div class="toc-desc">Real-time sector intelligence</div>
+            </div>
+        </div>
+        <div class="toc-item">
+            <div class="toc-number">9</div>
+            <div class="toc-text">
+                <div class="toc-name">Partnership Analysis</div>
+                <div class="toc-desc">Alliance and ecosystem mapping</div>
+            </div>
+        </div>
+        <div class="toc-item">
+            <div class="toc-number">10</div>
+            <div class="toc-text">
+                <div class="toc-name">Regulatory Intelligence</div>
+                <div class="toc-desc">Compliance and policy tracking</div>
+            </div>
+        </div>
+        <div class="toc-item">
+            <div class="toc-number">11</div>
+            <div class="toc-text">
+                <div class="toc-name">Financial Intelligence</div>
+                <div class="toc-desc">Economic analysis and benchmarking</div>
+            </div>
+        </div>
+        <div class="toc-item">
+            <div class="toc-number">12</div>
+            <div class="toc-text">
+                <div class="toc-name">Marketing Intelligence</div>
+                <div class="toc-desc">Go-to-market and brand analysis</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     ANALYSIS 1: COMPETITOR INTELLIGENCE
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<div class="analysis-page">
+    <div class="analysis-header">
+        <span class="analysis-icon">🎯</span>
+        <div class="analysis-title-block">
+            <div class="analysis-number">Analysis Type 01</div>
+            <h2 class="analysis-title">Competitor Intelligence</h2>
+        </div>
+        <span class="analysis-badge">Strategic Priority</span>
+    </div>
+
+    <div class="definition-box">
+        <div class="definition-header">
+            <span class="definition-icon">📖</span>
+            <span class="definition-title">Definition & Purpose</span>
+        </div>
+        <div class="definition-content">
+            Competitor Intelligence provides systematic, deep-dive analysis of competing organizations to understand their strategies, capabilities, market positioning, and potential future moves. This analysis enables proactive strategic planning and helps identify competitive advantages, threats, and opportunities for differentiation.
+        </div>
+    </div>
+
+    <div class="capabilities-box">
+        <div class="capabilities-header">
+            <span class="capabilities-icon">⚡</span>
+            <span class="capabilities-title">Key Capabilities</span>
+        </div>
+        <div class="capabilities-grid">
+            <div class="capability-item">
+                <div class="capability-name">Strategic Profiling</div>
+                <div class="capability-desc">Map competitor strategies, business models, and market positioning</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Product Analysis</div>
+                <div class="capability-desc">Feature comparison, roadmap analysis, technology differentiation</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Market Position</div>
+                <div class="capability-desc">Customer segments, pricing, market share dynamics</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Predictive Insights</div>
+                <div class="capability-desc">Anticipate competitor moves and market responses</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tech-stack-box">
+        <div class="tech-stack-header">
+            <span class="tech-stack-icon">🔧</span>
+            <span class="tech-stack-title">AI Technology Stack</span>
+        </div>
+        <div class="tech-grid">
+            <div class="tech-item">
+                <div class="tech-item-icon">🧠</div>
+                <div class="tech-item-name">Claude Opus 4.5</div>
+                <div class="tech-item-desc">Analysis Engine</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">🔍</div>
+                <div class="tech-item-name">Perplexity Sonar</div>
+                <div class="tech-item-desc">Real-time Search</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">🕸️</div>
+                <div class="tech-item-name">Exa Deep Search</div>
+                <div class="tech-item-desc">Agentic Discovery</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">📊</div>
+                <div class="tech-item-name">SerpAPI</div>
+                <div class="tech-item-desc">Google Integration</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">🗄️</div>
+                <div class="tech-item-name">Pinecone RAG</div>
+                <div class="tech-item-desc">Vector Database</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">⚙️</div>
+                <div class="tech-item-name">n8n Orchestrator</div>
+                <div class="tech-item-desc">Workflow Engine</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="rag-context-box">
+        <div class="rag-context-header">
+            <span class="rag-context-icon">🔗</span>
+            <span class="rag-context-title">RAG Context Match</span>
+        </div>
+        <div class="rag-context-grid">
+            <div class="rag-item">
+                <div class="rag-item-label">Company</div>
+                <div class="rag-item-value">{company_name}</div>
+            </div>
+            <div class="rag-item">
+                <div class="rag-item-label">Industry</div>
+                <div class="rag-item-value">{industry}</div>
+            </div>
+            <div class="rag-item">
+                <div class="rag-item-label">Use Cases</div>
+                <div class="rag-item-value">{use_cases}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="prompt-section">
+        <div class="prompt-header">
+            <span class="prompt-icon">💻</span>
+            <span class="prompt-title">Expert System Prompt</span>
+            <span class="prompt-badge">CLAUDE OPUS 4.5</span>
+        </div>
+        <div class="prompt-content">You are an elite competitive intelligence analyst with 20+ years of experience in strategic market analysis for {industry}. Your mission is to deliver actionable competitor intelligence for {company_name}.
+
+ANALYSIS FRAMEWORK:
+1. STRATEGIC PROFILE: Business model, value proposition, market positioning, strategic priorities
+2. PRODUCT PORTFOLIO: Core offerings, feature differentiation, technology stack, innovation pipeline
+3. MARKET DYNAMICS: Target segments, geographic focus, market share, growth trajectory
+4. COMPETITIVE STANCE: Pricing strategy, sales approach, partnership ecosystem, key accounts
+5. STRATEGIC INTENT: Recent moves, investment patterns, hiring signals, executive communications
+
+OUTPUT REQUIREMENTS:
+• Lead with most strategically significant findings
+• Quantify insights with metrics where available
+• Highlight implications for {company_name}'s strategy
+• Provide confidence levels for each assessment
+• Include actionable recommendations
+
+Focus on {company_use_cases} relevance throughout the analysis.</div>
+    </div>
+
+    <div class="template-section">
+        <div class="template-header">
+            <span class="template-icon">📋</span>
+            <span class="template-title">Report Template</span>
+        </div>
+        <div class="template-content"># COMPETITOR INTELLIGENCE REPORT
+## Analysis Date: {date} | Subject: {competitor_name}
+
+### EXECUTIVE SUMMARY
+[3-5 key strategic findings with business impact]
+
+### STRATEGIC PROFILE
+- Business Model & Value Proposition
+- Market Positioning & Differentiation
+- Strategic Priorities & Investment Focus
+
+### PRODUCT & TECHNOLOGY ANALYSIS
+- Core Product Portfolio
+- Technology Differentiation
+- Innovation Pipeline & Roadmap Signals
+
+### MARKET POSITION
+- Target Segments & Customer Base
+- Geographic Coverage
+- Market Share & Growth Trajectory
+
+### COMPETITIVE IMPLICATIONS FOR {company_name}
+- Opportunities Identified
+- Threats to Address
+- Recommended Strategic Responses</div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     ANALYSIS 2: MARKET TRENDS
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<div class="analysis-page">
+    <div class="analysis-header">
+        <span class="analysis-icon">📈</span>
+        <div class="analysis-title-block">
+            <div class="analysis-number">Analysis Type 02</div>
+            <h2 class="analysis-title">Market Trends Analysis</h2>
+        </div>
+        <span class="analysis-badge">Strategic Priority</span>
+    </div>
+
+    <div class="definition-box">
+        <div class="definition-header">
+            <span class="definition-icon">📖</span>
+            <span class="definition-title">Definition & Purpose</span>
+        </div>
+        <div class="definition-content">
+            Market Trends Analysis systematically identifies, tracks, and interprets evolving patterns in industry dynamics, customer behavior, technology adoption, and competitive landscape. This forward-looking intelligence enables strategic positioning and early identification of emerging opportunities or threats.
+        </div>
+    </div>
+
+    <div class="capabilities-box">
+        <div class="capabilities-header">
+            <span class="capabilities-icon">⚡</span>
+            <span class="capabilities-title">Key Capabilities</span>
+        </div>
+        <div class="capabilities-grid">
+            <div class="capability-item">
+                <div class="capability-name">Trend Detection</div>
+                <div class="capability-desc">Identify emerging patterns before mainstream recognition</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Impact Assessment</div>
+                <div class="capability-desc">Evaluate business implications of market shifts</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Timing Analysis</div>
+                <div class="capability-desc">Determine trend maturity and adoption timeline</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Strategic Alignment</div>
+                <div class="capability-desc">Connect trends to strategic opportunities</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tech-stack-box">
+        <div class="tech-stack-header">
+            <span class="tech-stack-icon">🔧</span>
+            <span class="tech-stack-title">AI Technology Stack</span>
+        </div>
+        <div class="tech-grid">
+            <div class="tech-item">
+                <div class="tech-item-icon">🧠</div>
+                <div class="tech-item-name">Claude Opus 4.5</div>
+                <div class="tech-item-desc">Analysis Engine</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">🔍</div>
+                <div class="tech-item-name">Perplexity Sonar</div>
+                <div class="tech-item-desc">Real-time Search</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">🕸️</div>
+                <div class="tech-item-name">Exa Deep Search</div>
+                <div class="tech-item-desc">Agentic Discovery</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">📊</div>
+                <div class="tech-item-name">SerpAPI</div>
+                <div class="tech-item-desc">Google Integration</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">🗄️</div>
+                <div class="tech-item-name">Pinecone RAG</div>
+                <div class="tech-item-desc">Vector Database</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">⚙️</div>
+                <div class="tech-item-name">n8n Orchestrator</div>
+                <div class="tech-item-desc">Workflow Engine</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="rag-context-box">
+        <div class="rag-context-header">
+            <span class="rag-context-icon">🔗</span>
+            <span class="rag-context-title">RAG Context Match</span>
+        </div>
+        <div class="rag-context-grid">
+            <div class="rag-item">
+                <div class="rag-item-label">Company</div>
+                <div class="rag-item-value">{company_name}</div>
+            </div>
+            <div class="rag-item">
+                <div class="rag-item-label">Industry</div>
+                <div class="rag-item-value">{industry}</div>
+            </div>
+            <div class="rag-item">
+                <div class="rag-item-label">Use Cases</div>
+                <div class="rag-item-value">{use_cases}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="prompt-section">
+        <div class="prompt-header">
+            <span class="prompt-icon">💻</span>
+            <span class="prompt-title">Expert System Prompt</span>
+            <span class="prompt-badge">CLAUDE OPUS 4.5</span>
+        </div>
+        <div class="prompt-content">You are a senior market analyst specializing in {industry} trends with expertise in predictive market intelligence. Your mission is to identify and analyze significant market trends relevant to {company_name}.
+
+ANALYSIS FRAMEWORK:
+1. MACRO TRENDS: Industry-wide shifts, economic factors, regulatory changes
+2. TECHNOLOGY TRENDS: Innovation patterns, adoption curves, disruption signals
+3. CUSTOMER TRENDS: Behavior shifts, preference evolution, demand patterns
+4. COMPETITIVE TRENDS: Market structure changes, new entrants, consolidation
+
+OUTPUT REQUIREMENTS:
+• Classify each trend by maturity: Emerging (0-2y), Growing (2-5y), Mature (5y+)
+• Assess impact: High/Medium/Low on {company_name}'s business
+• Provide timing windows for strategic action
+• Connect trends to specific business opportunities
+• Include supporting evidence and data points
+
+Focus analysis through lens of {company_use_cases}.</div>
+    </div>
+
+    <div class="template-section">
+        <div class="template-header">
+            <span class="template-icon">📋</span>
+            <span class="template-title">Report Template</span>
+        </div>
+        <div class="template-content"># MARKET TRENDS ANALYSIS REPORT
+## Analysis Date: {date} | Industry: {industry}
+
+### EXECUTIVE SUMMARY
+[Key trends with highest strategic relevance]
+
+### HIGH-IMPACT TRENDS
+| Trend | Maturity | Impact | Action Window |
+|-------|----------|--------|---------------|
+| [trend] | [stage] | [H/M/L] | [timeframe] |
+
+### TREND DEEP DIVE
+For each significant trend:
+- Description & Drivers
+- Market Evidence & Signals
+- Strategic Implications for {company_name}
+- Recommended Response
+
+### STRATEGIC RECOMMENDATIONS
+- Immediate Actions (0-6 months)
+- Medium-term Initiatives (6-18 months)
+- Long-term Positioning (18+ months)</div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     ANALYSIS 3: TECHNOLOGY WATCH
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<div class="analysis-page">
+    <div class="analysis-header">
+        <span class="analysis-icon">🔬</span>
+        <div class="analysis-title-block">
+            <div class="analysis-number">Analysis Type 03</div>
+            <h2 class="analysis-title">Technology Watch</h2>
+        </div>
+        <span class="analysis-badge">Innovation Focus</span>
+    </div>
+
+    <div class="definition-box">
+        <div class="definition-header">
+            <span class="definition-icon">📖</span>
+            <span class="definition-title">Definition & Purpose</span>
+        </div>
+        <div class="definition-content">
+            Technology Watch provides systematic monitoring and analysis of technological developments, innovations, and emerging technologies that could impact the industry. This intelligence enables informed R&D decisions, identifies disruption risks, and uncovers technology-driven opportunities.
+        </div>
+    </div>
+
+    <div class="capabilities-box">
+        <div class="capabilities-header">
+            <span class="capabilities-icon">⚡</span>
+            <span class="capabilities-title">Key Capabilities</span>
+        </div>
+        <div class="capabilities-grid">
+            <div class="capability-item">
+                <div class="capability-name">Innovation Radar</div>
+                <div class="capability-desc">Track emerging technologies and research breakthroughs</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Disruption Analysis</div>
+                <div class="capability-desc">Assess technology impact on industry dynamics</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Adoption Tracking</div>
+                <div class="capability-desc">Monitor technology maturity and market readiness</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">R&D Intelligence</div>
+                <div class="capability-desc">Patent analysis, research trends, innovation patterns</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tech-stack-box">
+        <div class="tech-stack-header">
+            <span class="tech-stack-icon">🔧</span>
+            <span class="tech-stack-title">AI Technology Stack</span>
+        </div>
+        <div class="tech-grid">
+            <div class="tech-item">
+                <div class="tech-item-icon">🧠</div>
+                <div class="tech-item-name">Claude Opus 4.5</div>
+                <div class="tech-item-desc">Analysis Engine</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">🔍</div>
+                <div class="tech-item-name">Perplexity Sonar</div>
+                <div class="tech-item-desc">Real-time Search</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">🕸️</div>
+                <div class="tech-item-name">Exa Deep Search</div>
+                <div class="tech-item-desc">Agentic Discovery</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">📊</div>
+                <div class="tech-item-name">SerpAPI</div>
+                <div class="tech-item-desc">Google Integration</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">🗄️</div>
+                <div class="tech-item-name">Pinecone RAG</div>
+                <div class="tech-item-desc">Vector Database</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">⚙️</div>
+                <div class="tech-item-name">n8n Orchestrator</div>
+                <div class="tech-item-desc">Workflow Engine</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="rag-context-box">
+        <div class="rag-context-header">
+            <span class="rag-context-icon">🔗</span>
+            <span class="rag-context-title">RAG Context Match</span>
+        </div>
+        <div class="rag-context-grid">
+            <div class="rag-item">
+                <div class="rag-item-label">Company</div>
+                <div class="rag-item-value">{company_name}</div>
+            </div>
+            <div class="rag-item">
+                <div class="rag-item-label">Industry</div>
+                <div class="rag-item-value">{industry}</div>
+            </div>
+            <div class="rag-item">
+                <div class="rag-item-label">Use Cases</div>
+                <div class="rag-item-value">{use_cases}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="prompt-section">
+        <div class="prompt-header">
+            <span class="prompt-icon">💻</span>
+            <span class="prompt-title">Expert System Prompt</span>
+            <span class="prompt-badge">CLAUDE OPUS 4.5</span>
+        </div>
+        <div class="prompt-content">You are a chief technology strategist with deep expertise in {industry} innovation. Your mission is to provide actionable technology intelligence for {company_name}.
+
+ANALYSIS FRAMEWORK:
+1. EMERGING TECHNOLOGIES: New developments with potential industry impact
+2. DISRUPTION ASSESSMENT: Technologies threatening current business models
+3. COMPETITIVE TECHNOLOGY: How competitors are leveraging technology
+4. ADOPTION ANALYSIS: Technology maturity and implementation readiness
+
+OUTPUT REQUIREMENTS:
+• Classify technologies by TRL (Technology Readiness Level)
+• Assess strategic relevance to {company_name}'s roadmap
+• Identify early adoption opportunities vs wait-and-see
+• Provide implementation complexity assessment
+• Include competitor technology positioning
+
+Focus on technologies relevant to {company_use_cases}.</div>
+    </div>
+
+    <div class="template-section">
+        <div class="template-header">
+            <span class="template-icon">📋</span>
+            <span class="template-title">Report Template</span>
+        </div>
+        <div class="template-content"># TECHNOLOGY WATCH REPORT
+## Analysis Date: {date} | Focus: {industry}
+
+### EXECUTIVE SUMMARY
+[Key technology developments requiring attention]
+
+### TECHNOLOGY RADAR
+| Technology | TRL | Impact | Timeline | Priority |
+|------------|-----|--------|----------|----------|
+| [tech] | [1-9] | [H/M/L] | [years] | [action] |
+
+### HIGH-PRIORITY TECHNOLOGIES
+For each critical technology:
+- Technical Description
+- Industry Applications
+- Competitive Landscape
+- Strategic Implications
+- Recommended Action
+
+### R&D RECOMMENDATIONS
+- Technologies to Adopt Now
+- Technologies to Monitor
+- Technologies to Deprioritize</div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     ANALYSIS 4: STRATEGIC OPPORTUNITIES
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<div class="analysis-page">
+    <div class="analysis-header">
+        <span class="analysis-icon">🚀</span>
+        <div class="analysis-title-block">
+            <div class="analysis-number">Analysis Type 04</div>
+            <h2 class="analysis-title">Strategic Opportunities</h2>
+        </div>
+        <span class="analysis-badge">Growth Focus</span>
+    </div>
+
+    <div class="definition-box">
+        <div class="definition-header">
+            <span class="definition-icon">📖</span>
+            <span class="definition-title">Definition & Purpose</span>
+        </div>
+        <div class="definition-content">
+            Strategic Opportunities analysis identifies and evaluates market gaps, untapped segments, expansion possibilities, and strategic moves that could drive growth. This intelligence supports strategic planning, investment decisions, and market development initiatives.
+        </div>
+    </div>
+
+    <div class="capabilities-box">
+        <div class="capabilities-header">
+            <span class="capabilities-icon">⚡</span>
+            <span class="capabilities-title">Key Capabilities</span>
+        </div>
+        <div class="capabilities-grid">
+            <div class="capability-item">
+                <div class="capability-name">Gap Analysis</div>
+                <div class="capability-desc">Identify unmet market needs and white space</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Expansion Mapping</div>
+                <div class="capability-desc">Geographic and segment growth opportunities</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">M&A Intelligence</div>
+                <div class="capability-desc">Acquisition targets and partnership opportunities</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">ROI Assessment</div>
+                <div class="capability-desc">Opportunity sizing and investment prioritization</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tech-stack-box">
+        <div class="tech-stack-header">
+            <span class="tech-stack-icon">🔧</span>
+            <span class="tech-stack-title">AI Technology Stack</span>
+        </div>
+        <div class="tech-grid">
+            <div class="tech-item">
+                <div class="tech-item-icon">🧠</div>
+                <div class="tech-item-name">Claude Opus 4.5</div>
+                <div class="tech-item-desc">Analysis Engine</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">🔍</div>
+                <div class="tech-item-name">Perplexity Sonar</div>
+                <div class="tech-item-desc">Real-time Search</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">🕸️</div>
+                <div class="tech-item-name">Exa Deep Search</div>
+                <div class="tech-item-desc">Agentic Discovery</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">📊</div>
+                <div class="tech-item-name">SerpAPI</div>
+                <div class="tech-item-desc">Google Integration</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">🗄️</div>
+                <div class="tech-item-name">Pinecone RAG</div>
+                <div class="tech-item-desc">Vector Database</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">⚙️</div>
+                <div class="tech-item-name">n8n Orchestrator</div>
+                <div class="tech-item-desc">Workflow Engine</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="rag-context-box">
+        <div class="rag-context-header">
+            <span class="rag-context-icon">🔗</span>
+            <span class="rag-context-title">RAG Context Match</span>
+        </div>
+        <div class="rag-context-grid">
+            <div class="rag-item">
+                <div class="rag-item-label">Company</div>
+                <div class="rag-item-value">{company_name}</div>
+            </div>
+            <div class="rag-item">
+                <div class="rag-item-label">Industry</div>
+                <div class="rag-item-value">{industry}</div>
+            </div>
+            <div class="rag-item">
+                <div class="rag-item-label">Use Cases</div>
+                <div class="rag-item-value">{use_cases}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="prompt-section">
+        <div class="prompt-header">
+            <span class="prompt-icon">💻</span>
+            <span class="prompt-title">Expert System Prompt</span>
+            <span class="prompt-badge">CLAUDE OPUS 4.5</span>
+        </div>
+        <div class="prompt-content">You are a strategic growth consultant with expertise in identifying market opportunities in {industry}. Your mission is to uncover high-value opportunities for {company_name}.
+
+ANALYSIS FRAMEWORK:
+1. MARKET GAPS: Unmet needs, underserved segments, product white space
+2. EXPANSION OPPORTUNITIES: Geographic, vertical, horizontal growth paths
+3. PARTNERSHIP POTENTIAL: Strategic alliances, channel expansion, ecosystem plays
+4. COMPETITIVE POSITIONING: Blue ocean opportunities, differentiation paths
+
+OUTPUT REQUIREMENTS:
+• Prioritize opportunities by: Market size, Strategic fit, Execution complexity
+• Provide addressable market estimates where possible
+• Assess competitive intensity for each opportunity
+• Include required capabilities/investments
+• Recommend go/no-go with rationale
+
+Focus opportunities relevant to {company_use_cases}.</div>
+    </div>
+
+    <div class="template-section">
+        <div class="template-header">
+            <span class="template-icon">📋</span>
+            <span class="template-title">Report Template</span>
+        </div>
+        <div class="template-content"># STRATEGIC OPPORTUNITIES REPORT
+## Analysis Date: {date} | Company: {company_name}
+
+### EXECUTIVE SUMMARY
+[Top 3-5 opportunities with business case highlights]
+
+### OPPORTUNITY MATRIX
+| Opportunity | Market Size | Fit | Complexity | Priority |
+|-------------|-------------|-----|------------|----------|
+| [opp] | [$XXM] | [H/M/L] | [H/M/L] | [1-5] |
+
+### HIGH-PRIORITY OPPORTUNITIES
+For each top opportunity:
+- Description & Rationale
+- Market Sizing & Growth
+- Competitive Landscape
+- Required Capabilities
+- Investment Estimate
+- Risk Assessment
+
+### RECOMMENDED STRATEGIC ACTIONS
+- Quick Wins (0-6 months)
+- Strategic Initiatives (6-18 months)
+- Long-term Bets (18+ months)</div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     ANALYSIS 5: CUSTOMER INTELLIGENCE
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<div class="analysis-page">
+    <div class="analysis-header">
+        <span class="analysis-icon">👥</span>
+        <div class="analysis-title-block">
+            <div class="analysis-number">Analysis Type 05</div>
+            <h2 class="analysis-title">Customer Intelligence</h2>
+        </div>
+        <span class="analysis-badge">Market Focus</span>
+    </div>
+
+    <div class="definition-box">
+        <div class="definition-header">
+            <span class="definition-icon">📖</span>
+            <span class="definition-title">Definition & Purpose</span>
+        </div>
+        <div class="definition-content">
+            Customer Intelligence delivers deep insights into buyer behavior, decision processes, preferences, and pain points. This analysis enables customer-centric strategy development, product optimization, and targeted market engagement.
+        </div>
+    </div>
+
+    <div class="capabilities-box">
+        <div class="capabilities-header">
+            <span class="capabilities-icon">⚡</span>
+            <span class="capabilities-title">Key Capabilities</span>
+        </div>
+        <div class="capabilities-grid">
+            <div class="capability-item">
+                <div class="capability-name">Buyer Journey Mapping</div>
+                <div class="capability-desc">Decision process, touchpoints, influence factors</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Segment Analysis</div>
+                <div class="capability-desc">Customer profiles, needs, value drivers</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Voice of Customer</div>
+                <div class="capability-desc">Pain points, preferences, satisfaction drivers</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Churn Intelligence</div>
+                <div class="capability-desc">Risk factors, retention opportunities</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tech-stack-box">
+        <div class="tech-stack-header">
+            <span class="tech-stack-icon">🔧</span>
+            <span class="tech-stack-title">AI Technology Stack</span>
+        </div>
+        <div class="tech-grid">
+            <div class="tech-item">
+                <div class="tech-item-icon">🧠</div>
+                <div class="tech-item-name">Claude Opus 4.5</div>
+                <div class="tech-item-desc">Analysis Engine</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">🔍</div>
+                <div class="tech-item-name">Perplexity Sonar</div>
+                <div class="tech-item-desc">Real-time Search</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">🕸️</div>
+                <div class="tech-item-name">Exa Deep Search</div>
+                <div class="tech-item-desc">Agentic Discovery</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">📊</div>
+                <div class="tech-item-name">SerpAPI</div>
+                <div class="tech-item-desc">Google Integration</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">🗄️</div>
+                <div class="tech-item-name">Pinecone RAG</div>
+                <div class="tech-item-desc">Vector Database</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">⚙️</div>
+                <div class="tech-item-name">n8n Orchestrator</div>
+                <div class="tech-item-desc">Workflow Engine</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="rag-context-box">
+        <div class="rag-context-header">
+            <span class="rag-context-icon">🔗</span>
+            <span class="rag-context-title">RAG Context Match</span>
+        </div>
+        <div class="rag-context-grid">
+            <div class="rag-item">
+                <div class="rag-item-label">Company</div>
+                <div class="rag-item-value">{company_name}</div>
+            </div>
+            <div class="rag-item">
+                <div class="rag-item-label">Industry</div>
+                <div class="rag-item-value">{industry}</div>
+            </div>
+            <div class="rag-item">
+                <div class="rag-item-label">Use Cases</div>
+                <div class="rag-item-value">{use_cases}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="prompt-section">
+        <div class="prompt-header">
+            <span class="prompt-icon">💻</span>
+            <span class="prompt-title">Expert System Prompt</span>
+            <span class="prompt-badge">CLAUDE OPUS 4.5</span>
+        </div>
+        <div class="prompt-content">You are a customer insights expert specializing in B2B {industry} markets. Your mission is to deliver actionable customer intelligence for {company_name}.
+
+ANALYSIS FRAMEWORK:
+1. BUYER PERSONAS: Decision makers, influencers, roles, priorities
+2. DECISION JOURNEY: Awareness → Evaluation → Purchase → Adoption
+3. VALUE DRIVERS: What matters most to buyers in this segment
+4. PAIN POINTS: Frustrations, unmet needs, competitive gaps
+
+OUTPUT REQUIREMENTS:
+• Build detailed buyer personas with decision criteria
+• Map the complete purchase journey with key moments
+• Identify high-impact pain points with business impact
+• Provide segment-specific engagement recommendations
+• Include competitive preference analysis
+
+Focus on customers relevant to {company_use_cases}.</div>
+    </div>
+
+    <div class="template-section">
+        <div class="template-header">
+            <span class="template-icon">📋</span>
+            <span class="template-title">Report Template</span>
+        </div>
+        <div class="template-content"># CUSTOMER INTELLIGENCE REPORT
+## Analysis Date: {date} | Market: {industry}
+
+### EXECUTIVE SUMMARY
+[Key customer insights with strategic implications]
+
+### BUYER PERSONAS
+| Persona | Role | Priorities | Pain Points | Decision Criteria |
+|---------|------|------------|-------------|-------------------|
+
+### BUYER JOURNEY ANALYSIS
+- Awareness Stage: Information sources, triggers
+- Evaluation Stage: Criteria, competitors considered
+- Purchase Stage: Decision process, stakeholders
+- Post-Purchase: Success metrics, expansion triggers
+
+### STRATEGIC RECOMMENDATIONS
+- Product/Feature Priorities
+- Messaging Optimization
+- Channel Strategy
+- Customer Success Focus</div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     ANALYSIS 6: PRICING ANALYSIS
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<div class="analysis-page">
+    <div class="analysis-header">
+        <span class="analysis-icon">💰</span>
+        <div class="analysis-title-block">
+            <div class="analysis-number">Analysis Type 06</div>
+            <h2 class="analysis-title">Pricing Analysis</h2>
+        </div>
+        <span class="analysis-badge">Revenue Focus</span>
+    </div>
+
+    <div class="definition-box">
+        <div class="definition-header">
+            <span class="definition-icon">📖</span>
+            <span class="definition-title">Definition & Purpose</span>
+        </div>
+        <div class="definition-content">
+            Pricing Analysis examines competitive pricing strategies, market price points, value perception, and pricing model effectiveness. This intelligence supports pricing optimization, competitive positioning, and revenue maximization strategies.
+        </div>
+    </div>
+
+    <div class="capabilities-box">
+        <div class="capabilities-header">
+            <span class="capabilities-icon">⚡</span>
+            <span class="capabilities-title">Key Capabilities</span>
+        </div>
+        <div class="capabilities-grid">
+            <div class="capability-item">
+                <div class="capability-name">Competitive Pricing</div>
+                <div class="capability-desc">Benchmark against market and competitors</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Model Analysis</div>
+                <div class="capability-desc">Subscription, usage-based, tiered pricing</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Value Mapping</div>
+                <div class="capability-desc">Price-to-value perception analysis</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Optimization</div>
+                <div class="capability-desc">Pricing strategy recommendations</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tech-stack-box">
+        <div class="tech-stack-header">
+            <span class="tech-stack-icon">🔧</span>
+            <span class="tech-stack-title">AI Technology Stack</span>
+        </div>
+        <div class="tech-grid">
+            <div class="tech-item">
+                <div class="tech-item-icon">🧠</div>
+                <div class="tech-item-name">Claude Opus 4.5</div>
+                <div class="tech-item-desc">Analysis Engine</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">🔍</div>
+                <div class="tech-item-name">Perplexity Sonar</div>
+                <div class="tech-item-desc">Real-time Search</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">🕸️</div>
+                <div class="tech-item-name">Exa Deep Search</div>
+                <div class="tech-item-desc">Agentic Discovery</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">📊</div>
+                <div class="tech-item-name">SerpAPI</div>
+                <div class="tech-item-desc">Google Integration</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">🗄️</div>
+                <div class="tech-item-name">Pinecone RAG</div>
+                <div class="tech-item-desc">Vector Database</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">⚙️</div>
+                <div class="tech-item-name">n8n Orchestrator</div>
+                <div class="tech-item-desc">Workflow Engine</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="rag-context-box">
+        <div class="rag-context-header">
+            <span class="rag-context-icon">🔗</span>
+            <span class="rag-context-title">RAG Context Match</span>
+        </div>
+        <div class="rag-context-grid">
+            <div class="rag-item">
+                <div class="rag-item-label">Company</div>
+                <div class="rag-item-value">{company_name}</div>
+            </div>
+            <div class="rag-item">
+                <div class="rag-item-label">Industry</div>
+                <div class="rag-item-value">{industry}</div>
+            </div>
+            <div class="rag-item">
+                <div class="rag-item-label">Use Cases</div>
+                <div class="rag-item-value">{use_cases}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="prompt-section">
+        <div class="prompt-header">
+            <span class="prompt-icon">💻</span>
+            <span class="prompt-title">Expert System Prompt</span>
+            <span class="prompt-badge">CLAUDE OPUS 4.5</span>
+        </div>
+        <div class="prompt-content">You are a pricing strategy expert with deep experience in {industry} markets. Your mission is to provide comprehensive pricing intelligence for {company_name}.
+
+ANALYSIS FRAMEWORK:
+1. COMPETITIVE PRICING: Market rates, competitor positioning, price points
+2. PRICING MODELS: Subscription, usage, perpetual, hybrid approaches
+3. VALUE PERCEPTION: Price-to-value ratio, willingness to pay
+4. OPTIMIZATION: Pricing strategy recommendations
+
+OUTPUT REQUIREMENTS:
+• Detailed competitive price benchmarking
+• Pricing model effectiveness analysis
+• Value perception gaps and opportunities
+• Segment-specific pricing recommendations
+• Revenue impact estimates
+
+Focus on pricing relevant to {company_use_cases}.</div>
+    </div>
+
+    <div class="template-section">
+        <div class="template-header">
+            <span class="template-icon">📋</span>
+            <span class="template-title">Report Template</span>
+        </div>
+        <div class="template-content"># PRICING ANALYSIS REPORT
+## Analysis Date: {date} | Market: {industry}
+
+### EXECUTIVE SUMMARY
+[Key pricing insights and recommendations]
+
+### COMPETITIVE PRICING BENCHMARK
+| Competitor | Model | Entry Price | Enterprise | Notes |
+|------------|-------|-------------|------------|-------|
+
+### PRICING MODEL ANALYSIS
+- Subscription Models: Pros, cons, market fit
+- Usage-Based: Implementation considerations
+- Hybrid Approaches: Optimization strategies
+
+### PRICING RECOMMENDATIONS
+- Short-term Adjustments
+- Strategic Repositioning Options
+- Revenue Impact Projections</div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     ANALYSIS 7: SWOT ANALYSIS
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<div class="analysis-page">
+    <div class="analysis-header">
+        <span class="analysis-icon">⚖️</span>
+        <div class="analysis-title-block">
+            <div class="analysis-number">Analysis Type 07</div>
+            <h2 class="analysis-title">SWOT Analysis</h2>
+        </div>
+        <span class="analysis-badge">Strategic Planning</span>
+    </div>
+
+    <div class="definition-box">
+        <div class="definition-header">
+            <span class="definition-icon">📖</span>
+            <span class="definition-title">Definition & Purpose</span>
+        </div>
+        <div class="definition-content">
+            SWOT Analysis provides structured strategic assessment of Strengths, Weaknesses, Opportunities, and Threats. This framework enables strategic planning, competitive positioning, and informed decision-making by providing a comprehensive view of internal capabilities and external environment.
+        </div>
+    </div>
+
+    <div class="capabilities-box">
+        <div class="capabilities-header">
+            <span class="capabilities-icon">⚡</span>
+            <span class="capabilities-title">Key Capabilities</span>
+        </div>
+        <div class="capabilities-grid">
+            <div class="capability-item">
+                <div class="capability-name">Internal Analysis</div>
+                <div class="capability-desc">Strengths and weaknesses assessment</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">External Analysis</div>
+                <div class="capability-desc">Opportunities and threats identification</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Strategic Mapping</div>
+                <div class="capability-desc">Cross-quadrant strategy development</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Action Planning</div>
+                <div class="capability-desc">Prioritized strategic initiatives</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tech-stack-box">
+        <div class="tech-stack-header">
+            <span class="tech-stack-icon">🔧</span>
+            <span class="tech-stack-title">AI Technology Stack</span>
+        </div>
+        <div class="tech-grid">
+            <div class="tech-item">
+                <div class="tech-item-icon">🧠</div>
+                <div class="tech-item-name">Claude Opus 4.5</div>
+                <div class="tech-item-desc">Analysis Engine</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">🔍</div>
+                <div class="tech-item-name">Perplexity Sonar</div>
+                <div class="tech-item-desc">Real-time Search</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">🕸️</div>
+                <div class="tech-item-name">Exa Deep Search</div>
+                <div class="tech-item-desc">Agentic Discovery</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">📊</div>
+                <div class="tech-item-name">SerpAPI</div>
+                <div class="tech-item-desc">Google Integration</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">🗄️</div>
+                <div class="tech-item-name">Pinecone RAG</div>
+                <div class="tech-item-desc">Vector Database</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">⚙️</div>
+                <div class="tech-item-name">n8n Orchestrator</div>
+                <div class="tech-item-desc">Workflow Engine</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="rag-context-box">
+        <div class="rag-context-header">
+            <span class="rag-context-icon">🔗</span>
+            <span class="rag-context-title">RAG Context Match</span>
+        </div>
+        <div class="rag-context-grid">
+            <div class="rag-item">
+                <div class="rag-item-label">Company</div>
+                <div class="rag-item-value">{company_name}</div>
+            </div>
+            <div class="rag-item">
+                <div class="rag-item-label">Industry</div>
+                <div class="rag-item-value">{industry}</div>
+            </div>
+            <div class="rag-item">
+                <div class="rag-item-label">Use Cases</div>
+                <div class="rag-item-value">{use_cases}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="prompt-section">
+        <div class="prompt-header">
+            <span class="prompt-icon">💻</span>
+            <span class="prompt-title">Expert System Prompt</span>
+            <span class="prompt-badge">CLAUDE OPUS 4.5</span>
+        </div>
+        <div class="prompt-content">You are a strategic planning expert with deep experience in {industry}. Your mission is to deliver a comprehensive SWOT analysis for {company_name}.
+
+ANALYSIS FRAMEWORK:
+1. STRENGTHS: Core competencies, competitive advantages, unique capabilities
+2. WEAKNESSES: Capability gaps, competitive disadvantages, improvement areas
+3. OPPORTUNITIES: Market trends, expansion possibilities, strategic options
+4. THREATS: Competitive pressures, market risks, disruption factors
+
+OUTPUT REQUIREMENTS:
+• Prioritize items by strategic impact (High/Medium/Low)
+• Provide evidence and examples for each item
+• Include cross-quadrant strategic implications
+• Develop SO/WO/ST/WT strategic options
+• Recommend prioritized action plan
+
+Focus on factors relevant to {company_use_cases}.</div>
+    </div>
+
+    <div class="template-section">
+        <div class="template-header">
+            <span class="template-icon">📋</span>
+            <span class="template-title">Report Template</span>
+        </div>
+        <div class="template-content"># SWOT ANALYSIS REPORT
+## Analysis Date: {date} | Subject: {company_name}
+
+### EXECUTIVE SUMMARY
+[Key strategic insights from SWOT analysis]
+
+### SWOT MATRIX
+| STRENGTHS | WEAKNESSES |
+|-----------|------------|
+| • [strength 1] | • [weakness 1] |
+
+| OPPORTUNITIES | THREATS |
+|---------------|---------|
+| • [opportunity 1] | • [threat 1] |
+
+### STRATEGIC OPTIONS
+- SO Strategies (Strengths + Opportunities)
+- WO Strategies (Weaknesses + Opportunities)
+- ST Strategies (Strengths + Threats)
+- WT Strategies (Weaknesses + Threats)
+
+### ACTION PLAN
+Prioritized initiatives with timeline</div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     ANALYSIS 8: INDUSTRY NEWS
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<div class="analysis-page">
+    <div class="analysis-header">
+        <span class="analysis-icon">📰</span>
+        <div class="analysis-title-block">
+            <div class="analysis-number">Analysis Type 08</div>
+            <h2 class="analysis-title">Industry News Intelligence</h2>
+        </div>
+        <span class="analysis-badge">Real-Time</span>
+    </div>
+
+    <div class="definition-box">
+        <div class="definition-header">
+            <span class="definition-icon">📖</span>
+            <span class="definition-title">Definition & Purpose</span>
+        </div>
+        <div class="definition-content">
+            Industry News Intelligence delivers curated, real-time monitoring of industry developments, company announcements, and market events. This analysis ensures timely awareness of market dynamics and enables rapid strategic response to emerging situations.
+        </div>
+    </div>
+
+    <div class="capabilities-box">
+        <div class="capabilities-header">
+            <span class="capabilities-icon">⚡</span>
+            <span class="capabilities-title">Key Capabilities</span>
+        </div>
+        <div class="capabilities-grid">
+            <div class="capability-item">
+                <div class="capability-name">Real-Time Monitoring</div>
+                <div class="capability-desc">Continuous news and announcement tracking</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Impact Assessment</div>
+                <div class="capability-desc">Strategic relevance scoring and prioritization</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Trend Detection</div>
+                <div class="capability-desc">Pattern recognition across news flow</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Alert Generation</div>
+                <div class="capability-desc">High-priority event notifications</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tech-stack-box">
+        <div class="tech-stack-header">
+            <span class="tech-stack-icon">🔧</span>
+            <span class="tech-stack-title">AI Technology Stack</span>
+        </div>
+        <div class="tech-grid">
+            <div class="tech-item">
+                <div class="tech-item-icon">🧠</div>
+                <div class="tech-item-name">Claude Opus 4.5</div>
+                <div class="tech-item-desc">Analysis Engine</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">🔍</div>
+                <div class="tech-item-name">Perplexity Sonar</div>
+                <div class="tech-item-desc">Real-time Search</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">🕸️</div>
+                <div class="tech-item-name">Exa Deep Search</div>
+                <div class="tech-item-desc">Agentic Discovery</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">📊</div>
+                <div class="tech-item-name">SerpAPI</div>
+                <div class="tech-item-desc">Google Integration</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">🗄️</div>
+                <div class="tech-item-name">Pinecone RAG</div>
+                <div class="tech-item-desc">Vector Database</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">⚙️</div>
+                <div class="tech-item-name">n8n Orchestrator</div>
+                <div class="tech-item-desc">Workflow Engine</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="rag-context-box">
+        <div class="rag-context-header">
+            <span class="rag-context-icon">🔗</span>
+            <span class="rag-context-title">RAG Context Match</span>
+        </div>
+        <div class="rag-context-grid">
+            <div class="rag-item">
+                <div class="rag-item-label">Company</div>
+                <div class="rag-item-value">{company_name}</div>
+            </div>
+            <div class="rag-item">
+                <div class="rag-item-label">Industry</div>
+                <div class="rag-item-value">{industry}</div>
+            </div>
+            <div class="rag-item">
+                <div class="rag-item-label">Use Cases</div>
+                <div class="rag-item-value">{use_cases}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="prompt-section">
+        <div class="prompt-header">
+            <span class="prompt-icon">💻</span>
+            <span class="prompt-title">Expert System Prompt</span>
+            <span class="prompt-badge">CLAUDE OPUS 4.5</span>
+        </div>
+        <div class="prompt-content">You are a market intelligence analyst specializing in {industry} news monitoring. Your mission is to deliver curated intelligence briefings for {company_name}.
+
+ANALYSIS FRAMEWORK:
+1. BREAKING NEWS: High-impact developments requiring immediate attention
+2. COMPETITOR MOVES: Announcements, launches, strategic changes
+3. MARKET EVENTS: M&A, funding, partnerships, regulatory changes
+4. TREND SIGNALS: Emerging patterns across news flow
+
+OUTPUT REQUIREMENTS:
+• Prioritize by strategic relevance to {company_name}
+• Provide impact assessment for each item
+• Include source credibility assessment
+• Identify required response actions
+• Flag items requiring executive attention
+
+Focus on news relevant to {company_use_cases}.</div>
+    </div>
+
+    <div class="template-section">
+        <div class="template-header">
+            <span class="template-icon">📋</span>
+            <span class="template-title">Report Template</span>
+        </div>
+        <div class="template-content"># INDUSTRY NEWS INTELLIGENCE BRIEFING
+## Period: {date_range} | Industry: {industry}
+
+### EXECUTIVE ALERTS
+[Critical items requiring immediate attention]
+
+### NEWS SUMMARY BY CATEGORY
+**Competitor Activity**
+| Company | Event | Impact | Source |
+
+**Market Developments**
+| Event | Category | Implications |
+
+**Regulatory Updates**
+| Item | Status | Action Required |
+
+### TREND ANALYSIS
+[Patterns emerging from news flow]
+
+### RECOMMENDED ACTIONS
+[Response priorities based on news]</div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     ANALYSIS 9: PARTNERSHIP ANALYSIS
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<div class="analysis-page">
+    <div class="analysis-header">
+        <span class="analysis-icon">🤝</span>
+        <div class="analysis-title-block">
+            <div class="analysis-number">Analysis Type 09</div>
+            <h2 class="analysis-title">Partnership Analysis</h2>
+        </div>
+        <span class="analysis-badge">Ecosystem Focus</span>
+    </div>
+
+    <div class="definition-box">
+        <div class="definition-header">
+            <span class="definition-icon">📖</span>
+            <span class="definition-title">Definition & Purpose</span>
+        </div>
+        <div class="definition-content">
+            Partnership Analysis maps and evaluates strategic alliances, ecosystem relationships, and collaboration opportunities. This intelligence supports partnership strategy development, alliance management, and ecosystem positioning decisions.
+        </div>
+    </div>
+
+    <div class="capabilities-box">
+        <div class="capabilities-header">
+            <span class="capabilities-icon">⚡</span>
+            <span class="capabilities-title">Key Capabilities</span>
+        </div>
+        <div class="capabilities-grid">
+            <div class="capability-item">
+                <div class="capability-name">Ecosystem Mapping</div>
+                <div class="capability-desc">Industry partnership landscape visualization</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Partner Assessment</div>
+                <div class="capability-desc">Strategic fit and value potential evaluation</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Alliance Intelligence</div>
+                <div class="capability-desc">Competitor partnership tracking</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Opportunity Identification</div>
+                <div class="capability-desc">Strategic partnership targets</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tech-stack-box">
+        <div class="tech-stack-header">
+            <span class="tech-stack-icon">🔧</span>
+            <span class="tech-stack-title">AI Technology Stack</span>
+        </div>
+        <div class="tech-grid">
+            <div class="tech-item">
+                <div class="tech-item-icon">🧠</div>
+                <div class="tech-item-name">Claude Opus 4.5</div>
+                <div class="tech-item-desc">Analysis Engine</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">🔍</div>
+                <div class="tech-item-name">Perplexity Sonar</div>
+                <div class="tech-item-desc">Real-time Search</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">🕸️</div>
+                <div class="tech-item-name">Exa Deep Search</div>
+                <div class="tech-item-desc">Agentic Discovery</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">📊</div>
+                <div class="tech-item-name">SerpAPI</div>
+                <div class="tech-item-desc">Google Integration</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">🗄️</div>
+                <div class="tech-item-name">Pinecone RAG</div>
+                <div class="tech-item-desc">Vector Database</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">⚙️</div>
+                <div class="tech-item-name">n8n Orchestrator</div>
+                <div class="tech-item-desc">Workflow Engine</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="rag-context-box">
+        <div class="rag-context-header">
+            <span class="rag-context-icon">🔗</span>
+            <span class="rag-context-title">RAG Context Match</span>
+        </div>
+        <div class="rag-context-grid">
+            <div class="rag-item">
+                <div class="rag-item-label">Company</div>
+                <div class="rag-item-value">{company_name}</div>
+            </div>
+            <div class="rag-item">
+                <div class="rag-item-label">Industry</div>
+                <div class="rag-item-value">{industry}</div>
+            </div>
+            <div class="rag-item">
+                <div class="rag-item-label">Use Cases</div>
+                <div class="rag-item-value">{use_cases}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="prompt-section">
+        <div class="prompt-header">
+            <span class="prompt-icon">💻</span>
+            <span class="prompt-title">Expert System Prompt</span>
+            <span class="prompt-badge">CLAUDE OPUS 4.5</span>
+        </div>
+        <div class="prompt-content">You are a strategic partnership expert in {industry}. Your mission is to provide comprehensive partnership intelligence for {company_name}.
+
+ANALYSIS FRAMEWORK:
+1. ECOSYSTEM MAPPING: Key players, relationships, alliance networks
+2. COMPETITOR PARTNERSHIPS: Strategic alliances, integration ecosystem
+3. OPPORTUNITY ASSESSMENT: Potential partners, strategic fit, value potential
+4. RISK ANALYSIS: Partnership risks, dependency concerns
+
+OUTPUT REQUIREMENTS:
+• Map the industry partnership landscape
+• Assess competitor alliance strategies
+• Identify high-value partnership opportunities
+• Evaluate strategic fit and synergies
+• Provide partnership prioritization
+
+Focus on partnerships relevant to {company_use_cases}.</div>
+    </div>
+
+    <div class="template-section">
+        <div class="template-header">
+            <span class="template-icon">📋</span>
+            <span class="template-title">Report Template</span>
+        </div>
+        <div class="template-content"># PARTNERSHIP ANALYSIS REPORT
+## Analysis Date: {date} | Industry: {industry}
+
+### EXECUTIVE SUMMARY
+[Key partnership landscape insights]
+
+### ECOSYSTEM MAP
+[Major players and relationship types]
+
+### COMPETITOR ALLIANCE ANALYSIS
+| Competitor | Key Partners | Value | Threat Level |
+
+### PARTNERSHIP OPPORTUNITIES
+| Partner | Strategic Value | Fit Score | Priority |
+
+### RECOMMENDATIONS
+- Priority Partnership Targets
+- Engagement Strategy
+- Risk Mitigation</div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     ANALYSIS 10: REGULATORY INTELLIGENCE
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<div class="analysis-page">
+    <div class="analysis-header">
+        <span class="analysis-icon">📜</span>
+        <div class="analysis-title-block">
+            <div class="analysis-number">Analysis Type 10</div>
+            <h2 class="analysis-title">Regulatory Intelligence</h2>
+        </div>
+        <span class="analysis-badge">Compliance Focus</span>
+    </div>
+
+    <div class="definition-box">
+        <div class="definition-header">
+            <span class="definition-icon">📖</span>
+            <span class="definition-title">Definition & Purpose</span>
+        </div>
+        <div class="definition-content">
+            Regulatory Intelligence monitors and analyzes regulatory developments, compliance requirements, and policy changes affecting the industry. This intelligence supports risk management, compliance planning, and strategic positioning in evolving regulatory environments.
+        </div>
+    </div>
+
+    <div class="capabilities-box">
+        <div class="capabilities-header">
+            <span class="capabilities-icon">⚡</span>
+            <span class="capabilities-title">Key Capabilities</span>
+        </div>
+        <div class="capabilities-grid">
+            <div class="capability-item">
+                <div class="capability-name">Regulatory Tracking</div>
+                <div class="capability-desc">Policy changes, new requirements, enforcement</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Compliance Assessment</div>
+                <div class="capability-desc">Gap analysis and readiness evaluation</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Impact Analysis</div>
+                <div class="capability-desc">Business implications of regulatory changes</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Risk Forecasting</div>
+                <div class="capability-desc">Emerging regulatory risks and trends</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tech-stack-box">
+        <div class="tech-stack-header">
+            <span class="tech-stack-icon">🔧</span>
+            <span class="tech-stack-title">AI Technology Stack</span>
+        </div>
+        <div class="tech-grid">
+            <div class="tech-item">
+                <div class="tech-item-icon">🧠</div>
+                <div class="tech-item-name">Claude Opus 4.5</div>
+                <div class="tech-item-desc">Analysis Engine</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">🔍</div>
+                <div class="tech-item-name">Perplexity Sonar</div>
+                <div class="tech-item-desc">Real-time Search</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">🕸️</div>
+                <div class="tech-item-name">Exa Deep Search</div>
+                <div class="tech-item-desc">Agentic Discovery</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">📊</div>
+                <div class="tech-item-name">SerpAPI</div>
+                <div class="tech-item-desc">Google Integration</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">🗄️</div>
+                <div class="tech-item-name">Pinecone RAG</div>
+                <div class="tech-item-desc">Vector Database</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">⚙️</div>
+                <div class="tech-item-name">n8n Orchestrator</div>
+                <div class="tech-item-desc">Workflow Engine</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="rag-context-box">
+        <div class="rag-context-header">
+            <span class="rag-context-icon">🔗</span>
+            <span class="rag-context-title">RAG Context Match</span>
+        </div>
+        <div class="rag-context-grid">
+            <div class="rag-item">
+                <div class="rag-item-label">Company</div>
+                <div class="rag-item-value">{company_name}</div>
+            </div>
+            <div class="rag-item">
+                <div class="rag-item-label">Industry</div>
+                <div class="rag-item-value">{industry}</div>
+            </div>
+            <div class="rag-item">
+                <div class="rag-item-label">Use Cases</div>
+                <div class="rag-item-value">{use_cases}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="prompt-section">
+        <div class="prompt-header">
+            <span class="prompt-icon">💻</span>
+            <span class="prompt-title">Expert System Prompt</span>
+            <span class="prompt-badge">CLAUDE OPUS 4.5</span>
+        </div>
+        <div class="prompt-content">You are a regulatory affairs expert specializing in {industry}. Your mission is to provide comprehensive regulatory intelligence for {company_name}.
+
+ANALYSIS FRAMEWORK:
+1. CURRENT REGULATIONS: Applicable rules, compliance requirements, jurisdictions
+2. PENDING CHANGES: Proposed regulations, legislative activity, policy shifts
+3. ENFORCEMENT TRENDS: Agency priorities, recent actions, penalties
+4. IMPACT ASSESSMENT: Business implications, compliance costs, timeline
+
+OUTPUT REQUIREMENTS:
+• Prioritize by compliance urgency and business impact
+• Provide actionable compliance recommendations
+• Include enforcement risk assessment
+• Identify competitive implications of regulatory changes
+• Map regulatory timeline with action requirements
+
+Focus on regulations affecting {company_use_cases}.</div>
+    </div>
+
+    <div class="template-section">
+        <div class="template-header">
+            <span class="template-icon">📋</span>
+            <span class="template-title">Report Template</span>
+        </div>
+        <div class="template-content"># REGULATORY INTELLIGENCE REPORT
+## Analysis Date: {date} | Jurisdictions: {regions}
+
+### EXECUTIVE SUMMARY
+[Critical regulatory developments and actions required]
+
+### REGULATORY LANDSCAPE
+| Regulation | Status | Deadline | Impact |
+
+### PENDING CHANGES
+| Proposed Rule | Timeline | Likelihood | Action |
+
+### ENFORCEMENT UPDATE
+[Recent actions, trends, risk areas]
+
+### COMPLIANCE RECOMMENDATIONS
+- Immediate Actions
+- Medium-term Preparation
+- Strategic Positioning</div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     ANALYSIS 11: FINANCIAL INTELLIGENCE
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<div class="analysis-page">
+    <div class="analysis-header">
+        <span class="analysis-icon">📊</span>
+        <div class="analysis-title-block">
+            <div class="analysis-number">Analysis Type 11</div>
+            <h2 class="analysis-title">Financial Intelligence</h2>
+        </div>
+        <span class="analysis-badge">Business Analysis</span>
+    </div>
+
+    <div class="definition-box">
+        <div class="definition-header">
+            <span class="definition-icon">📖</span>
+            <span class="definition-title">Definition & Purpose</span>
+        </div>
+        <div class="definition-content">
+            Financial Intelligence provides analysis of financial performance, market valuations, funding activities, and economic indicators relevant to the industry. This intelligence supports investment decisions, competitive benchmarking, and strategic financial planning.
+        </div>
+    </div>
+
+    <div class="capabilities-box">
+        <div class="capabilities-header">
+            <span class="capabilities-icon">⚡</span>
+            <span class="capabilities-title">Key Capabilities</span>
+        </div>
+        <div class="capabilities-grid">
+            <div class="capability-item">
+                <div class="capability-name">Financial Benchmarking</div>
+                <div class="capability-desc">Performance metrics vs industry and competitors</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Funding Intelligence</div>
+                <div class="capability-desc">Investment activity, valuations, M&A tracking</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Market Analysis</div>
+                <div class="capability-desc">Industry economics and growth projections</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Risk Assessment</div>
+                <div class="capability-desc">Financial health and stability indicators</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tech-stack-box">
+        <div class="tech-stack-header">
+            <span class="tech-stack-icon">🔧</span>
+            <span class="tech-stack-title">AI Technology Stack</span>
+        </div>
+        <div class="tech-grid">
+            <div class="tech-item">
+                <div class="tech-item-icon">🧠</div>
+                <div class="tech-item-name">Claude Opus 4.5</div>
+                <div class="tech-item-desc">Analysis Engine</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">🔍</div>
+                <div class="tech-item-name">Perplexity Sonar</div>
+                <div class="tech-item-desc">Real-time Search</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">🕸️</div>
+                <div class="tech-item-name">Exa Deep Search</div>
+                <div class="tech-item-desc">Agentic Discovery</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">📊</div>
+                <div class="tech-item-name">SerpAPI</div>
+                <div class="tech-item-desc">Google Integration</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">🗄️</div>
+                <div class="tech-item-name">Pinecone RAG</div>
+                <div class="tech-item-desc">Vector Database</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">⚙️</div>
+                <div class="tech-item-name">n8n Orchestrator</div>
+                <div class="tech-item-desc">Workflow Engine</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="rag-context-box">
+        <div class="rag-context-header">
+            <span class="rag-context-icon">🔗</span>
+            <span class="rag-context-title">RAG Context Match</span>
+        </div>
+        <div class="rag-context-grid">
+            <div class="rag-item">
+                <div class="rag-item-label">Company</div>
+                <div class="rag-item-value">{company_name}</div>
+            </div>
+            <div class="rag-item">
+                <div class="rag-item-label">Industry</div>
+                <div class="rag-item-value">{industry}</div>
+            </div>
+            <div class="rag-item">
+                <div class="rag-item-label">Use Cases</div>
+                <div class="rag-item-value">{use_cases}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="prompt-section">
+        <div class="prompt-header">
+            <span class="prompt-icon">💻</span>
+            <span class="prompt-title">Expert System Prompt</span>
+            <span class="prompt-badge">CLAUDE OPUS 4.5</span>
+        </div>
+        <div class="prompt-content">You are a financial analyst specializing in {industry} markets. Your mission is to provide comprehensive financial intelligence for {company_name}.
+
+ANALYSIS FRAMEWORK:
+1. INDUSTRY ECONOMICS: Market size, growth rates, profitability benchmarks
+2. COMPETITOR FINANCIALS: Revenue, margins, funding, valuations
+3. INVESTMENT ACTIVITY: Funding rounds, M&A, strategic investments
+4. FINANCIAL HEALTH: Key metrics, risk indicators, stability assessment
+
+OUTPUT REQUIREMENTS:
+• Provide quantified financial benchmarks
+• Track competitor funding and M&A activity
+• Assess industry financial health indicators
+• Include investment and valuation trends
+• Highlight financial risks and opportunities
+
+Focus on financial metrics relevant to {company_use_cases}.</div>
+    </div>
+
+    <div class="template-section">
+        <div class="template-header">
+            <span class="template-icon">📋</span>
+            <span class="template-title">Report Template</span>
+        </div>
+        <div class="template-content"># FINANCIAL INTELLIGENCE REPORT
+## Analysis Date: {date} | Industry: {industry}
+
+### EXECUTIVE SUMMARY
+[Key financial insights and implications]
+
+### INDUSTRY FINANCIAL METRICS
+| Metric | Industry Avg | Top Quartile | {company_name} |
+
+### COMPETITOR FINANCIAL ANALYSIS
+| Company | Revenue Est. | Funding | Valuation |
+
+### INVESTMENT ACTIVITY
+[Recent funding rounds, M&A, strategic investments]
+
+### FINANCIAL RECOMMENDATIONS
+- Benchmarking Insights
+- Investment Priorities
+- Risk Mitigation</div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     ANALYSIS 12: MARKETING INTELLIGENCE
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<div class="analysis-page">
+    <div class="analysis-header">
+        <span class="analysis-icon">📣</span>
+        <div class="analysis-title-block">
+            <div class="analysis-number">Analysis Type 12</div>
+            <h2 class="analysis-title">Marketing Intelligence</h2>
+        </div>
+        <span class="analysis-badge">GTM Focus</span>
+    </div>
+
+    <div class="definition-box">
+        <div class="definition-header">
+            <span class="definition-icon">📖</span>
+            <span class="definition-title">Definition & Purpose</span>
+        </div>
+        <div class="definition-content">
+            Marketing Intelligence analyzes go-to-market strategies, brand positioning, messaging effectiveness, and marketing channel performance across the competitive landscape. This intelligence supports marketing strategy optimization and competitive positioning decisions.
+        </div>
+    </div>
+
+    <div class="capabilities-box">
+        <div class="capabilities-header">
+            <span class="capabilities-icon">⚡</span>
+            <span class="capabilities-title">Key Capabilities</span>
+        </div>
+        <div class="capabilities-grid">
+            <div class="capability-item">
+                <div class="capability-name">GTM Analysis</div>
+                <div class="capability-desc">Competitor go-to-market strategies</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Brand Positioning</div>
+                <div class="capability-desc">Messaging, differentiation, perception</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Channel Intelligence</div>
+                <div class="capability-desc">Marketing mix, channel effectiveness</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Content Strategy</div>
+                <div class="capability-desc">Content themes, formats, engagement</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tech-stack-box">
+        <div class="tech-stack-header">
+            <span class="tech-stack-icon">🔧</span>
+            <span class="tech-stack-title">AI Technology Stack</span>
+        </div>
+        <div class="tech-grid">
+            <div class="tech-item">
+                <div class="tech-item-icon">🧠</div>
+                <div class="tech-item-name">Claude Opus 4.5</div>
+                <div class="tech-item-desc">Analysis Engine</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">🔍</div>
+                <div class="tech-item-name">Perplexity Sonar</div>
+                <div class="tech-item-desc">Real-time Search</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">🕸️</div>
+                <div class="tech-item-name">Exa Deep Search</div>
+                <div class="tech-item-desc">Agentic Discovery</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">📊</div>
+                <div class="tech-item-name">SerpAPI</div>
+                <div class="tech-item-desc">Google Integration</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">🗄️</div>
+                <div class="tech-item-name">Pinecone RAG</div>
+                <div class="tech-item-desc">Vector Database</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">⚙️</div>
+                <div class="tech-item-name">n8n Orchestrator</div>
+                <div class="tech-item-desc">Workflow Engine</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="rag-context-box">
+        <div class="rag-context-header">
+            <span class="rag-context-icon">🔗</span>
+            <span class="rag-context-title">RAG Context Match</span>
+        </div>
+        <div class="rag-context-grid">
+            <div class="rag-item">
+                <div class="rag-item-label">Company</div>
+                <div class="rag-item-value">{company_name}</div>
+            </div>
+            <div class="rag-item">
+                <div class="rag-item-label">Industry</div>
+                <div class="rag-item-value">{industry}</div>
+            </div>
+            <div class="rag-item">
+                <div class="rag-item-label">Use Cases</div>
+                <div class="rag-item-value">{use_cases}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="prompt-section">
+        <div class="prompt-header">
+            <span class="prompt-icon">💻</span>
+            <span class="prompt-title">Expert System Prompt</span>
+            <span class="prompt-badge">CLAUDE OPUS 4.5</span>
+        </div>
+        <div class="prompt-content">You are a marketing strategy expert specializing in {industry} B2B marketing. Your mission is to provide comprehensive marketing intelligence for {company_name}.
+
+ANALYSIS FRAMEWORK:
+1. GTM STRATEGIES: Competitor go-to-market approaches, sales models, channels
+2. BRAND POSITIONING: Messaging, value propositions, differentiation
+3. CONTENT STRATEGY: Themes, formats, engagement, thought leadership
+4. CHANNEL MIX: Marketing channels, spend allocation, effectiveness
+
+OUTPUT REQUIREMENTS:
+• Analyze competitor marketing strategies and tactics
+• Assess brand positioning and messaging effectiveness
+• Evaluate content strategy and engagement patterns
+• Identify marketing best practices and opportunities
+• Provide actionable marketing recommendations
+
+Focus on marketing relevant to {company_use_cases}.</div>
+    </div>
+
+    <div class="template-section">
+        <div class="template-header">
+            <span class="template-icon">📋</span>
+            <span class="template-title">Report Template</span>
+        </div>
+        <div class="template-content"># MARKETING INTELLIGENCE REPORT
+## Analysis Date: {date} | Industry: {industry}
+
+### EXECUTIVE SUMMARY
+[Key marketing intelligence findings]
+
+### COMPETITOR GTM ANALYSIS
+| Competitor | GTM Model | Key Channels | Messaging |
+
+### BRAND POSITIONING MAP
+[Positioning analysis across competitors]
+
+### CONTENT & CHANNEL INTELLIGENCE
+| Competitor | Content Focus | Top Channels | Engagement |
+
+### MARKETING RECOMMENDATIONS
+- Positioning Opportunities
+- Channel Strategy
+- Content Priorities
+- Tactical Quick Wins</div>
+    </div>
+</div>
+
+</body>
+</html>

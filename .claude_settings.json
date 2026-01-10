@@ -1,0 +1,34 @@
+{
+  "sandbox": {
+    "enabled": true,
+    "autoAllowBashIfSandboxed": true
+  },
+  "permissions": {
+    "defaultMode": "acceptEdits",
+    "allow": [
+      "Read(./**)",
+      "Write(./**)",
+      "Edit(./**)",
+      "Glob(./**)",
+      "Grep(./**)",
+      "Read(/Users/gil/Desktop/CDS-Platform-MVP/**)",
+      "Write(/Users/gil/Desktop/CDS-Platform-MVP/**)",
+      "Edit(/Users/gil/Desktop/CDS-Platform-MVP/**)",
+      "Glob(/Users/gil/Desktop/CDS-Platform-MVP/**)",
+      "Grep(/Users/gil/Desktop/CDS-Platform-MVP/**)",
+      "Read(/Users/gil/Desktop/CDS-Platform-MVP/.auto-claude/specs/001-review-ui-ux/**)",
+      "Write(/Users/gil/Desktop/CDS-Platform-MVP/.auto-claude/specs/001-review-ui-ux/**)",
+      "Edit(/Users/gil/Desktop/CDS-Platform-MVP/.auto-claude/specs/001-review-ui-ux/**)",
+      "Bash(*)",
+      "WebFetch(*)",
+      "WebSearch(*)",
+      "mcp__context7__resolve-library-id(*)",
+      "mcp__context7__get-library-docs(*)",
+      "mcp__graphiti-memory__search_nodes(*)",
+      "mcp__graphiti-memory__search_facts(*)",
+      "mcp__graphiti-memory__add_episode(*)",
+      "mcp__graphiti-memory__get_episodes(*)",
+      "mcp__graphiti-memory__get_entity_edge(*)"
+    ]
+  }
+}

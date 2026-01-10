@@ -1,0 +1,2058 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DEALIGENT - Strategic Analysis Portfolio v5.0</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        @page {
+            size: A4;
+            margin: 10mm;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #10b981;
+            --accent: #f59e0b;
+            --dark: #0f172a;
+            --dark-light: #1e293b;
+            --text: #334155;
+            --text-light: #64748b;
+            --bg: #ffffff;
+            --bg-light: #f8fafc;
+            --border: #e2e8f0;
+            --rag-bg: #eff6ff;
+            --rag-border: #3b82f6;
+            --rag-text: #1e40af;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 10pt;
+            line-height: 1.5;
+            color: var(--text);
+            background: var(--bg);
+        }
+
+        .page {
+            width: 100%;
+            max-width: 210mm;
+            min-height: 297mm;
+            padding: 10mm 12mm;
+            margin: 0 auto;
+            background: white;
+            page-break-after: always;
+            break-after: page;
+            position: relative;
+        }
+
+        .page:last-child {
+            page-break-after: auto;
+            break-after: auto;
+        }
+
+        /* Cover Page */
+        .cover {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            min-height: 275mm;
+            background: linear-gradient(135deg, var(--dark) 0%, var(--dark-light) 100%);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cover::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(99,102,241,0.3) 0%, transparent 70%);
+        }
+
+        .cover-logo {
+            font-size: 48pt;
+            font-weight: 800;
+            letter-spacing: -2px;
+            background: linear-gradient(135deg, #6366f1, #a855f7, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8mm;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cover-subtitle {
+            font-size: 16pt;
+            font-weight: 300;
+            color: #94a3b8;
+            margin-bottom: 15mm;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cover-title {
+            font-size: 26pt;
+            font-weight: 700;
+            margin-bottom: 6mm;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cover-description {
+            font-size: 11pt;
+            color: #cbd5e1;
+            max-width: 420px;
+            position: relative;
+            z-index: 1;
+            line-height: 1.6;
+        }
+
+        .cover-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            padding: 2mm 5mm;
+            border-radius: 20px;
+            font-size: 9pt;
+            font-weight: 600;
+            margin-top: 10mm;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cover-footer {
+            position: absolute;
+            bottom: 15mm;
+            font-size: 9pt;
+            color: #64748b;
+        }
+
+        /* Section Headers */
+        .section-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 5mm 6mm;
+            border-radius: 6px;
+            margin-bottom: 5mm;
+            page-break-after: avoid;
+            break-after: avoid;
+        }
+
+        .section-number {
+            font-size: 8pt;
+            font-weight: 600;
+            opacity: 0.85;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 1mm;
+        }
+
+        .section-title {
+            font-size: 18pt;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        /* Definition Box - Enhanced */
+        .definition-box {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            border: 1px solid #22c55e;
+            border-left: 4px solid #22c55e;
+            border-radius: 6px;
+            padding: 4mm 5mm;
+            margin-bottom: 4mm;
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+
+        .definition-header {
+            display: flex;
+            align-items: center;
+            gap: 2mm;
+            margin-bottom: 2mm;
+        }
+
+        .definition-icon {
+            font-size: 14pt;
+        }
+
+        .definition-title {
+            font-size: 10pt;
+            font-weight: 700;
+            color: #166534;
+        }
+
+        .definition-content {
+            font-size: 9pt;
+            color: var(--text);
+            line-height: 1.55;
+        }
+
+        .definition-content p {
+            margin-bottom: 2mm;
+        }
+
+        .definition-content p:last-child {
+            margin-bottom: 0;
+        }
+
+        .definition-highlight {
+            background: #bbf7d0;
+            padding: 0.5mm 1.5mm;
+            border-radius: 2px;
+            font-weight: 600;
+        }
+
+        /* Capabilities Box - Enhanced */
+        .capabilities-box {
+            background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+            border: 1px solid #a855f7;
+            border-left: 4px solid #a855f7;
+            border-radius: 6px;
+            padding: 4mm 5mm;
+            margin-bottom: 4mm;
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+
+        .capabilities-header {
+            display: flex;
+            align-items: center;
+            gap: 2mm;
+            margin-bottom: 3mm;
+        }
+
+        .capabilities-icon {
+            font-size: 14pt;
+        }
+
+        .capabilities-title {
+            font-size: 10pt;
+            font-weight: 700;
+            color: #7c3aed;
+        }
+
+        .capabilities-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3mm;
+        }
+
+        .capability-item {
+            background: white;
+            border-radius: 4px;
+            padding: 2.5mm 3mm;
+            border: 1px solid #e9d5ff;
+        }
+
+        .capability-name {
+            font-size: 8pt;
+            font-weight: 700;
+            color: #7c3aed;
+            margin-bottom: 1mm;
+        }
+
+        .capability-desc {
+            font-size: 7.5pt;
+            color: var(--text);
+            line-height: 1.4;
+        }
+
+        /* RAG Context Match Box - Enhanced */
+        .rag-context-box {
+            background: linear-gradient(135deg, var(--rag-bg) 0%, #dbeafe 100%);
+            border: 1px solid var(--rag-border);
+            border-left: 4px solid var(--rag-border);
+            border-radius: 6px;
+            padding: 4mm 5mm;
+            margin-bottom: 4mm;
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+
+        .rag-context-header {
+            display: flex;
+            align-items: center;
+            gap: 2mm;
+            margin-bottom: 2mm;
+        }
+
+        .rag-context-icon {
+            font-size: 14pt;
+        }
+
+        .rag-context-title {
+            font-size: 10pt;
+            font-weight: 700;
+            color: var(--rag-text);
+        }
+
+        .rag-context-explanation {
+            font-size: 8pt;
+            color: #1e40af;
+            background: white;
+            padding: 2mm 3mm;
+            border-radius: 4px;
+            margin-bottom: 3mm;
+            border: 1px solid #bfdbfe;
+            line-height: 1.45;
+        }
+
+        .rag-context-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2.5mm;
+        }
+
+        .rag-context-item {
+            background: white;
+            border-radius: 4px;
+            padding: 2mm 2.5mm;
+            border: 1px solid #bfdbfe;
+        }
+
+        .rag-context-label {
+            font-size: 6.5pt;
+            font-weight: 700;
+            color: var(--rag-border);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5mm;
+        }
+
+        .rag-context-value {
+            font-size: 7pt;
+            color: var(--text);
+            font-family: 'Monaco', 'Consolas', monospace;
+        }
+
+        /* Prompt Box */
+        .prompt-box {
+            background: var(--dark);
+            color: #10b981;
+            padding: 4mm;
+            border-radius: 6px;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 7pt;
+            line-height: 1.5;
+            margin-bottom: 4mm;
+            white-space: pre-wrap;
+            border-left: 4px solid var(--secondary);
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+
+        .prompt-label {
+            display: inline-block;
+            background: var(--secondary);
+            color: white;
+            padding: 1mm 2.5mm;
+            border-radius: 3px;
+            font-size: 7pt;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 2mm;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .prompt-placeholder {
+            color: #f59e0b;
+            font-weight: 600;
+        }
+
+        /* Report Template */
+        .template-box {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border: 1px solid #f59e0b;
+            border-left: 4px solid #f59e0b;
+            border-radius: 6px;
+            padding: 3.5mm 4mm;
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+
+        .template-box h4 {
+            color: #92400e;
+            font-size: 9pt;
+            font-weight: 700;
+            margin-bottom: 2mm;
+        }
+
+        .template-item {
+            display: flex;
+            gap: 2mm;
+            padding: 1.5mm 0;
+            border-bottom: 1px dashed #d97706;
+            font-size: 7.5pt;
+        }
+
+        .template-item:last-child { border-bottom: none; }
+
+        .template-number {
+            background: #92400e;
+            color: white;
+            width: 4mm;
+            height: 4mm;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 6pt;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .template-content strong { color: #92400e; }
+
+        /* Table Styling */
+        .styled-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 4mm;
+            font-size: 8pt;
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+
+        .styled-table th {
+            background: var(--dark);
+            color: white;
+            padding: 2mm 3mm;
+            text-align: left;
+            font-weight: 600;
+            font-size: 7pt;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .styled-table th:first-child { border-radius: 4px 0 0 0; }
+        .styled-table th:last-child { border-radius: 0 4px 0 0; }
+
+        .styled-table td {
+            padding: 2mm 3mm;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .styled-table tr:nth-child(even) { background: var(--bg-light); }
+
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 0.8mm 2mm;
+            border-radius: 3px;
+            font-size: 6pt;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-live { background: #dcfce7; color: #166534; }
+        .badge-p1 { background: #fee2e2; color: #991b1b; }
+        .badge-p2 { background: #fef3c7; color: #92400e; }
+        .badge-p3 { background: #e0e7ff; color: #3730a3; }
+        .badge-p4 { background: #f1f5f9; color: #475569; }
+        .badge-new { background: #dbeafe; color: #1d4ed8; }
+
+        /* TOC */
+        .toc-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 2mm 0;
+            border-bottom: 1px dotted var(--border);
+            font-size: 9pt;
+        }
+
+        .toc-number {
+            color: var(--primary);
+            font-weight: 600;
+            margin-right: 3mm;
+        }
+
+        /* Content Grid for reference pages */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3mm;
+            margin-bottom: 4mm;
+        }
+
+        .content-card {
+            background: var(--bg-light);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 3mm;
+        }
+
+        .content-card h4 {
+            font-size: 9pt;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 2mm;
+        }
+
+        .content-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .content-card li {
+            font-size: 8pt;
+            padding: 1mm 0;
+            padding-left: 3mm;
+            position: relative;
+        }
+
+        .content-card li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--secondary);
+            font-weight: 600;
+        }
+
+        h3 {
+            font-size: 11pt;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 3mm;
+            margin-top: 4mm;
+        }
+
+        @media print {
+            .page {
+                margin: 0;
+                padding: 10mm 12mm;
+                box-shadow: none;
+                page-break-after: always;
+            }
+
+            .page:last-child { page-break-after: auto; }
+
+            .definition-box,
+            .capabilities-box,
+            .rag-context-box,
+            .template-box,
+            .prompt-box {
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+            }
+
+            .section-header {
+                page-break-after: avoid !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- COVER PAGE -->
+<div class="page cover">
+    <div class="cover-logo">DEALIGENT</div>
+    <div class="cover-subtitle">Intelligence Platform</div>
+    <div class="cover-title">Strategic Analysis Portfolio</div>
+    <div class="cover-description">
+        Catalogue complet des types d'analyses IA avec prompts contextualisés par RAG pour l'intelligence de marché. Chaque analyse est automatiquement filtrée selon les données spécifiques de votre entreprise.
+    </div>
+    <div class="cover-badge">🔗 RAG-Enhanced • Multi-Tenant Ready</div>
+    <div class="cover-footer">
+        Document Stratégique • Janvier 2025 • Version 5.0
+    </div>
+</div>
+
+<!-- TABLE OF CONTENTS -->
+<div class="page">
+    <div class="section-header" style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%);">
+        <div class="section-number">Contents</div>
+        <h1 class="section-title">Table of Contents</h1>
+    </div>
+
+    <div style="margin-top: 6mm;">
+        <div class="toc-item"><span><span class="toc-number">01</span>Competitor Intelligence</span><span>3</span></div>
+        <div class="toc-item"><span><span class="toc-number">02</span>Product Intelligence</span><span>4</span></div>
+        <div class="toc-item"><span><span class="toc-number">03</span>Client Intelligence</span><span>5</span></div>
+        <div class="toc-item"><span><span class="toc-number">04</span>Executive Intelligence</span><span>6</span></div>
+        <div class="toc-item"><span><span class="toc-number">05</span>Market Intelligence</span><span>7</span></div>
+        <div class="toc-item"><span><span class="toc-number">06</span>Industry Dynamics</span><span>8</span></div>
+        <div class="toc-item"><span><span class="toc-number">07</span>Technology Assessment</span><span>9</span></div>
+        <div class="toc-item"><span><span class="toc-number">08</span>Security & Compliance</span><span>10</span></div>
+        <div class="toc-item"><span><span class="toc-number">09</span>M&A Intelligence</span><span>11</span></div>
+        <div class="toc-item"><span><span class="toc-number">10</span>Innovation Tracking</span><span>12</span></div>
+        <div class="toc-item"><span><span class="toc-number">11</span>Ecosystem Mapping</span><span>13</span></div>
+        <div class="toc-item"><span><span class="toc-number">12</span>Marketing Intelligence <span class="badge badge-new">NEW</span></span><span>14</span></div>
+        <div class="toc-item"><span><span class="toc-number">13</span>Report Levels (I-IV)</span><span>15</span></div>
+        <div class="toc-item"><span><span class="toc-number">14</span>RAG Data Schema</span><span>16</span></div>
+        <div class="toc-item"><span><span class="toc-number">15</span>Implementation Roadmap</span><span>17</span></div>
+    </div>
+
+    <div style="margin-top: 8mm; padding: 4mm; background: var(--rag-bg); border-radius: 6px; border: 1px solid var(--rag-border);">
+        <h4 style="color: var(--rag-text); font-size: 10pt; margin-bottom: 2mm;">🔗 Architecture RAG Intégrée</h4>
+        <p style="font-size: 8pt; color: var(--text); line-height: 1.5;">
+            Tous les prompts de ce document sont conçus pour fonctionner avec les données RAG spécifiques de chaque entreprise. Les placeholders comme <code style="background: #dbeafe; padding: 0.5mm 1.5mm; border-radius: 2px; font-size: 7pt;">{company_use_cases}</code> sont automatiquement remplacés par les données de votre base de connaissances, garantissant des analyses contextualisées et pertinentes.
+        </p>
+    </div>
+</div>
+
+<!-- ANALYSIS 1: COMPETITOR INTELLIGENCE -->
+<div class="page">
+    <div class="section-header">
+        <div class="section-number">Analysis 01</div>
+        <h1 class="section-title">Competitor Intelligence</h1>
+    </div>
+
+    <!-- DEFINITION - Enhanced -->
+    <div class="definition-box">
+        <div class="definition-header">
+            <span class="definition-icon">📋</span>
+            <span class="definition-title">Définition & Objectif Stratégique</span>
+        </div>
+        <div class="definition-content">
+            <p><strong>L'analyse Competitor Intelligence</strong> fournit une vision complète et contextualisée d'un concurrent spécifique, filtrée exclusivement sur les domaines où il entre en <span class="definition-highlight">concurrence directe</span> avec votre entreprise.</p>
+            <p>Contrairement à une analyse concurrentielle générique, cette approche utilise vos données RAG (use cases, features, industries) pour <strong>ne retenir que les divisions, produits et activités pertinentes</strong> du concurrent analysé. Cela évite le bruit informationnel et concentre l'intelligence sur les menaces réelles.</p>
+            <p><strong>Décisions supportées :</strong> Positionnement produit, stratégie pricing, arguments de vente, anticipation des mouvements concurrentiels, allocation des ressources R&D défensives.</p>
+        </div>
+    </div>
+
+    <!-- CAPABILITIES - Enhanced -->
+    <div class="capabilities-box">
+        <div class="capabilities-header">
+            <span class="capabilities-icon">🎯</span>
+            <span class="capabilities-title">Capacités d'Analyse Détaillées</span>
+        </div>
+        <div class="capabilities-grid">
+            <div class="capability-item">
+                <div class="capability-name">Profilage Contextuel 360°</div>
+                <div class="capability-desc">Analyse complète du concurrent limitée aux divisions et produits qui chevauchent directement vos use cases et marchés cibles.</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Matrice de Comparaison Features</div>
+                <div class="capability-desc">Comparaison fonctionnalité par fonctionnalité entre vos capabilities et celles du concurrent, avec scoring de parité/avantage.</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Scoring de Menace (1-10)</div>
+                <div class="capability-desc">Évaluation quantifiée du niveau de menace basée sur l'overlap de marché, la vélocité d'innovation et l'agressivité commerciale.</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Intelligence Win/Loss</div>
+                <div class="capability-desc">Analyse des patterns de victoires et défaites commerciales, identification des arguments différenciants et points de faiblesse.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- RAG CONTEXT - Enhanced -->
+    <div class="rag-context-box">
+        <div class="rag-context-header">
+            <span class="rag-context-icon">🔗</span>
+            <span class="rag-context-title">RAG Context Match — Filtrage Intelligent</span>
+        </div>
+        <div class="rag-context-explanation">
+            <strong>Pourquoi ce filtrage ?</strong> Lors de l'analyse d'un concurrent comme Dassault Systèmes, le système n'analysera PAS l'ensemble du groupe (ENOVIA, SIMULIA, 3DEXCITE...) mais uniquement les produits de conception générative qui concurrencent directement vos capabilities. Les données ci-dessous définissent ce périmètre de filtrage.
+        </div>
+        <div class="rag-context-grid">
+            <div class="rag-context-item">
+                <div class="rag-context-label">Use Cases</div>
+                <div class="rag-context-value">{company_use_cases}</div>
+            </div>
+            <div class="rag-context-item">
+                <div class="rag-context-label">Industries Cibles</div>
+                <div class="rag-context-value">{company_industries}</div>
+            </div>
+            <div class="rag-context-item">
+                <div class="rag-context-label">Features Clés</div>
+                <div class="rag-context-value">{company_features}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PROMPT -->
+    <div class="prompt-label">System Prompt</div>
+    <div class="prompt-box">You are a competitive intelligence researcher analyzing competitors for <span class="prompt-placeholder">{company_name}</span>.
+
+<b>CRITICAL: RAG Context Filtering</b>
+Before analysis, filter ALL research through the company's RAG context:
+• Use Cases: <span class="prompt-placeholder">{company_use_cases}</span>
+• Industries: <span class="prompt-placeholder">{company_industries}</span>
+• Features: <span class="prompt-placeholder">{company_features}</span>
+• Part Types: <span class="prompt-placeholder">{company_part_types}</span>
+
+<b>Scope:</b> ONLY analyze competitor products/divisions that DIRECTLY compete with above context.
+
+<b>Required Analysis:</b>
+1. Filtered company overview (relevant divisions only)
+2. Competing product portfolio vs company use cases
+3. Feature comparison matrix vs <span class="prompt-placeholder">{company_features}</span>
+4. Pricing strategy | 5. Go-to-market in <span class="prompt-placeholder">{company_industries}</span>
+6. Competitive advantages/vulnerabilities | 7. Recent strategic moves
+8. Win/loss patterns | Quantify threat level (1-10) with evidence.</div>
+
+    <!-- TEMPLATE -->
+    <div class="template-box">
+        <h4>📄 Structure du Rapport</h4>
+        <div class="template-item">
+            <div class="template-number">1</div>
+            <div class="template-content"><strong>Context Match</strong> — Score d'alignement RAG, divisions analysées</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">2</div>
+            <div class="template-content"><strong>Threat Assessment</strong> — Score (1-10), justification, actions immédiates</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">3</div>
+            <div class="template-content"><strong>Feature Matrix</strong> — Comparaison vs capabilities entreprise</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">4</div>
+            <div class="template-content"><strong>Go-to-Market</strong> — Stratégie dans les industries partagées</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">5</div>
+            <div class="template-content"><strong>Recommandations</strong> — Stratégies attaque/défense</div>
+        </div>
+    </div>
+</div>
+
+<!-- ANALYSIS 2: PRODUCT INTELLIGENCE -->
+<div class="page">
+    <div class="section-header" style="background: linear-gradient(135deg, #059669 0%, #047857 100%);">
+        <div class="section-number">Analysis 02</div>
+        <h1 class="section-title">Product Intelligence</h1>
+    </div>
+
+    <div class="definition-box">
+        <div class="definition-header">
+            <span class="definition-icon">📋</span>
+            <span class="definition-title">Définition & Objectif Stratégique</span>
+        </div>
+        <div class="definition-content">
+            <p><strong>L'analyse Product Intelligence</strong> fournit une dissection fonctionnelle approfondie d'un produit concurrent spécifique, comparée feature-par-feature avec les capacités de votre solution.</p>
+            <p>Cette analyse dépasse la simple comparaison marketing en s'appuyant sur vos <span class="definition-highlight">features RAG</span> comme référentiel. Chaque fonctionnalité du produit concurrent est évaluée selon sa pertinence pour vos use cases, permettant d'identifier les véritables gaps fonctionnels et opportunités de différenciation.</p>
+            <p><strong>Décisions supportées :</strong> Priorisation roadmap produit, création de battle cards commerciales, stratégie de pricing, identification de features différenciantes pour le marketing.</p>
+        </div>
+    </div>
+
+    <div class="capabilities-box">
+        <div class="capabilities-header">
+            <span class="capabilities-icon">🎯</span>
+            <span class="capabilities-title">Capacités d'Analyse Détaillées</span>
+        </div>
+        <div class="capabilities-grid">
+            <div class="capability-item">
+                <div class="capability-name">Matrice Feature Gap</div>
+                <div class="capability-desc">Mapping complet des fonctionnalités concurrentes vs les vôtres avec scoring: Parité / Avantage vous / Avantage concurrent / Gap critique.</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Analyse Pricing & TCO</div>
+                <div class="capability-desc">Comparaison des modèles de licensing, coût total de possession, et perception de valeur par segment de marché.</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Coverage Use Cases</div>
+                <div class="capability-desc">Évaluation du taux de couverture du produit concurrent sur vos use cases cibles avec identification des points forts/faibles.</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Battle Card Generator</div>
+                <div class="capability-desc">Production d'argumentaires commerciaux structurés avec points de différenciation, objections anticipées et réponses.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="rag-context-box">
+        <div class="rag-context-header">
+            <span class="rag-context-icon">🔗</span>
+            <span class="rag-context-title">RAG Context Match — Filtrage Intelligent</span>
+        </div>
+        <div class="rag-context-explanation">
+            <strong>Pourquoi ce filtrage ?</strong> L'analyse se concentre sur les fonctionnalités du produit concurrent qui répondent aux mêmes besoins que vos features. Un produit concurrent peut avoir 100 features, mais seules celles qui overlappent avec votre périmètre fonctionnel sont analysées en profondeur.
+        </div>
+        <div class="rag-context-grid">
+            <div class="rag-context-item">
+                <div class="rag-context-label">Features Clés</div>
+                <div class="rag-context-value">{company_features}</div>
+            </div>
+            <div class="rag-context-item">
+                <div class="rag-context-label">Use Cases</div>
+                <div class="rag-context-value">{company_use_cases}</div>
+            </div>
+            <div class="rag-context-item">
+                <div class="rag-context-label">Value Props</div>
+                <div class="rag-context-value">{company_value_props}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="prompt-label">System Prompt</div>
+    <div class="prompt-box">You are a product intelligence analyst comparing competitor products for <span class="prompt-placeholder">{company_name}</span>.
+
+<b>CRITICAL: RAG Context Filtering</b>
+Compare ONLY features relevant to: Features: <span class="prompt-placeholder">{company_features}</span> | Use Cases: <span class="prompt-placeholder">{company_use_cases}</span> | Value Props: <span class="prompt-placeholder">{company_value_props}</span>
+
+<b>Analysis Focus:</b>
+1. Product positioning vs <span class="prompt-placeholder">{company_name}</span>
+2. Feature-by-feature matrix (only matching <span class="prompt-placeholder">{company_features}</span>)
+3. Pricing/licensing comparison | 4. Use case coverage vs <span class="prompt-placeholder">{company_use_cases}</span>
+5. Integration ecosystem | 6. UX comparison | 7. Roadmap analysis
+8. Customer reviews | 9. Differentiation gaps
+
+Output: Feature matrix with scoring, Battle card content, Roadmap recommendations.</div>
+
+    <div class="template-box">
+        <h4>📄 Structure du Rapport</h4>
+        <div class="template-item">
+            <div class="template-number">1</div>
+            <div class="template-content"><strong>Feature Matrix</strong> — Comparaison side-by-side vs company features</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">2</div>
+            <div class="template-content"><strong>Pricing Analysis</strong> — Modèle, TCO, perception valeur</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">3</div>
+            <div class="template-content"><strong>Use Case Coverage</strong> — Taux de match vs company use cases</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">4</div>
+            <div class="template-content"><strong>Battle Card</strong> — Arguments, objections, différenciation</div>
+        </div>
+    </div>
+</div>
+
+<!-- ANALYSIS 3: CLIENT INTELLIGENCE -->
+<div class="page">
+    <div class="section-header" style="background: linear-gradient(135deg, #db2777 0%, #be185d 100%);">
+        <div class="section-number">Analysis 03</div>
+        <h1 class="section-title">Client Intelligence</h1>
+    </div>
+
+    <div class="definition-box">
+        <div class="definition-header">
+            <span class="definition-icon">📋</span>
+            <span class="definition-title">Définition & Objectif Stratégique</span>
+        </div>
+        <div class="definition-content">
+            <p><strong>L'analyse Client Intelligence</strong> cartographie et analyse la base clients d'un concurrent pour identifier les <span class="definition-highlight">opportunités de conquête</span> et comprendre les patterns d'adoption dans vos segments cibles.</p>
+            <p>En filtrant l'analyse par vos industries et personas RAG, cette intelligence se concentre uniquement sur les clients qui correspondent à votre ICP (Ideal Customer Profile). L'objectif est d'identifier les comptes à cibler en priorité, les signaux de mécontentement exploitables, et les stratégies ABM (Account-Based Marketing) optimales.</p>
+            <p><strong>Décisions supportées :</strong> Ciblage commercial, stratégie ABM, expansion de marché, arguments de conquête par segment, priorisation des efforts sales.</p>
+        </div>
+    </div>
+
+    <div class="capabilities-box">
+        <div class="capabilities-header">
+            <span class="capabilities-icon">🎯</span>
+            <span class="capabilities-title">Capacités d'Analyse Détaillées</span>
+        </div>
+        <div class="capabilities-grid">
+            <div class="capability-item">
+                <div class="capability-name">Segmentation ICP-Aligned</div>
+                <div class="capability-desc">Analyse de la base clients filtrée par vos industries cibles et personas, avec taille, géographie et maturité d'adoption.</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Conquest Target List</div>
+                <div class="capability-desc">Identification des comptes à fort potentiel de conquête basée sur signaux de mécontentement, fin de contrat, ou mismatch technologique.</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Persona Buying Journey</div>
+                <div class="capability-desc">Mapping du parcours d'achat pour chaque persona cible avec critères de décision, influenceurs et points de friction.</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">ABM Playbook</div>
+                <div class="capability-desc">Stratégies personnalisées par compte avec arguments adaptés au contexte, canaux d'approche et timing optimal.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="rag-context-box">
+        <div class="rag-context-header">
+            <span class="rag-context-icon">🔗</span>
+            <span class="rag-context-title">RAG Context Match — Filtrage Intelligent</span>
+        </div>
+        <div class="rag-context-explanation">
+            <strong>Pourquoi ce filtrage ?</strong> Un concurrent peut avoir 10,000 clients, mais seuls ceux dans vos industries cibles et correspondant à vos personas sont analysés. Cela garantit que chaque compte identifié est réellement conquérable et aligné avec votre stratégie go-to-market.
+        </div>
+        <div class="rag-context-grid">
+            <div class="rag-context-item">
+                <div class="rag-context-label">Industries Cibles</div>
+                <div class="rag-context-value">{company_industries}</div>
+            </div>
+            <div class="rag-context-item">
+                <div class="rag-context-label">Personas</div>
+                <div class="rag-context-value">{company_personas}</div>
+            </div>
+            <div class="rag-context-item">
+                <div class="rag-context-label">Use Cases</div>
+                <div class="rag-context-value">{company_use_cases}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="prompt-label">System Prompt</div>
+    <div class="prompt-box">You are a customer intelligence analyst for <span class="prompt-placeholder">{company_name}</span>.
+
+<b>CRITICAL: RAG Context Filtering</b>
+Focus on segments matching: Industries: <span class="prompt-placeholder">{company_industries}</span> | Personas: <span class="prompt-placeholder">{company_personas}</span> | Use Cases: <span class="prompt-placeholder">{company_use_cases}</span>
+
+<b>Analysis:</b>
+1. Customer segments in <span class="prompt-placeholder">{company_industries}</span> only
+2. Reference customers by industry | 3. Buying patterns for <span class="prompt-placeholder">{company_personas}</span>
+4. Use case adoption matching <span class="prompt-placeholder">{company_use_cases}</span>
+5. Satisfaction signals | 6. Churn indicators | 7. Expansion opportunities
+
+<b>Conquest Intel:</b> Dissatisfied accounts, buying criteria by persona, accounts with matching use cases.</div>
+
+    <div class="template-box">
+        <h4>📄 Structure du Rapport</h4>
+        <div class="template-item">
+            <div class="template-number">1</div>
+            <div class="template-content"><strong>Segment Analysis</strong> — Par industrie cible uniquement</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">2</div>
+            <div class="template-content"><strong>Persona Mapping</strong> — Buying journey par persona</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">3</div>
+            <div class="template-content"><strong>Conquest Targets</strong> — Comptes haute valeur à cibler</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">4</div>
+            <div class="template-content"><strong>ABM Playbook</strong> — Stratégie account-based</div>
+        </div>
+    </div>
+</div>
+
+<!-- ANALYSIS 4: EXECUTIVE INTELLIGENCE -->
+<div class="page">
+    <div class="section-header" style="background: linear-gradient(135deg, #0891b2 0%, #0e7490 100%);">
+        <div class="section-number">Analysis 04</div>
+        <h1 class="section-title">Executive Intelligence</h1>
+    </div>
+
+    <div class="definition-box">
+        <div class="definition-header">
+            <span class="definition-icon">📋</span>
+            <span class="definition-title">Définition & Objectif Stratégique</span>
+        </div>
+        <div class="definition-content">
+            <p><strong>L'analyse Executive Intelligence</strong> profile les dirigeants et décideurs clés des organisations concurrentes et partenaires potentielles pour <span class="definition-highlight">anticiper les décisions stratégiques</span> et identifier les opportunités de networking.</p>
+            <p>Cette intelligence humaine complète les analyses produit et marché en ajoutant la dimension leadership. Les mouvements de carrière, les prises de position publiques et les réseaux d'influence des executives sont des indicateurs avancés des orientations stratégiques futures.</p>
+            <p><strong>Décisions supportées :</strong> Networking stratégique, recrutement de talents, anticipation des pivots concurrentiels, identification de sponsors pour partenariats.</p>
+        </div>
+    </div>
+
+    <div class="capabilities-box">
+        <div class="capabilities-header">
+            <span class="capabilities-icon">🎯</span>
+            <span class="capabilities-title">Capacités d'Analyse Détaillées</span>
+        </div>
+        <div class="capabilities-grid">
+            <div class="capability-item">
+                <div class="capability-name">Leadership Profiling</div>
+                <div class="capability-desc">Profils complets des C-level et VP chez les concurrents avec parcours, style de management, et track record de décisions.</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Network Mapping</div>
+                <div class="capability-desc">Cartographie des connexions professionnelles, board positions, et cercles d'influence de chaque executive clé.</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Movement Tracking</div>
+                <div class="capability-desc">Monitoring des changements de poste, recrutements significatifs, et réorganisations comme signaux stratégiques.</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Engagement Strategy</div>
+                <div class="capability-desc">Recommandations de points de contact, événements, et approches pour établir des relations avec les décideurs clés.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="rag-context-box">
+        <div class="rag-context-header">
+            <span class="rag-context-icon">🔗</span>
+            <span class="rag-context-title">RAG Context Match — Filtrage Intelligent</span>
+        </div>
+        <div class="rag-context-explanation">
+            <strong>Pourquoi ce filtrage ?</strong> L'analyse se concentre sur les executives des organisations listées dans vos concurrents et partenaires RAG, ainsi que les influenceurs de vos industries cibles. Cela évite de profiler des personnes sans lien avec votre écosystème business.
+        </div>
+        <div class="rag-context-grid">
+            <div class="rag-context-item">
+                <div class="rag-context-label">Concurrents</div>
+                <div class="rag-context-value">{company_competitors}</div>
+            </div>
+            <div class="rag-context-item">
+                <div class="rag-context-label">Industries</div>
+                <div class="rag-context-value">{company_industries}</div>
+            </div>
+            <div class="rag-context-item">
+                <div class="rag-context-label">Partenaires</div>
+                <div class="rag-context-value">{company_partners}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="prompt-label">System Prompt</div>
+    <div class="prompt-box">You are an executive intelligence analyst for <span class="prompt-placeholder">{company_name}</span>.
+
+<b>CRITICAL: RAG Context Filtering</b>
+Focus on executives at: Competitors: <span class="prompt-placeholder">{company_competitors}</span> | Industries: <span class="prompt-placeholder">{company_industries}</span> | Partners: <span class="prompt-placeholder">{company_partners}</span>
+
+<b>Analysis:</b>
+1. Executive profiles at competing companies | 2. Decision-makers in target industries
+3. Industry thought leaders | 4. Partnership contacts | 5. Career moves signaling strategy
+6. Speaking engagements | 7. Network connections | 8. Management style
+
+<b>Strategic Value:</b> Networking opportunities, partnership targets, competitive signals.</div>
+
+    <div class="template-box">
+        <h4>📄 Structure du Rapport</h4>
+        <div class="template-item">
+            <div class="template-number">1</div>
+            <div class="template-content"><strong>Executive Profiles</strong> — Leaders clés chez concurrents</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">2</div>
+            <div class="template-content"><strong>Network Analysis</strong> — Connexions et influence</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">3</div>
+            <div class="template-content"><strong>Strategic Signals</strong> — Mouvements, déclarations</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">4</div>
+            <div class="template-content"><strong>Engagement Strategy</strong> — Approche networking</div>
+        </div>
+    </div>
+</div>
+
+<!-- ANALYSIS 5: MARKET INTELLIGENCE -->
+<div class="page">
+    <div class="section-header" style="background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);">
+        <div class="section-number">Analysis 05</div>
+        <h1 class="section-title">Market Intelligence</h1>
+    </div>
+
+    <div class="definition-box">
+        <div class="definition-header">
+            <span class="definition-icon">📋</span>
+            <span class="definition-title">Définition & Objectif Stratégique</span>
+        </div>
+        <div class="definition-content">
+            <p><strong>L'analyse Market Intelligence</strong> évalue les marchés géographiques et sectoriels pour <span class="definition-highlight">quantifier les opportunités</span> et guider les décisions d'expansion et d'investissement.</p>
+            <p>En utilisant vos industries et géographies RAG comme filtres, cette analyse se concentre sur les marchés alignés avec votre stratégie, évitant l'analyse de segments non pertinents. Elle fournit les métriques TAM/SAM/SOM spécifiques à votre périmètre cible.</p>
+            <p><strong>Décisions supportées :</strong> Expansion géographique, investissement R&D par marché, pivots stratégiques, allocation des ressources commerciales, business planning.</p>
+        </div>
+    </div>
+
+    <div class="capabilities-box">
+        <div class="capabilities-header">
+            <span class="capabilities-icon">🎯</span>
+            <span class="capabilities-title">Capacités d'Analyse Détaillées</span>
+        </div>
+        <div class="capabilities-grid">
+            <div class="capability-item">
+                <div class="capability-name">TAM/SAM/SOM Sizing</div>
+                <div class="capability-desc">Quantification du marché total, adressable et obtenable pour chaque combinaison industrie × géographie avec projections 3-5 ans.</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Competitive Landscape</div>
+                <div class="capability-desc">Mapping des acteurs par segment de marché avec parts de marché, positionnement et dynamiques concurrentielles.</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Entry Barrier Analysis</div>
+                <div class="capability-desc">Évaluation des obstacles à l'entrée : réglementaires, technologiques, commerciaux et culturels par marché.</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Go/No-Go Framework</div>
+                <div class="capability-desc">Scoring multicritère pour chaque opportunité de marché avec recommandation d'entrée, timing et mode d'accès.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="rag-context-box">
+        <div class="rag-context-header">
+            <span class="rag-context-icon">🔗</span>
+            <span class="rag-context-title">RAG Context Match — Filtrage Intelligent</span>
+        </div>
+        <div class="rag-context-explanation">
+            <strong>Pourquoi ce filtrage ?</strong> Le marché mondial du logiciel est immense, mais seuls les segments correspondant à vos industries cibles et géographies prioritaires sont analysés. Cela garantit des recommandations d'expansion alignées avec votre stratégie et vos capabilities.
+        </div>
+        <div class="rag-context-grid">
+            <div class="rag-context-item">
+                <div class="rag-context-label">Industries Cibles</div>
+                <div class="rag-context-value">{company_industries}</div>
+            </div>
+            <div class="rag-context-item">
+                <div class="rag-context-label">Géographies</div>
+                <div class="rag-context-value">{company_geographies}</div>
+            </div>
+            <div class="rag-context-item">
+                <div class="rag-context-label">Use Cases</div>
+                <div class="rag-context-value">{company_use_cases}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="prompt-label">System Prompt</div>
+    <div class="prompt-box">You are a market intelligence analyst for <span class="prompt-placeholder">{company_name}</span>.
+
+<b>CRITICAL: RAG Context Filtering</b>
+Analyze markets relevant to: Industries: <span class="prompt-placeholder">{company_industries}</span> | Geographies: <span class="prompt-placeholder">{company_geographies}</span> | Use Cases: <span class="prompt-placeholder">{company_use_cases}</span>
+
+<b>Market Scope:</b>
+1. TAM/SAM/SOM for <span class="prompt-placeholder">{company_industries}</span> | 2. Growth in target geographies
+3. Competitive landscape in segments | 4. Regulatory environment | 5. Tech adoption rates
+6. Entry barriers | 7. Distribution channels | 8. Pricing benchmarks
+
+<b>Output:</b> Opportunity sizing, white space identification, entry priorities.</div>
+
+    <div class="template-box">
+        <h4>📄 Structure du Rapport</h4>
+        <div class="template-item">
+            <div class="template-number">1</div>
+            <div class="template-content"><strong>Market Sizing</strong> — TAM/SAM/SOM par industrie × géo</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">2</div>
+            <div class="template-content"><strong>Competitive Map</strong> — Acteurs dans segments cibles</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">3</div>
+            <div class="template-content"><strong>Opportunity Matrix</strong> — Segments × Géographies scorés</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">4</div>
+            <div class="template-content"><strong>Entry Strategy</strong> — Go/No-Go par marché</div>
+        </div>
+    </div>
+</div>
+
+<!-- ANALYSIS 6: INDUSTRY DYNAMICS -->
+<div class="page">
+    <div class="section-header" style="background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);">
+        <div class="section-number">Analysis 06</div>
+        <h1 class="section-title">Industry Dynamics</h1>
+    </div>
+
+    <div class="definition-box">
+        <div class="definition-header">
+            <span class="definition-icon">📋</span>
+            <span class="definition-title">Définition & Objectif Stratégique</span>
+        </div>
+        <div class="definition-content">
+            <p><strong>L'analyse Industry Dynamics</strong> évalue les forces structurelles qui façonnent vos industries cibles pour <span class="definition-highlight">anticiper les transformations</span> et positionner l'entreprise sur le long terme.</p>
+            <p>Cette analyse macro utilise des frameworks stratégiques (Porter, PESTEL) appliqués spécifiquement à vos secteurs RAG. Elle identifie les disruptions technologiques, les changements réglementaires et les tendances de consolidation qui impacteront votre positionnement à 3-5 ans.</p>
+            <p><strong>Décisions supportées :</strong> Stratégie long-terme, investissements R&D, pivots business model, adaptation à la réglementation, anticipation des disruptions.</p>
+        </div>
+    </div>
+
+    <div class="capabilities-box">
+        <div class="capabilities-header">
+            <span class="capabilities-icon">🎯</span>
+            <span class="capabilities-title">Capacités d'Analyse Détaillées</span>
+        </div>
+        <div class="capabilities-grid">
+            <div class="capability-item">
+                <div class="capability-name">Porter's Five Forces</div>
+                <div class="capability-desc">Analyse de l'intensité concurrentielle: pouvoir clients/fournisseurs, menace nouveaux entrants/substituts, rivalité.</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">PESTEL Assessment</div>
+                <div class="capability-desc">Évaluation des tendances Politiques, Économiques, Sociales, Technologiques, Environnementales, Légales.</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Disruption Mapping</div>
+                <div class="capability-desc">Identification des disruptions actives et émergentes avec timeline d'impact et implications stratégiques.</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Scenario Planning</div>
+                <div class="capability-desc">Construction de scénarios 3-5 ans avec probabilités, implications et stratégies de réponse pour chaque cas.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="rag-context-box">
+        <div class="rag-context-header">
+            <span class="rag-context-icon">🔗</span>
+            <span class="rag-context-title">RAG Context Match — Filtrage Intelligent</span>
+        </div>
+        <div class="rag-context-explanation">
+            <strong>Pourquoi ce filtrage ?</strong> Les dynamiques industrielles varient énormément d'un secteur à l'autre. L'analyse PESTEL pour l'Aerospace n'est pas la même que pour l'Automotive. Le filtrage par vos industries et technologies RAG garantit des insights pertinents pour votre positionnement.
+        </div>
+        <div class="rag-context-grid">
+            <div class="rag-context-item">
+                <div class="rag-context-label">Industries</div>
+                <div class="rag-context-value">{company_industries}</div>
+            </div>
+            <div class="rag-context-item">
+                <div class="rag-context-label">Technologie</div>
+                <div class="rag-context-value">{company_technology}</div>
+            </div>
+            <div class="rag-context-item">
+                <div class="rag-context-label">Concurrents</div>
+                <div class="rag-context-value">{company_competitors}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="prompt-label">System Prompt</div>
+    <div class="prompt-box">You are an industry analyst for <span class="prompt-placeholder">{company_name}</span>.
+
+<b>CRITICAL: RAG Context Filtering</b>
+Focus on dynamics affecting: Industries: <span class="prompt-placeholder">{company_industries}</span> | Tech: <span class="prompt-placeholder">{company_technology}</span> | Competitors: <span class="prompt-placeholder">{company_competitors}</span>
+
+<b>Framework:</b>
+1. Porter's Five Forces for <span class="prompt-placeholder">{company_industries}</span> | 2. PESTEL trends | 3. Tech disruptions
+4. Consolidation patterns | 5. Regulatory changes | 6. Supply chain | 7. Talent market
+
+<b>Output:</b> Strategic implications for <span class="prompt-placeholder">{company_name}</span>, required adaptations, 3-5 year scenarios.</div>
+
+    <div class="template-box">
+        <h4>📄 Structure du Rapport</h4>
+        <div class="template-item">
+            <div class="template-number">1</div>
+            <div class="template-content"><strong>Five Forces</strong> — Structure et intensité concurrentielle</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">2</div>
+            <div class="template-content"><strong>PESTEL Trends</strong> — Environnement macro</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">3</div>
+            <div class="template-content"><strong>Disruption Map</strong> — Tech et business models</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">4</div>
+            <div class="template-content"><strong>Scenarios 3-5Y</strong> — Outlook avec probabilités</div>
+        </div>
+    </div>
+</div>
+
+<!-- ANALYSIS 7: TECHNOLOGY ASSESSMENT -->
+<div class="page">
+    <div class="section-header" style="background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);">
+        <div class="section-number">Analysis 07</div>
+        <h1 class="section-title">Technology Assessment</h1>
+    </div>
+
+    <div class="definition-box">
+        <div class="definition-header">
+            <span class="definition-icon">📋</span>
+            <span class="definition-title">Définition & Objectif Stratégique</span>
+        </div>
+        <div class="definition-content">
+            <p><strong>L'analyse Technology Assessment</strong> évalue l'architecture technique, les capacités d'innovation et la maturité technologique d'un concurrent pour informer les <span class="definition-highlight">décisions build vs buy</span> et partenariats tech.</p>
+            <p>En comparant spécifiquement avec votre stack technologique RAG, cette analyse identifie les gaps techniques, les approches architecturales différentes et les opportunités d'intégration. Elle éclaire les choix R&D et les acquisitions technologiques.</p>
+            <p><strong>Décisions supportées :</strong> Build vs buy, partenariats technologiques, investissements R&D, modernisation architecture, acquisitions tech.</p>
+        </div>
+    </div>
+
+    <div class="capabilities-box">
+        <div class="capabilities-header">
+            <span class="capabilities-icon">🎯</span>
+            <span class="capabilities-title">Capacités d'Analyse Détaillées</span>
+        </div>
+        <div class="capabilities-grid">
+            <div class="capability-item">
+                <div class="capability-name">Architecture Comparison</div>
+                <div class="capability-desc">Analyse des approches architecturales (cloud-native, monolithique, microservices) avec forces/faiblesses vs votre stack.</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">API & Integration Assessment</div>
+                <div class="capability-desc">Évaluation de la maturité API, des patterns d'intégration et de l'écosystème de connecteurs vs vos besoins.</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">AI/ML Capabilities</div>
+                <div class="capability-desc">Comparaison des capacités d'intelligence artificielle et machine learning avec votre implémentation.</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Build/Buy/Partner Matrix</div>
+                <div class="capability-desc">Recommandations pour chaque gap technologique identifié: développer en interne, acquérir ou partenariat.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="rag-context-box">
+        <div class="rag-context-header">
+            <span class="rag-context-icon">🔗</span>
+            <span class="rag-context-title">RAG Context Match — Filtrage Intelligent</span>
+        </div>
+        <div class="rag-context-explanation">
+            <strong>Pourquoi ce filtrage ?</strong> L'analyse technique se concentre sur les composants technologiques qui implémentent des fonctionnalités équivalentes à vos features. Inutile d'analyser le stack e-commerce d'un concurrent si vous êtes sur du B2B engineering software.
+        </div>
+        <div class="rag-context-grid">
+            <div class="rag-context-item">
+                <div class="rag-context-label">Technologie</div>
+                <div class="rag-context-value">{company_technology}</div>
+            </div>
+            <div class="rag-context-item">
+                <div class="rag-context-label">Features</div>
+                <div class="rag-context-value">{company_features}</div>
+            </div>
+            <div class="rag-context-item">
+                <div class="rag-context-label">Intégrations</div>
+                <div class="rag-context-value">{company_integrations}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="prompt-label">System Prompt</div>
+    <div class="prompt-box">You are a technology analyst for <span class="prompt-placeholder">{company_name}</span>.
+
+<b>CRITICAL: RAG Context Filtering</b>
+Compare against: Tech: <span class="prompt-placeholder">{company_technology}</span> | Features: <span class="prompt-placeholder">{company_features}</span> | Integrations: <span class="prompt-placeholder">{company_integrations}</span>
+
+<b>Assessment:</b>
+1. Architecture comparison | 2. Feature implementation approaches | 3. API capabilities
+4. Performance | 5. Scalability | 6. AI/ML maturity | 7. Cloud infrastructure | 8. Security
+
+<b>Output:</b> Technology gaps, Build/Buy/Partner recommendations, R&D priorities.</div>
+
+    <div class="template-box">
+        <h4>📄 Structure du Rapport</h4>
+        <div class="template-item">
+            <div class="template-number">1</div>
+            <div class="template-content"><strong>Architecture</strong> — Comparaison approches techniques</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">2</div>
+            <div class="template-content"><strong>API Assessment</strong> — Maturité intégration</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">3</div>
+            <div class="template-content"><strong>Innovation Gap</strong> — Différences technologiques</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">4</div>
+            <div class="template-content"><strong>Recommendations</strong> — Build/Buy/Partner</div>
+        </div>
+    </div>
+</div>
+
+<!-- ANALYSIS 8: SECURITY & COMPLIANCE -->
+<div class="page">
+    <div class="section-header" style="background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);">
+        <div class="section-number">Analysis 08</div>
+        <h1 class="section-title">Security & Compliance</h1>
+    </div>
+
+    <div class="definition-box">
+        <div class="definition-header">
+            <span class="definition-icon">📋</span>
+            <span class="definition-title">Définition & Objectif Stratégique</span>
+        </div>
+        <div class="definition-content">
+            <p><strong>L'analyse Security & Compliance</strong> évalue le positionnement sécurité et conformité d'un concurrent pour identifier les <span class="definition-highlight">avantages compétitifs réglementaires</span> et les gaps à combler.</p>
+            <p>En filtrant par vos industries et géographies RAG, cette analyse se concentre sur les certifications et réglementations pertinentes pour vos marchés cibles. Elle permet d'identifier si un concurrent a des avantages ou faiblesses en termes de qualification enterprise.</p>
+            <p><strong>Décisions supportées :</strong> Roadmap certifications, conformité réglementaire, due diligence, qualification enterprise, gestion des risques.</p>
+        </div>
+    </div>
+
+    <div class="capabilities-box">
+        <div class="capabilities-header">
+            <span class="capabilities-icon">🎯</span>
+            <span class="capabilities-title">Capacités d'Analyse Détaillées</span>
+        </div>
+        <div class="capabilities-grid">
+            <div class="capability-item">
+                <div class="capability-name">Certification Matrix</div>
+                <div class="capability-desc">Comparaison des certifications (SOC2, ISO27001, FedRAMP...) avec votre statut et importance par marché cible.</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Regulatory Compliance Map</div>
+                <div class="capability-desc">Évaluation de la conformité GDPR, CCPA, ITAR et réglementations sectorielles par géographie.</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Security Architecture</div>
+                <div class="capability-desc">Analyse des pratiques sécurité: encryption, access control, audit logging, incident response.</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Gap Analysis</div>
+                <div class="capability-desc">Identification des certifications manquantes pour vos marchés cibles avec roadmap de remédiation.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="rag-context-box">
+        <div class="rag-context-header">
+            <span class="rag-context-icon">🔗</span>
+            <span class="rag-context-title">RAG Context Match — Filtrage Intelligent</span>
+        </div>
+        <div class="rag-context-explanation">
+            <strong>Pourquoi ce filtrage ?</strong> Les exigences de compliance varient par industrie et géographie. L'Aerospace a des contraintes ITAR, l'Automotive des normes spécifiques. L'analyse se concentre sur les certifications requises pour VOS marchés, pas toutes les certifications existantes.
+        </div>
+        <div class="rag-context-grid">
+            <div class="rag-context-item">
+                <div class="rag-context-label">Industries</div>
+                <div class="rag-context-value">{company_industries}</div>
+            </div>
+            <div class="rag-context-item">
+                <div class="rag-context-label">Certifications</div>
+                <div class="rag-context-value">{company_certifications}</div>
+            </div>
+            <div class="rag-context-item">
+                <div class="rag-context-label">Géographies</div>
+                <div class="rag-context-value">{company_geographies}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="prompt-label">System Prompt</div>
+    <div class="prompt-box">You are a security analyst for <span class="prompt-placeholder">{company_name}</span>.
+
+<b>CRITICAL: RAG Context Filtering</b>
+Focus on compliance for: Industries: <span class="prompt-placeholder">{company_industries}</span> | Certifications: <span class="prompt-placeholder">{company_certifications}</span> | Geographies: <span class="prompt-placeholder">{company_geographies}</span>
+
+<b>Assessment:</b>
+1. Industry-specific compliance | 2. Certification comparison | 3. Geographic regulatory alignment
+4. Data protection | 5. Security architecture | 6. Incident history | 7. Third-party audits
+
+<b>Output:</b> Compliance gaps vs company, requirements for industries, certification roadmap.</div>
+
+    <div class="template-box">
+        <h4>📄 Structure du Rapport</h4>
+        <div class="template-item">
+            <div class="template-number">1</div>
+            <div class="template-content"><strong>Certification Matrix</strong> — Concurrent vs company</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">2</div>
+            <div class="template-content"><strong>Compliance Map</strong> — Par industrie/région</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">3</div>
+            <div class="template-content"><strong>Gap Analysis</strong> — Requirements manquants</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">4</div>
+            <div class="template-content"><strong>Risk Register</strong> — Préoccupations sécurité</div>
+        </div>
+    </div>
+</div>
+
+<!-- ANALYSIS 9: M&A INTELLIGENCE -->
+<div class="page">
+    <div class="section-header" style="background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);">
+        <div class="section-number">Analysis 09</div>
+        <h1 class="section-title">M&A Intelligence</h1>
+    </div>
+
+    <div class="definition-box">
+        <div class="definition-header">
+            <span class="definition-icon">📋</span>
+            <span class="definition-title">Définition & Objectif Stratégique</span>
+        </div>
+        <div class="definition-content">
+            <p><strong>L'analyse M&A Intelligence</strong> suit les activités de fusions-acquisitions dans votre écosystème pour <span class="definition-highlight">anticiper la consolidation</span> et identifier les opportunités d'acquisition ou de défense stratégique.</p>
+            <p>En filtrant par vos concurrents et features RAG, cette analyse se concentre sur les transactions qui impactent directement votre positionnement. Elle identifie les cibles potentielles alignées avec vos gaps fonctionnels et les mouvements concurrentiels à surveiller.</p>
+            <p><strong>Décisions supportées :</strong> Acquisitions stratégiques, investissements, défense contre consolidation, synergies M&A, valorisation.</p>
+        </div>
+    </div>
+
+    <div class="capabilities-box">
+        <div class="capabilities-header">
+            <span class="capabilities-icon">🎯</span>
+            <span class="capabilities-title">Capacités d'Analyse Détaillées</span>
+        </div>
+        <div class="capabilities-grid">
+            <div class="capability-item">
+                <div class="capability-name">Deal Flow Tracking</div>
+                <div class="capability-desc">Monitoring des transactions récentes (12 mois) impliquant concurrents ou acteurs adjacents avec rationale stratégique.</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Valuation Benchmarks</div>
+                <div class="capability-desc">Analyse des multiples de transaction (revenue, ARR, users) pour votre secteur avec tendances et comparables.</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Target Pipeline</div>
+                <div class="capability-desc">Identification de cibles d'acquisition potentielles alignées avec vos gaps de features et stratégie d'expansion.</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Synergy Assessment</div>
+                <div class="capability-desc">Évaluation des synergies potentielles (revenue, cost, tech) pour chaque cible identifiée avec risques d'intégration.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="rag-context-box">
+        <div class="rag-context-header">
+            <span class="rag-context-icon">🔗</span>
+            <span class="rag-context-title">RAG Context Match — Filtrage Intelligent</span>
+        </div>
+        <div class="rag-context-explanation">
+            <strong>Pourquoi ce filtrage ?</strong> Des milliers de transactions M&A tech ont lieu chaque année. Seules celles impliquant vos concurrents, comblant vos gaps de features, ou dans vos industries cibles sont pertinentes. Le filtrage RAG garantit un focus sur les deals qui impactent votre stratégie.
+        </div>
+        <div class="rag-context-grid">
+            <div class="rag-context-item">
+                <div class="rag-context-label">Concurrents</div>
+                <div class="rag-context-value">{company_competitors}</div>
+            </div>
+            <div class="rag-context-item">
+                <div class="rag-context-label">Features</div>
+                <div class="rag-context-value">{company_features}</div>
+            </div>
+            <div class="rag-context-item">
+                <div class="rag-context-label">Industries</div>
+                <div class="rag-context-value">{company_industries}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="prompt-label">System Prompt</div>
+    <div class="prompt-box">You are an M&A analyst for <span class="prompt-placeholder">{company_name}</span>.
+
+<b>CRITICAL: RAG Context Filtering</b>
+Focus on transactions relevant to: Competitors: <span class="prompt-placeholder">{company_competitors}</span> | Features: <span class="prompt-placeholder">{company_features}</span> | Industries: <span class="prompt-placeholder">{company_industries}</span>
+
+<b>Analysis:</b>
+1. Recent competitor transactions | 2. Acquisitions affecting <span class="prompt-placeholder">{company_features}</span>
+3. Consolidation patterns | 4. Valuation multiples | 5. Strategic rationale
+6. Integration outcomes | 7. Potential targets | 8. Defensive positioning
+
+<b>Output:</b> Competitive landscape impact, acquisition opportunities, synergy assessment.</div>
+
+    <div class="template-box">
+        <h4>📄 Structure du Rapport</h4>
+        <div class="template-item">
+            <div class="template-number">1</div>
+            <div class="template-content"><strong>Deal Tracker</strong> — Transactions récentes</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">2</div>
+            <div class="template-content"><strong>Valuation Benchmarks</strong> — Multiples analyse</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">3</div>
+            <div class="template-content"><strong>Target Pipeline</strong> — Cibles acquisition</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">4</div>
+            <div class="template-content"><strong>Strategic Impact</strong> — Implications concurrentielles</div>
+        </div>
+    </div>
+</div>
+
+<!-- ANALYSIS 10: INNOVATION TRACKING -->
+<div class="page">
+    <div class="section-header" style="background: linear-gradient(135deg, #c026d3 0%, #a21caf 100%);">
+        <div class="section-number">Analysis 10</div>
+        <h1 class="section-title">Innovation Tracking</h1>
+    </div>
+
+    <div class="definition-box">
+        <div class="definition-header">
+            <span class="definition-icon">📋</span>
+            <span class="definition-title">Définition & Objectif Stratégique</span>
+        </div>
+        <div class="definition-content">
+            <p><strong>L'analyse Innovation Tracking</strong> surveille les roadmaps produits, brevets et investissements R&D des concurrents pour <span class="definition-highlight">anticiper les évolutions fonctionnelles</span> et protéger votre avance technologique.</p>
+            <p>En filtrant par vos features et technologies RAG, cette veille se concentre sur les innovations qui menacent votre différenciation ou créent des opportunités de positionnement. Elle alimente directement votre roadmap produit avec des insights compétitifs.</p>
+            <p><strong>Décisions supportées :</strong> Priorisation roadmap, investissements R&D, dépôt de brevets, partenariats technologiques, stratégie de différenciation.</p>
+        </div>
+    </div>
+
+    <div class="capabilities-box">
+        <div class="capabilities-header">
+            <span class="capabilities-icon">🎯</span>
+            <span class="capabilities-title">Capacités d'Analyse Détaillées</span>
+        </div>
+        <div class="capabilities-grid">
+            <div class="capability-item">
+                <div class="capability-name">Roadmap Analysis</div>
+                <div class="capability-desc">Décryptage des annonces publiques, betas, et leaks pour construire une vision des roadmaps concurrentes.</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Patent Watch</div>
+                <div class="capability-desc">Monitoring des dépôts de brevets dans votre domaine technologique avec analyse des axes d'innovation.</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">R&D Intelligence</div>
+                <div class="capability-desc">Suivi des investissements R&D, partenariats recherche, et acquisitions tech comme indicateurs d'orientation.</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Innovation Radar</div>
+                <div class="capability-desc">Vue consolidée des innovations à venir par timeline avec niveau de menace pour votre différenciation.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="rag-context-box">
+        <div class="rag-context-header">
+            <span class="rag-context-icon">🔗</span>
+            <span class="rag-context-title">RAG Context Match — Filtrage Intelligent</span>
+        </div>
+        <div class="rag-context-explanation">
+            <strong>Pourquoi ce filtrage ?</strong> Un concurrent peut annoncer 50 features par an, mais seules celles qui overlappent avec vos features ou adressent vos use cases méritent attention. Le filtrage RAG concentre la veille sur les innovations réellement menaçantes ou inspirantes.
+        </div>
+        <div class="rag-context-grid">
+            <div class="rag-context-item">
+                <div class="rag-context-label">Features</div>
+                <div class="rag-context-value">{company_features}</div>
+            </div>
+            <div class="rag-context-item">
+                <div class="rag-context-label">Technologie</div>
+                <div class="rag-context-value">{company_technology}</div>
+            </div>
+            <div class="rag-context-item">
+                <div class="rag-context-label">Use Cases</div>
+                <div class="rag-context-value">{company_use_cases}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="prompt-label">System Prompt</div>
+    <div class="prompt-box">You are a product strategy analyst for <span class="prompt-placeholder">{company_name}</span>.
+
+<b>CRITICAL: RAG Context Filtering</b>
+Track innovations relevant to: Features: <span class="prompt-placeholder">{company_features}</span> | Tech: <span class="prompt-placeholder">{company_technology}</span> | Use Cases: <span class="prompt-placeholder">{company_use_cases}</span>
+
+<b>Tracking:</b>
+1. Public roadmaps matching <span class="prompt-placeholder">{company_features}</span> | 2. Patents in <span class="prompt-placeholder">{company_technology}</span>
+3. R&D investments | 4. Beta programs | 5. Conference announcements
+6. Partnership innovations | 7. Analyst predictions | 8. Customer requests
+
+<b>Output:</b> Features threatening differentiation, innovation gaps to exploit, roadmap recommendations.</div>
+
+    <div class="template-box">
+        <h4>📄 Structure du Rapport</h4>
+        <div class="template-item">
+            <div class="template-number">1</div>
+            <div class="template-content"><strong>Roadmap Tracker</strong> — Features annoncées</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">2</div>
+            <div class="template-content"><strong>Patent Watch</strong> — Analyse dépôts IP</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">3</div>
+            <div class="template-content"><strong>Innovation Radar</strong> — What's coming</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">4</div>
+            <div class="template-content"><strong>Roadmap Impact</strong> — Recommandations</div>
+        </div>
+    </div>
+</div>
+
+<!-- ANALYSIS 11: ECOSYSTEM MAPPING -->
+<div class="page">
+    <div class="section-header" style="background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);">
+        <div class="section-number">Analysis 11</div>
+        <h1 class="section-title">Ecosystem Mapping</h1>
+    </div>
+
+    <div class="definition-box">
+        <div class="definition-header">
+            <span class="definition-icon">📋</span>
+            <span class="definition-title">Définition & Objectif Stratégique</span>
+        </div>
+        <div class="definition-content">
+            <p><strong>L'analyse Ecosystem Mapping</strong> fournit une <span class="definition-highlight">vue 360°</span> du paysage concurrentiel et partenarial pour identifier les opportunités de positionnement et d'alliance stratégique.</p>
+            <p>En cartographiant l'ensemble des acteurs (concurrents directs, adjacents, partenaires, intégrateurs) filtrés par votre contexte RAG, cette analyse révèle les white spaces, les opportunités d'alliance, et les risques de désintermédiation. Elle est fondamentale pour la stratégie d'écosystème.</p>
+            <p><strong>Décisions supportées :</strong> Positionnement stratégique, stratégie d'alliance, développement écosystème, identification de white spaces, défense de position.</p>
+        </div>
+    </div>
+
+    <div class="capabilities-box">
+        <div class="capabilities-header">
+            <span class="capabilities-icon">🎯</span>
+            <span class="capabilities-title">Capacités d'Analyse Détaillées</span>
+        </div>
+        <div class="capabilities-grid">
+            <div class="capability-item">
+                <div class="capability-name">Market Map</div>
+                <div class="capability-desc">Cartographie visuelle de tous les acteurs par catégorie (pure-players, géants, startups, adjacents) avec positionnement.</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Positioning Matrix</div>
+                <div class="capability-desc">Analyse 2×2 du positionnement concurrentiel sur axes stratégiques clés (ex: breadth vs depth, enterprise vs SMB).</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Partnership Network</div>
+                <div class="capability-desc">Visualisation des alliances et intégrations entre acteurs avec identification des clusters et opportunités.</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">White Space Analysis</div>
+                <div class="capability-desc">Identification des segments de marché ou positionnements non occupés représentant des opportunités de différenciation.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="rag-context-box">
+        <div class="rag-context-header">
+            <span class="rag-context-icon">🔗</span>
+            <span class="rag-context-title">RAG Context Match — Filtrage Intelligent</span>
+        </div>
+        <div class="rag-context-explanation">
+            <strong>Pourquoi ce filtrage ?</strong> L'écosystème tech est immense. Le mapping se concentre sur les acteurs en relation avec vos concurrents, vos partenaires actuels, et les intégrations de votre roadmap. Cela garantit une carte actionnable, pas un inventaire exhaustif.
+        </div>
+        <div class="rag-context-grid">
+            <div class="rag-context-item">
+                <div class="rag-context-label">Concurrents</div>
+                <div class="rag-context-value">{company_competitors}</div>
+            </div>
+            <div class="rag-context-item">
+                <div class="rag-context-label">Partenaires</div>
+                <div class="rag-context-value">{company_partners}</div>
+            </div>
+            <div class="rag-context-item">
+                <div class="rag-context-label">Intégrations</div>
+                <div class="rag-context-value">{company_integrations}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="prompt-label">System Prompt</div>
+    <div class="prompt-box">You are an ecosystem analyst for <span class="prompt-placeholder">{company_name}</span>.
+
+<b>CRITICAL: RAG Context Filtering</b>
+Map ecosystem around: Competitors: <span class="prompt-placeholder">{company_competitors}</span> | Partners: <span class="prompt-placeholder">{company_partners}</span> | Integrations: <span class="prompt-placeholder">{company_integrations}</span>
+
+<b>Analysis:</b>
+1. Complete market map (competitors + adjacent) | 2. Partnership networks | 3. Integration ecosystem
+4. Channel landscape | 5. Platform relationships | 6. Value chain | 7. White spaces | 8. Alliance implications
+
+<b>Output:</b> Positioning vs competitors, partnership gaps, alliance recommendations.</div>
+
+    <div class="template-box">
+        <h4>📄 Structure du Rapport</h4>
+        <div class="template-item">
+            <div class="template-number">1</div>
+            <div class="template-content"><strong>Market Map</strong> — Cartographie visuelle</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">2</div>
+            <div class="template-content"><strong>Positioning Matrix</strong> — Placement concurrentiel</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">3</div>
+            <div class="template-content"><strong>Partnership Network</strong> — Alliance mapping</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">4</div>
+            <div class="template-content"><strong>Alliance Strategy</strong> — Recommandations</div>
+        </div>
+    </div>
+</div>
+
+<!-- ANALYSIS 12: MARKETING INTELLIGENCE (NEW) -->
+<div class="page">
+    <div class="section-header" style="background: linear-gradient(135deg, #e11d48 0%, #be123c 100%);">
+        <div class="section-number">Analysis 12 <span class="badge badge-new">NEW</span></div>
+        <h1 class="section-title">Marketing Intelligence</h1>
+    </div>
+
+    <div class="definition-box">
+        <div class="definition-header">
+            <span class="definition-icon">📋</span>
+            <span class="definition-title">Définition & Objectif Stratégique</span>
+        </div>
+        <div class="definition-content">
+            <p><strong>L'analyse Marketing Intelligence</strong> surveille l'ensemble des activités marketing des concurrents à travers tous les canaux pour <span class="definition-highlight">optimiser votre stratégie de communication</span> et identifier les opportunités de positionnement.</p>
+            <p>Cette analyse couvre le spectre complet du marketing moderne : social media (LinkedIn, X, YouTube, Reddit), paid media (Meta, Google, LinkedIn Ads), content marketing (blog, SEO, whitepapers), et product marketing. Elle révèle les messages clés, les investissements media, et les gaps de communication exploitables.</p>
+            <p><strong>Décisions supportées :</strong> Stratégie de contenu, budget media, messaging et positionnement, campagnes paid, social media strategy, événements.</p>
+        </div>
+    </div>
+
+    <div class="capabilities-box">
+        <div class="capabilities-header">
+            <span class="capabilities-icon">🎯</span>
+            <span class="capabilities-title">Capacités d'Analyse Détaillées</span>
+        </div>
+        <div class="capabilities-grid">
+            <div class="capability-item">
+                <div class="capability-name">Social Media Monitoring</div>
+                <div class="capability-desc">Suivi de l'activité LinkedIn, X, YouTube, Reddit: fréquence de publication, engagement, thèmes, tone of voice.</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Paid Media Analysis</div>
+                <div class="capability-desc">Détection des campagnes Meta Ads, Google Ads, LinkedIn Ads avec estimation des budgets et créatives utilisées.</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Content Strategy Intel</div>
+                <div class="capability-desc">Analyse du blog, SEO rankings, whitepapers, webinars avec identification des thèmes prioritaires et gaps.</div>
+            </div>
+            <div class="capability-item">
+                <div class="capability-name">Messaging Comparison</div>
+                <div class="capability-desc">Comparaison des value propositions et arguments clés vs vos messages avec opportunités de différenciation.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="rag-context-box">
+        <div class="rag-context-header">
+            <span class="rag-context-icon">🔗</span>
+            <span class="rag-context-title">RAG Context Match — Filtrage Intelligent</span>
+        </div>
+        <div class="rag-context-explanation">
+            <strong>Pourquoi ce filtrage ?</strong> Le marketing d'un concurrent peut couvrir de nombreux produits et personas. L'analyse se concentre sur les messages et campagnes ciblant vos personas et promouvant des value props concurrentes aux vôtres. Cela révèle les vraies batailles de perception.
+        </div>
+        <div class="rag-context-grid">
+            <div class="rag-context-item">
+                <div class="rag-context-label">Concurrents</div>
+                <div class="rag-context-value">{company_competitors}</div>
+            </div>
+            <div class="rag-context-item">
+                <div class="rag-context-label">Personas</div>
+                <div class="rag-context-value">{company_personas}</div>
+            </div>
+            <div class="rag-context-item">
+                <div class="rag-context-label">Value Props</div>
+                <div class="rag-context-value">{company_value_props}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="prompt-label">System Prompt</div>
+    <div class="prompt-box">You are a marketing intelligence analyst for <span class="prompt-placeholder">{company_name}</span>.
+
+<b>CRITICAL: RAG Context Filtering</b>
+Analyze marketing relevant to: Competitors: <span class="prompt-placeholder">{company_competitors}</span> | Personas: <span class="prompt-placeholder">{company_personas}</span> | Value Props: <span class="prompt-placeholder">{company_value_props}</span>
+
+<b>Channels:</b>
+1. <b>Social</b>: LinkedIn, X, YouTube, Reddit | 2. <b>Paid</b>: Meta, Google, LinkedIn Ads
+3. <b>Content</b>: Blog, SEO, whitepapers | 4. <b>Product Marketing</b>: Messaging, launches
+5. <b>Events</b>: Conferences, webinars | 6. <b>Influencer</b>: Analyst relations
+
+<b>Per Competitor:</b> Content themes, campaign frequency, engagement, positioning vs <span class="prompt-placeholder">{company_name}</span>
+<b>Output:</b> Messaging gaps, channel opportunities, content strategy recommendations.</div>
+
+    <div class="template-box">
+        <h4>📄 Structure du Rapport</h4>
+        <div class="template-item">
+            <div class="template-number">1</div>
+            <div class="template-content"><strong>Channel Activity</strong> — Social, Paid, Content par canal</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">2</div>
+            <div class="template-content"><strong>Messaging Analysis</strong> — Thèmes et positionnement</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">3</div>
+            <div class="template-content"><strong>Campaign Tracker</strong> — Campagnes actives</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">4</div>
+            <div class="template-content"><strong>Content Strategy</strong> — Topics et formats</div>
+        </div>
+        <div class="template-item">
+            <div class="template-number">5</div>
+            <div class="template-content"><strong>Marketing Playbook</strong> — Recommandations</div>
+        </div>
+    </div>
+</div>
+
+<!-- REPORT LEVELS -->
+<div class="page">
+    <div class="section-header" style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%);">
+        <div class="section-number">Reference</div>
+        <h1 class="section-title">Report Depth Levels</h1>
+    </div>
+
+    <p style="font-size: 9pt; margin-bottom: 5mm;">Chaque analyse peut être générée à quatre niveaux de profondeur selon le contexte business:</p>
+
+    <table class="styled-table">
+        <thead>
+            <tr>
+                <th>Level</th>
+                <th>Nom</th>
+                <th>Temps</th>
+                <th>Format</th>
+                <th>Usage</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><span class="badge badge-live">I</span></td>
+                <td><strong>Flash Brief</strong></td>
+                <td>2-3 min</td>
+                <td>5-7 bullet points</td>
+                <td>Daily standup, quick update</td>
+            </tr>
+            <tr>
+                <td><span class="badge badge-p1">II</span></td>
+                <td><strong>Executive Summary</strong></td>
+                <td>10 min</td>
+                <td>2-3 pages</td>
+                <td>Weekly review, team meeting</td>
+            </tr>
+            <tr>
+                <td><span class="badge badge-p2">III</span></td>
+                <td><strong>Strategic Analysis</strong></td>
+                <td>20 min</td>
+                <td>5-8 pages</td>
+                <td>Board prep, investment</td>
+            </tr>
+            <tr>
+                <td><span class="badge badge-p3">IV</span></td>
+                <td><strong>Deep Dive Report</strong></td>
+                <td>45+ min</td>
+                <td>15-25 pages</td>
+                <td>Due diligence, strategic planning</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>Audience Mapping</h3>
+    <div class="content-grid">
+        <div class="content-card">
+            <h4>Level I-II</h4>
+            <ul>
+                <li>Operations teams</li>
+                <li>Managers</li>
+                <li>Field sales</li>
+                <li>Quick decisions</li>
+            </ul>
+        </div>
+        <div class="content-card">
+            <h4>Level III-IV</h4>
+            <ul>
+                <li>Directors</li>
+                <li>C-Level executives</li>
+                <li>Board members</li>
+                <li>Strategic decisions</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- RAG DATA SCHEMA -->
+<div class="page">
+    <div class="section-header" style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);">
+        <div class="section-number">Reference</div>
+        <h1 class="section-title">RAG Data Schema</h1>
+    </div>
+
+    <p style="font-size: 9pt; margin-bottom: 5mm;">Chaque entreprise fournit les données RAG suivantes pour personnaliser les prompts:</p>
+
+    <table class="styled-table">
+        <thead>
+            <tr>
+                <th>Placeholder</th>
+                <th>Source</th>
+                <th>Example</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>{company_name}</code></td>
+                <td>Company Overview</td>
+                <td>Cognitive Design Systems</td>
+            </tr>
+            <tr>
+                <td><code>{company_use_cases}</code></td>
+                <td>Use Cases</td>
+                <td>Aerospace brackets, Automotive housings...</td>
+            </tr>
+            <tr>
+                <td><code>{company_features}</code></td>
+                <td>Features</td>
+                <td>TopOpt, Lattice/TPMS, DfAM, DfCasting...</td>
+            </tr>
+            <tr>
+                <td><code>{company_industries}</code></td>
+                <td>Industries</td>
+                <td>Aerospace, Automotive, Space, Defense</td>
+            </tr>
+            <tr>
+                <td><code>{company_personas}</code></td>
+                <td>Personas</td>
+                <td>Design Engineer, CAE Lead, VP Engineering</td>
+            </tr>
+            <tr>
+                <td><code>{company_competitors}</code></td>
+                <td>Competition</td>
+                <td>nTop, PTC Creo, Altair Inspire...</td>
+            </tr>
+            <tr>
+                <td><code>{company_value_props}</code></td>
+                <td>Positioning</td>
+                <td>10x faster, 85% time reduction...</td>
+            </tr>
+            <tr>
+                <td><code>{company_technology}</code></td>
+                <td>Tech Architecture</td>
+                <td>Cloud-native, AI/ML, CAD kernel...</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div style="margin-top: 5mm; padding: 4mm; background: var(--bg-light); border-radius: 6px;">
+        <h4 style="font-size: 9pt; color: var(--dark); margin-bottom: 2mm;">📁 Required CSV Files</h4>
+        <p style="font-size: 8pt; color: var(--text);">
+            Company_Overview.csv • Use_Cases.csv • Features_Capabilities.csv • Industries_Target.csv • Personas.csv • Competition.csv • Positioning.csv • Technology_Architecture.csv • Customers.csv
+        </p>
+    </div>
+</div>
+
+<!-- IMPLEMENTATION ROADMAP -->
+<div class="page">
+    <div class="section-header" style="background: linear-gradient(135deg, #059669 0%, #047857 100%);">
+        <div class="section-number">Roadmap</div>
+        <h1 class="section-title">Implementation Priority</h1>
+    </div>
+
+    <table class="styled-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Analysis Type</th>
+                <th>Priority</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td>1</td><td>Competitor Intelligence</td><td><span class="badge badge-live">P0</span></td><td><span class="badge badge-live">LIVE</span></td></tr>
+            <tr><td>2</td><td>Product Intelligence</td><td><span class="badge badge-p1">P1</span></td><td>To Build</td></tr>
+            <tr><td>12</td><td>Marketing Intelligence</td><td><span class="badge badge-p1">P1</span></td><td><span class="badge badge-new">NEW</span></td></tr>
+            <tr><td>5</td><td>Market Intelligence</td><td><span class="badge badge-p1">P1</span></td><td>To Build</td></tr>
+            <tr><td>3</td><td>Client Intelligence</td><td><span class="badge badge-p2">P2</span></td><td>To Build</td></tr>
+            <tr><td>9</td><td>M&A Intelligence</td><td><span class="badge badge-p2">P2</span></td><td>To Build</td></tr>
+            <tr><td>11</td><td>Ecosystem Mapping</td><td><span class="badge badge-p2">P2</span></td><td>To Build</td></tr>
+            <tr><td>4</td><td>Executive Intelligence</td><td><span class="badge badge-p3">P3</span></td><td>To Build</td></tr>
+            <tr><td>6</td><td>Industry Dynamics</td><td><span class="badge badge-p3">P3</span></td><td>To Build</td></tr>
+            <tr><td>10</td><td>Innovation Tracking</td><td><span class="badge badge-p3">P3</span></td><td>To Build</td></tr>
+            <tr><td>7</td><td>Technology Assessment</td><td><span class="badge badge-p4">P4</span></td><td>To Build</td></tr>
+            <tr><td>8</td><td>Security & Compliance</td><td><span class="badge badge-p4">P4</span></td><td>To Build</td></tr>
+        </tbody>
+    </table>
+
+    <h3>Implementation Phases</h3>
+    <div class="content-grid">
+        <div class="content-card" style="border-left: 4px solid #059669;">
+            <h4 style="color: #059669;">Phase 1</h4>
+            <p style="font-size: 8pt; font-weight: 600;">Competitor + Product + Marketing + Market</p>
+        </div>
+        <div class="content-card" style="border-left: 4px solid #f59e0b;">
+            <h4 style="color: #f59e0b;">Phase 2</h4>
+            <p style="font-size: 8pt; font-weight: 600;">Client + Ecosystem + M&A</p>
+        </div>
+        <div class="content-card" style="border-left: 4px solid #6366f1;">
+            <h4 style="color: #6366f1;">Phase 3</h4>
+            <p style="font-size: 8pt; font-weight: 600;">Innovation + Executive + Industry</p>
+        </div>
+        <div class="content-card" style="border-left: 4px solid #64748b;">
+            <h4 style="color: #64748b;">Phase 4</h4>
+            <p style="font-size: 8pt; font-weight: 600;">Technology + Security</p>
+        </div>
+    </div>
+
+    <div style="margin-top: 8mm; text-align: center; padding: 5mm; background: var(--bg-light); border-radius: 6px;">
+        <p style="font-size: 10pt; font-weight: 600; color: var(--dark);">DEALIGENT Intelligence Platform</p>
+        <p style="font-size: 8pt; color: var(--text-light);">RAG-Enhanced Multi-Tenant Analysis System</p>
+        <p style="font-size: 7pt; color: var(--text-light); margin-top: 2mm;">Janvier 2025 • Version 5.0</p>
+    </div>
+</div>
+
+</body>
+</html>

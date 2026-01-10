@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DEALLIGENT - Portfolio Analyses V12</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background-color: #f8fafc;
+      color: #1e293b;
+      line-height: 1.6;
+      padding: 40px 20px;
+    }
+
+    .email-container {
+      max-width: 640px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    /* Header */
+    .email-header {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+      padding: 32px 40px;
+      text-align: center;
+    }
+
+    .logo {
+      font-size: 28px;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+    }
+
+    .logo span {
+      color: #60a5fa;
+    }
+
+    .tagline {
+      color: #94a3b8;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    /* Content */
+    .email-content {
+      padding: 40px;
+    }
+
+    .greeting {
+      font-size: 18px;
+      color: #334155;
+      margin-bottom: 24px;
+    }
+
+    .intro {
+      color: #475569;
+      margin-bottom: 28px;
+      font-size: 15px;
+    }
+
+    /* Important Notice */
+    .important-notice {
+      background: linear-gradient(135deg, #fef3c7 0%, #fef9c3 100%);
+      border-left: 4px solid #f59e0b;
+      padding: 20px 24px;
+      border-radius: 0 12px 12px 0;
+      margin-bottom: 32px;
+    }
+
+    .important-label {
+      font-weight: 700;
+      color: #b45309;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    .important-text {
+      color: #78350f;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .rag-var {
+      background: linear-gradient(135deg, #fbbf24, #f59e0b);
+      color: #78350f;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-family: 'SF Mono', Monaco, 'Courier New', monospace;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    /* Section Cards */
+    .section-card {
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 28px;
+      margin-bottom: 24px;
+      transition: all 0.2s ease;
+    }
+
+    .section-card:hover {
+      border-color: #cbd5e1;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .section-card.pdf {
+      border-left: 4px solid #ef4444;
+    }
+
+    .section-card.sheets {
+      border-left: 4px solid #22c55e;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .section-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .section-icon.pdf {
+      background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+    }
+
+    .section-icon.sheets {
+      background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    }
+
+    .section-title {
+      font-size: 17px;
+      font-weight: 600;
+      color: #1e293b;
+    }
+
+    .section-subtitle {
+      font-size: 13px;
+      color: #64748b;
+      font-weight: 500;
+    }
+
+    .section-description {
+      color: #475569;
+      font-size: 14px;
+      margin-bottom: 16px;
+      line-height: 1.7;
+    }
+
+    .feature-list {
+      list-style: none;
+      margin-bottom: 20px;
+    }
+
+    .feature-list li {
+      padding: 6px 0;
+      padding-left: 24px;
+      position: relative;
+      color: #475569;
+      font-size: 14px;
+    }
+
+    .feature-list li::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: #22c55e;
+      font-weight: 700;
+    }
+
+    .feature-list li strong {
+      color: #334155;
+    }
+
+    /* CTA Button */
+    .cta-button {
+      display: inline-block;
+      padding: 14px 28px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 14px;
+      transition: all 0.2s ease;
+      text-align: center;
+    }
+
+    .cta-button.pdf {
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      color: #ffffff;
+    }
+
+    .cta-button.pdf:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+    }
+
+    .cta-button.sheets {
+      background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+      color: #ffffff;
+    }
+
+    .cta-button.sheets:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
+    }
+
+    /* Divider */
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #e2e8f0, transparent);
+      margin: 32px 0;
+    }
+
+    /* Closing */
+    .closing {
+      color: #475569;
+      font-size: 15px;
+      margin-bottom: 24px;
+    }
+
+    .signature {
+      font-size: 16px;
+      color: #1e293b;
+    }
+
+    .signature-name {
+      font-weight: 600;
+      margin-top: 8px;
+    }
+
+    /* Footer */
+    .email-footer {
+      background: #f8fafc;
+      padding: 24px 40px;
+      text-align: center;
+      border-top: 1px solid #e2e8f0;
+    }
+
+    .footer-text {
+      color: #94a3b8;
+      font-size: 12px;
+    }
+
+    .footer-brand {
+      font-weight: 600;
+      color: #64748b;
+    }
+  </style>
+</head>
+<body>
+  <div class="email-container">
+
+    <!-- Header -->
+    <div class="email-header">
+      <div class="logo">DEAL<span>LIGENT</span></div>
+      <div class="tagline">Market Intelligence Platform</div>
+    </div>
+
+    <!-- Content -->
+    <div class="email-content">
+
+      <p class="greeting">Salut Denis,</p>
+
+      <p class="intro">
+        Comme convenu, tu trouveras ci-dessous les prompts experts pour nos 12 analyses Market Intelligence, disponibles sous deux formats.
+      </p>
+
+      <!-- Important Notice -->
+      <div class="important-notice">
+        <div class="important-label">🎯 Important</div>
+        <p class="important-text">
+          Tous ces prompts sont ultra-personnalisés pour assurer un matching optimal avec les données pertinentes présentes dans notre RAG. Chaque prompt intègre automatiquement les variables dynamiques
+          <span class="rag-var">{company_name}</span>,
+          <span class="rag-var">{industry}</span>,
+          <span class="rag-var">{company_use_cases}</span>
+          qui seront remplacées par les informations spécifiques de chaque client lors de l'exécution.
+        </p>
+      </div>
+
+      <!-- PDF Section -->
+      <div class="section-card pdf">
+        <div class="section-header">
+          <div class="section-icon pdf">📄</div>
+          <div>
+            <div class="section-title">Version PDF</div>
+            <div class="section-subtitle">Portfolio Complet</div>
+          </div>
+        </div>
+
+        <p class="section-description">
+          Le PDF présente l'ensemble de notre offre d'analyses avec, pour chacune des 12 analyses :
+        </p>
+
+        <ul class="feature-list">
+          <li><strong>La définition</strong> détaillée de l'analyse</li>
+          <li><strong>Les capabilities</strong> (ce que l'analyse permet de faire)</li>
+          <li><strong>Le prompt expert</strong> complet avec les variables RAG surlignées</li>
+          <li><strong>Le template de rapport</strong> structuré pour la restitution</li>
+        </ul>
+
+        <a href="#PDF_LINK" class="cta-button pdf">📥 Accéder au PDF</a>
+      </div>
+
+      <!-- Google Sheets Section -->
+      <div class="section-card sheets">
+        <div class="section-header">
+          <div class="section-icon sheets">📊</div>
+          <div>
+            <div class="section-title">Version Google Sheets</div>
+            <div class="section-subtitle">Prompts Éditables</div>
+          </div>
+        </div>
+
+        <p class="section-description">
+          Les prompts présents dans le Google Sheets sont là pour qu'on les analyse ensemble et qu'on les personnalise selon nos besoins. Tu pourras :
+        </p>
+
+        <ul class="feature-list">
+          <li><strong>Visualiser</strong> chaque prompt avec sa définition et ses capabilities</li>
+          <li><strong>Modifier</strong> et affiner les formulations</li>
+          <li><strong>Ajouter des commentaires</strong> pour notre discussion</li>
+          <li><strong>Suivre les versions</strong> et modifications</li>
+        </ul>
+
+        <a href="#SHEETS_LINK" class="cta-button sheets">📊 Ouvrir le Google Sheets</a>
+      </div>
+
+      <div class="divider"></div>
+
+      <p class="closing">
+        N'hésite pas si tu as des questions ou des premières remarques.
+      </p>
+
+      <div class="signature">
+        À très vite,
+        <div class="signature-name">Gil</div>
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="email-footer">
+      <p class="footer-text">
+        <span class="footer-brand">DEALLIGENT</span> · Market Intelligence Platform
+      </p>
+    </div>
+
+  </div>
+</body>
+</html>
