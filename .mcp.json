@@ -1,0 +1,43 @@
+{
+  "mcpServers": {
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@context7/mcp-server"],
+      "purpose": "Documentation technique"
+    },
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "purpose": "Gestion repo, PRs, issues"
+    },
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "@anthropic/mcp-playwright"],
+      "purpose": "Tests E2E automatises"
+    },
+    "serena": {
+      "command": "npx",
+      "args": ["-y", "@anthropic/mcp-serena"],
+      "purpose": "Navigation code semantique"
+    },
+    "sequential-thinking": {
+      "command": "npx",
+      "args": ["-y", "@anthropic/mcp-sequential-thinking"],
+      "purpose": "Raisonnement complexe"
+    }
+  },
+  "profiles": {
+    "saas-dev": {
+      "description": "Developpement quotidien",
+      "servers": ["context7", "github", "playwright", "serena"]
+    },
+    "saas-research": {
+      "description": "Recherche et exploration",
+      "servers": ["context7", "sequential-thinking"]
+    },
+    "minimal": {
+      "description": "Aucun MCP",
+      "servers": []
+    }
+  }
+}
