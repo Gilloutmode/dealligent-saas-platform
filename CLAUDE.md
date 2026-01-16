@@ -8,6 +8,12 @@
 - **Clients**: Mix Mid-Market + Enterprise + Tech Startups
 - **Platform**: Desktop only (MVP)
 
+## Git Repository
+- **Remote**: https://github.com/Gilloutmode/dealligent-saas-platform.git
+- **Branch principale**: main
+- **Convention branches**: feature/[nom], fix/[nom], refactor/[nom]
+- **Convention commits**: feat/fix/refactor/docs + Co-Authored-By Claude
+
 ## Tech Stack
 
 ### Frontend
