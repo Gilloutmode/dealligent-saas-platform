@@ -108,6 +108,8 @@ export function AnalysisProvider({ children }: { children: React.ReactNode }): R
     const id = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
     const now = new Date().toISOString()
 
+    console.log('[AnalysisContext] Starting analysis:', { id, competitor: config.competitor, type: config.analysisType })
+
     // Map sources to n8n format
     const frontendSources: FrontendSourcesState = {
       perplexity: config.sources.perplexity,
@@ -134,16 +136,24 @@ export function AnalysisProvider({ children }: { children: React.ReactNode }): R
 
     setAnalyses(prev => [newAnalysis, ...prev])
     saveAnalysis(newAnalysis)
+    console.log('[AnalysisContext] Analysis created with status: running')
 
     // Launch n8n webhook in background
     try {
+      console.log('[AnalysisContext] Calling n8n webhook for:', config.competitor)
       const response = await n8nLaunch(
         config.competitor,
         frontendSources,
         config.analysisType
       )
 
+      console.log('[AnalysisContext] n8n response received for', id, ':', {
+        success: response.success,
+        hasData: !!response.data,
+      })
+
       // Mark as completed
+      console.log('[AnalysisContext] Updating state to completed for:', id)
       setAnalyses(prev => prev.map(a =>
         a.id === id
           ? {
@@ -163,9 +173,16 @@ export function AnalysisProvider({ children }: { children: React.ReactNode }): R
         response,
       }
       saveAnalysis(updatedAnalysis)
+      console.log('[AnalysisContext] Analysis completed successfully:', id)
+
+      // Dispatch custom event for toast notification
+      window.dispatchEvent(new CustomEvent('analysis-complete', {
+        detail: { id, competitor: config.competitor, status: 'completed' }
+      }))
 
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue'
+      console.error('[AnalysisContext] Error during analysis', id, ':', errorMessage)
 
       // Mark as failed
       setAnalyses(prev => prev.map(a =>
@@ -181,6 +198,11 @@ export function AnalysisProvider({ children }: { children: React.ReactNode }): R
         error: errorMessage,
       }
       saveAnalysis(failedAnalysis)
+
+      // Dispatch custom event for toast notification
+      window.dispatchEvent(new CustomEvent('analysis-complete', {
+        detail: { id, competitor: config.competitor, status: 'failed', error: errorMessage }
+      }))
     }
 
     return id

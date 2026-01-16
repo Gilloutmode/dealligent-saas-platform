@@ -6,6 +6,7 @@ import { DashboardPage } from './pages/Dashboard'
 import { MyCompanyPage } from './pages/MyCompany'
 import { WatchlistPage } from './pages/Watchlist'
 import { LaunchAnalysisPage } from './pages/LaunchAnalysis'
+import { MyAnalysesPage } from './pages/MyAnalyses'
 import { ResultsPage } from './pages/Results'
 import { RAGManagementPage } from './pages/RAGManagement'
 import { ReportsPage } from './pages/Reports'
@@ -39,7 +40,15 @@ const router = createBrowserRouter([
         element: <LaunchAnalysisPage />,
       },
       {
+        path: 'my-analyses',
+        element: <MyAnalysesPage />,
+      },
+      {
         path: 'results',
+        element: <ResultsPage />,
+      },
+      {
+        path: 'results/:analysisId',
         element: <ResultsPage />,
       },
       {

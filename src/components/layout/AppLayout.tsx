@@ -8,6 +8,7 @@ import {
   Building2,
   Eye,
   PlayCircle,
+  Activity,
   FileText,
   Database,
   FileBarChart,
@@ -30,6 +31,7 @@ import {
   Crown,
 } from 'lucide-react'
 import { useTheme } from '../../contexts/ThemeContext'
+import { useAnalysis } from '../../contexts/AnalysisContext'
 import { MobileNav } from './MobileNav'
 import type { LucideIcon } from 'lucide-react'
 
@@ -39,6 +41,7 @@ interface NavItem {
   label: string
   path: string
   locked?: boolean
+  badgeKey?: 'runningAnalyses' // Key for dynamic badge count
 }
 
 interface NavSection {
@@ -68,6 +71,7 @@ const navigationSections: NavSection[] = [
       { icon: Building2, label: 'Mon Entreprise', path: '/my-company' },
       { icon: Eye, label: 'Watchlist', path: '/watchlist' },
       { icon: PlayCircle, label: 'Lancer Analyse', path: '/launch-analysis' },
+      { icon: Activity, label: 'Mes Analyses', path: '/my-analyses', badgeKey: 'runningAnalyses' },
       { icon: FileText, label: 'Résultats', path: '/results' },
     ]
   },
@@ -116,13 +120,20 @@ const navigationSections: NavSection[] = [
   },
 ]
 
+// Badge counts type
+interface BadgeCounts {
+  runningAnalyses: number
+}
+
 // Collapsible Menu Section Component
 function CollapsibleSection({
   section,
-  isCollapsed
+  isCollapsed,
+  badgeCounts
 }: {
   section: typeof navigationSections[0]
   isCollapsed: boolean
+  badgeCounts: BadgeCounts
 }) {
   const [isExpanded, setIsExpanded] = useState(true)
   const location = useLocation()
@@ -224,6 +235,8 @@ function CollapsibleSection({
                 )
               }
 
+              const badgeCount = item.badgeKey ? badgeCounts[item.badgeKey] : 0
+
               return (
                 <NavLink key={item.path} to={item.path} className="block">
                   <motion.div
@@ -237,6 +250,11 @@ function CollapsibleSection({
                     <span className={`sidebar-nav-label ${isActive ? 'active' : ''}`}>
                       {item.label}
                     </span>
+                    {badgeCount > 0 && (
+                      <span className="ml-auto px-2 py-0.5 text-xs font-semibold rounded-full bg-blue-500/20 text-blue-400 animate-pulse">
+                        {badgeCount}
+                      </span>
+                    )}
                   </motion.div>
                 </NavLink>
               )
@@ -253,6 +271,12 @@ function ModernSidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const { toggleTheme, isDark } = useTheme()
+  const { runningAnalyses } = useAnalysis()
+
+  // Badge counts for navigation items
+  const badgeCounts: BadgeCounts = {
+    runningAnalyses: runningAnalyses.length
+  }
 
   return (
     <motion.aside
@@ -320,6 +344,7 @@ function ModernSidebar() {
             key={section.id}
             section={section}
             isCollapsed={isCollapsed}
+            badgeCounts={badgeCounts}
           />
         ))}
       </nav>

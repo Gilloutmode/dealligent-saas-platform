@@ -55,6 +55,14 @@ export interface ToastProviderProps {
   maxToasts?: number
 }
 
+// Event detail type for analysis completion
+interface AnalysisCompleteEventDetail {
+  id: string
+  competitor: string
+  status: 'completed' | 'failed'
+  error?: string
+}
+
 export const ToastProvider: React.FC<ToastProviderProps> = ({
   children,
   position = "bottom-right",
@@ -79,6 +87,35 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({
   const removeToast = React.useCallback((id: string) => {
     setToasts((prev) => prev.filter((t) => t.id !== id))
   }, [])
+
+  // Listen for analysis-complete custom events
+  React.useEffect(() => {
+    const handleAnalysisComplete = (event: Event) => {
+      const detail = (event as CustomEvent<AnalysisCompleteEventDetail>).detail
+      console.log('[Toast] Received analysis-complete event:', detail)
+
+      if (detail.status === 'completed') {
+        addToast({
+          type: 'success',
+          title: 'Analyse terminée',
+          description: `L'analyse de ${detail.competitor} est prête à consulter`,
+        })
+      } else {
+        addToast({
+          type: 'error',
+          title: 'Échec de l\'analyse',
+          description: detail.error || `L'analyse de ${detail.competitor} a échoué`,
+        })
+      }
+    }
+
+    window.addEventListener('analysis-complete', handleAnalysisComplete)
+    console.log('[Toast] Event listener registered for analysis-complete')
+
+    return () => {
+      window.removeEventListener('analysis-complete', handleAnalysisComplete)
+    }
+  }, [addToast])
 
   // Position classes
   const positionClasses = {

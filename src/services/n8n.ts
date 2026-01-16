@@ -94,17 +94,32 @@ export async function launchAnalysis(
       )
     }
 
-    const data = await response.json() as N8nAnalysisResponse
+    const data = await response.json()
 
-    // Validate response structure
-    if (typeof data.success !== 'boolean') {
-      throw new N8nError(
-        'Invalid response format from n8n',
-        'INVALID_RESPONSE'
-      )
+    // Debug logging - log raw response
+    console.log('[n8n] Raw response received:', JSON.stringify(data, null, 2))
+
+    // Handle explicit error from n8n
+    if (data.success === false && data.error) {
+      console.error('[n8n] Server returned error:', data.error)
+      throw new N8nError(data.error, 'SERVER')
     }
 
-    return data
+    // Normalize response - be permissive with format
+    // If response has data but no explicit success field, treat as success
+    const normalizedResponse: N8nAnalysisResponse = {
+      success: data.success !== false, // true unless explicitly false
+      data: data.data || data, // Use data field if exists, otherwise use whole response
+      timestamp: data.timestamp || new Date().toISOString(),
+    }
+
+    console.log('[n8n] Normalized response:', {
+      success: normalizedResponse.success,
+      hasData: !!normalizedResponse.data,
+      timestamp: normalizedResponse.timestamp,
+    })
+
+    return normalizedResponse
   } catch (error) {
     clearTimeout(timeoutId)
 
