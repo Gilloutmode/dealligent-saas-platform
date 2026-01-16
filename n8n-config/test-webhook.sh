@@ -130,9 +130,9 @@ HTTP_RESPONSE=$(curl -s -w "\n%{http_code}" -X POST \
   -H 'Content-Type: application/json' \
   -d "$PAYLOAD")
 
-# Extract body and status code
-HTTP_BODY=$(echo "$HTTP_RESPONSE" | head -n -1)
+# Extract body and status code (macOS compatible)
 HTTP_STATUS=$(echo "$HTTP_RESPONSE" | tail -n 1)
+HTTP_BODY=$(echo "$HTTP_RESPONSE" | sed '$d')
 
 echo "Status: $HTTP_STATUS"
 echo ""

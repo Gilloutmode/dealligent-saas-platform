@@ -11,8 +11,18 @@ Configurer le workflow n8n existant CDS-RAG PROD V11.2 pour recevoir les requete
 - [x] Task 1: Creer le fichier de configuration n8n detaille (n8n-config/webhook-setup.md)
 - [x] Task 2: Creer le script de test curl (n8n-config/test-webhook.sh)
 - [x] Task 3: Documenter le mapping des champs vers le workflow existant
-- [ ] Task 4: Tester manuellement le webhook avec le script curl
-- [ ] Task 5: Valider la reponse JSON {success, analysis_id, estimated_duration}
+- [x] Task 4: Fix script macOS compatibility (head -n -1 → sed)
+- [ ] Task 5: Tester webhook (REQUIRES: n8n workflow in test mode)
+- [ ] Task 6: Valider la reponse JSON {success, analysis_id, estimated_duration}
+
+## Prerequisites for Testing
+
+> **Important**: Tasks 5-6 require the n8n workflow to be in test mode.
+>
+> 1. Go to https://gilloutmode.app.n8n.cloud
+> 2. Open workflow: **CDS-RAG PROD - V11.2**
+> 3. Click "Execute workflow" button (enables webhook-test URL)
+> 4. Run: `./n8n-config/test-webhook.sh basic`
 
 ## n8n Node Configuration
 
