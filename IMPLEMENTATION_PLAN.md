@@ -1,112 +1,69 @@
-# Implementation Plan: n8n Webhook Configuration CDS-RAG PROD V11.2
+# Implementation Plan: LaunchAnalysis Refactoring
 
-> **Scope**: n8n config only | **Risk**: Conservative | **Validation**: Manual curl testing
+> **Scope**: Single file refactor | **Risk**: Aggressive | **Validation**: npm run build
 
 ## Summary
 
-Configurer le workflow n8n existant CDS-RAG PROD V11.2 pour recevoir les requetes JSON du frontend Dealligent via webhook, generer un analysis_id, et retourner une reponse immediate pendant que l'analyse s'execute en arriere-plan.
+Refactor LaunchAnalysis.tsx from a 4-step wizard with fake animation to a single-page form with 4 CollapsibleSections, sticky footer, and integration with AnalysisContext for async analysis management.
 
 ## Tasks
 
-- [x] Task 1: Creer le fichier de configuration n8n detaille (n8n-config/webhook-setup.md)
-- [x] Task 2: Creer le script de test curl (n8n-config/test-webhook.sh)
-- [x] Task 3: Documenter le mapping des champs vers le workflow existant
-- [x] Task 4: Fix script macOS compatibility (head -n -1 → sed)
-- [ ] Task 5: Tester webhook (REQUIRES: n8n workflow in test mode)
-- [ ] Task 6: Valider la reponse JSON {success, analysis_id, estimated_duration}
+- [x] Task 1: Remove wizard infrastructure (step state, LaunchAnimation component, step indicator, prev/next buttons)
+- [ ] Task 2: Create new state structure (expandedSection, analysisType, selectedCompetitor, sources, modals)
+- [ ] Task 3: Extract AnalysisTypeCard to separate file or keep inline, simplify for single-page use
+- [ ] Task 4: Implement Section 1 (Type d'analyse) with CollapsibleSection wrapper
+- [ ] Task 5: Implement Section 2 (Concurrent à analyser) with single-select competitor grid
+- [ ] Task 6: Implement Section 3 (Sources de données) with Switch toggles
+- [ ] Task 7: Implement Section 4 (Options avancées) as placeholder with CollapsibleSection
+- [ ] Task 8: Implement sticky footer with summary and launch button
+- [ ] Task 9: Integrate LaunchChoiceModal and useSavedPreference
+- [ ] Task 10: Integrate ProgressOverlay for "wait" choice
+- [ ] Task 11: Add navigation to /my-analyses for "notify" choice
+- [ ] Task 12: Final cleanup and build validation
 
-## Prerequisites for Testing
-
-> **Important**: Tasks 5-6 require the n8n workflow to be in test mode.
->
-> 1. Go to https://gilloutmode.app.n8n.cloud
-> 2. Open workflow: **CDS-RAG PROD - V11.2**
-> 3. Click "Execute workflow" button (enables webhook-test URL)
-> 4. Run: `./n8n-config/test-webhook.sh basic`
-
-## n8n Node Configuration
-
-### Webhook Node Settings
-
-```yaml
-Node: Webhook
-HTTP Method: POST
-Path: 61ea8949-d762-49f1-8f5c-75169b5a4190
-Authentication: None (MVP)
-Response Mode: Using 'Respond to Webhook' Node
-```
-
-### Code Node - UUID Generation
-
-```javascript
-// Node: Generate Analysis ID
-function generateUUID() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-    const r = Math.random() * 16 | 0;
-    const v = c === 'x' ? r : (r & 0x3 | 0x8);
-    return v.toString(16);
-  });
-}
-
-return {
-  json: {
-    ...items[0].json,
-    analysis_id: generateUUID(),
-    received_at: new Date().toISOString()
-  }
-};
-```
-
-### Set Node - Format Response
-
-```yaml
-Node: Set Response
-Mode: Raw JSON
-Value: |
-  {
-    "success": true,
-    "analysis_id": "{{ $json.analysis_id }}",
-    "estimated_duration": 120
-  }
-```
-
-### Respond to Webhook Node
-
-```yaml
-Node: Respond to Webhook
-Respond With: First Entry JSON
-Response Code: 200
-```
-
-## Workflow Architecture
+## Component Dependencies
 
 ```
-[Webhook POST]
-    ↓
-[Code: Generate UUID]
-    ↓
-[Set: Format Response] → [Respond to Webhook: 200 OK]
-    ↓
-[Continue: Process Analysis in background]
-    ↓
-[IF: Check sources.perplexity] → [Perplexity Node]
-[IF: Check sources.exaDeep] → [Exa Node]
-[IF: Check sources.serpNews] → [SerpAPI Node]
-    ↓
-[Merge Results]
-    ↓
-[Claude Opus 4.5: Generate Report]
-    ↓
-[PostgreSQL: Save with analysis_id]
+src/components/analysis/
+├── CollapsibleSection.tsx  ✓
+├── LaunchChoiceModal.tsx   ✓
+├── ProgressOverlay.tsx     ✓
+└── useSavedPreference      ✓ (exported from LaunchChoiceModal)
+
+src/contexts/AnalysisContext.tsx
+└── useAnalysis().launchAnalysis(config)  ✓
+
+src/components/ui/FormControls.tsx
+└── Switch  ✓
+
+src/types/analysis.ts
+└── ANALYSIS_DURATION_ESTIMATES  ✓
 ```
 
-## Field Access in Workflow
+## New State Structure
 
-| Payload Field | n8n Expression |
-|---------------|----------------|
-| analysis_type | `{{ $json.analysis_type }}` |
-| competitors[0] | `{{ $json.competitors[0] }}` |
-| all competitors | `{{ $json.competitors.join(', ') }}` |
-| perplexity enabled | `{{ $json.sources.perplexity }}` |
-| company name | `{{ $json.company_context.name }}` |
-| industry | `{{ $json.company_context.industry }}` |
+```typescript
+// Expanded section (only one at a time)
+const [expandedSection, setExpandedSection] = useState<string | null>('type')
+
+// Form data
+const [analysisType, setAnalysisType] = useState<'quick' | 'standard' | 'deep' | null>(null)
+const [selectedCompetitor, setSelectedCompetitor] = useState<string | null>(null)
+const [sources, setSources] = useState({
+  perplexity: true,
+  exa: true,
+  serpNews: true,
+  serpLinkedIn: true,
+})
+
+// UI state
+const [showChoiceModal, setShowChoiceModal] = useState(false)
+const [showProgressOverlay, setShowProgressOverlay] = useState(false)
+const [currentAnalysisId, setCurrentAnalysisId] = useState<string | null>(null)
+```
+
+## Validation Command
+
+```bash
+npm run build
+```
