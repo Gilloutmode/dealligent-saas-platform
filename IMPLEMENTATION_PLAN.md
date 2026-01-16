@@ -14,7 +14,7 @@ Refactor LaunchAnalysis.tsx from a 4-step wizard with fake animation to a single
 - [x] Task 4: Implement Section 1 (Type d'analyse) with CollapsibleSection wrapper
 - [x] Task 5: Implement Section 2 (Concurrent à analyser) with single-select competitor grid
 - [x] Task 6: Implement Section 3 (Sources de données) with Switch toggles
-- [ ] Task 7: Implement Section 4 (Options avancées) as placeholder with CollapsibleSection
+- [x] Task 7: Implement Section 4 (Options avancées) as placeholder with CollapsibleSection
 - [x] Task 8: Implement sticky footer with summary and launch button
 - [x] Task 9: Integrate LaunchChoiceModal and useSavedPreference
 - [x] Task 10: Integrate ProgressOverlay for "wait" choice
@@ -25,7 +25,8 @@ Refactor LaunchAnalysis.tsx from a 4-step wizard with fake animation to a single
 
 - Task 3: Extracted AnalysisTypeCard.tsx and SourceCard.tsx to src/components/analysis/
 - Tasks 4-6: Implemented as static sections (always visible) rather than CollapsibleSection wrappers for simpler UX
-- LaunchAnalysis.tsx reduced from 525 lines to 345 lines
+- Task 7: Added Section 4 (Options avancées) as a CollapsibleSection placeholder, collapsed by default
+- LaunchAnalysis.tsx now at 372 lines (note: exceeds 300-line guideline, consider splitting in future)
 
 ## Component Dependencies
 

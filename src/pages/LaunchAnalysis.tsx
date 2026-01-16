@@ -14,6 +14,7 @@ import {
   Rocket,
   Shield,
   Sparkles,
+  Settings2,
 } from 'lucide-react'
 import { competitors, companyInfo } from '../data/clientData'
 import { useAnalysis } from '../contexts/AnalysisContext'
@@ -21,6 +22,7 @@ import { LaunchChoiceModal, useSavedPreference } from '../components/analysis/La
 import { ProgressOverlay } from '../components/analysis/ProgressOverlay'
 import { AnalysisTypeCard } from '../components/analysis/AnalysisTypeCard'
 import { SourceCard } from '../components/analysis/SourceCard'
+import { CollapsibleSection } from '../components/analysis/CollapsibleSection'
 import { ANALYSIS_DURATION_ESTIMATES } from '../types/analysis'
 
 const containerVariants = {
@@ -90,10 +92,11 @@ export function LaunchAnalysisPage() {
     serpLinkedIn: true,
   })
 
-  // UI state for modals
+  // UI state for modals and sections
   const [showChoiceModal, setShowChoiceModal] = useState(false)
   const [showProgressOverlay, setShowProgressOverlay] = useState(false)
   const [currentAnalysisId, setCurrentAnalysisId] = useState<string | null>(null)
+  const [advancedExpanded, setAdvancedExpanded] = useState(false)
 
   // Get current analysis for progress overlay
   const currentAnalysis = currentAnalysisId
@@ -279,6 +282,30 @@ export function LaunchAnalysisPage() {
             agent="SerpAPI LinkedIn"
           />
         </div>
+      </motion.div>
+
+      {/* Section 4: Advanced Options (Collapsible) */}
+      <motion.div variants={itemVariants}>
+        <CollapsibleSection
+          title="4. Options avancées"
+          subtitle="Personnalisez les paramètres de l'analyse"
+          icon={<Settings2 className="w-5 h-5" />}
+          isExpanded={advancedExpanded}
+          onToggle={() => setAdvancedExpanded(!advancedExpanded)}
+          optional
+          summary="Paramètres par défaut"
+        >
+          <div className="space-y-4">
+            <div className="card-glass p-4 text-center">
+              <p className="text-secondary text-sm">
+                Les options avancées seront disponibles dans une prochaine version.
+              </p>
+              <p className="text-xs text-tertiary mt-2">
+                Profondeur de recherche • Filtres temporels • Export personnalisé
+              </p>
+            </div>
+          </div>
+        </CollapsibleSection>
       </motion.div>
 
       {/* Sticky Footer with Summary and Launch Button */}
