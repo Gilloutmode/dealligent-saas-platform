@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
   Play,
   Search,
@@ -16,6 +17,10 @@ import {
   Shield,
 } from 'lucide-react'
 import { competitors, companyInfo } from '../data/clientData'
+import { useAnalysis } from '../contexts/AnalysisContext'
+import { LaunchChoiceModal, useSavedPreference } from '../components/analysis/LaunchChoiceModal'
+import { ProgressOverlay } from '../components/analysis/ProgressOverlay'
+import { ANALYSIS_DURATION_ESTIMATES } from '../types/analysis'
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -196,8 +201,12 @@ function SourceCard({ icon, name, description, isEnabled, onToggle, isPremium, a
 }
 
 export function LaunchAnalysisPage() {
+  const navigate = useNavigate()
+  const { launchAnalysis, analyses, getProgress } = useAnalysis()
+  const savedPreference = useSavedPreference()
+
   // Form state
-  const [selectedType, setSelectedType] = useState<string | null>(null)
+  const [analysisType, setAnalysisType] = useState<'quick' | 'standard' | 'deep' | null>(null)
   const [selectedCompetitor, setSelectedCompetitor] = useState<string | null>(null)
   const [sources, setSources] = useState({
     perplexity: true,
@@ -205,6 +214,16 @@ export function LaunchAnalysisPage() {
     serpNews: true,
     serpLinkedIn: true,
   })
+
+  // UI state for modals
+  const [showChoiceModal, setShowChoiceModal] = useState(false)
+  const [showProgressOverlay, setShowProgressOverlay] = useState(false)
+  const [currentAnalysisId, setCurrentAnalysisId] = useState<string | null>(null)
+
+  // Get current analysis for progress overlay
+  const currentAnalysis = currentAnalysisId
+    ? analyses.find(a => a.id === currentAnalysisId) ?? null
+    : null
 
   // Analysis types matching n8n workflow
   const analysisTypes = [
@@ -251,7 +270,54 @@ export function LaunchAnalysisPage() {
   }))
 
   // Check if form is complete for launch
-  const canLaunch = selectedType !== null && selectedCompetitor !== null
+  const canLaunch = analysisType !== null && selectedCompetitor !== null
+
+  // Handle launch button click
+  const handleLaunchClick = () => {
+    if (!canLaunch) return
+
+    // If user has saved preference, skip modal and launch directly
+    if (savedPreference) {
+      handleLaunch(savedPreference)
+    } else {
+      setShowChoiceModal(true)
+    }
+  }
+
+  // Handle the actual launch after choice
+  const handleLaunch = async (choice: 'wait' | 'notify') => {
+    if (!analysisType || !selectedCompetitor) return
+
+    const competitorName = competitorsList.find(c => c.id === selectedCompetitor)?.name ?? selectedCompetitor
+
+    const id = await launchAnalysis({
+      competitor: competitorName,
+      analysisType,
+      sources,
+      userChoice: choice,
+    })
+
+    setCurrentAnalysisId(id)
+
+    if (choice === 'wait') {
+      setShowProgressOverlay(true)
+    } else {
+      // Navigate to my-analyses page
+      navigate('/my-analyses')
+    }
+  }
+
+  // Handle progress overlay dismiss
+  const handleDismissProgress = () => {
+    setShowProgressOverlay(false)
+    navigate('/my-analyses')
+  }
+
+  // Handle analysis completion while watching
+  const handleAnalysisComplete = () => {
+    setShowProgressOverlay(false)
+    navigate('/results')
+  }
 
   return (
     <motion.div
@@ -287,8 +353,8 @@ export function LaunchAnalysisPage() {
             <AnalysisTypeCard
               key={type.id}
               {...type}
-              isSelected={selectedType === type.id}
-              onSelect={() => setSelectedType(type.id)}
+              isSelected={analysisType === type.id}
+              onSelect={() => setAnalysisType(type.id as 'quick' | 'standard' | 'deep')}
             />
           ))}
         </div>
@@ -401,7 +467,7 @@ export function LaunchAnalysisPage() {
             <div className="flex items-center gap-2">
               <Target className="w-4 h-4 text-purple-400" />
               <span className="text-secondary">
-                {selectedType ? analysisTypes.find(t => t.id === selectedType)?.title : 'Aucun type'}
+                {analysisType ? analysisTypes.find(t => t.id === analysisType)?.title : 'Aucun type'}
               </span>
             </div>
             <div className="flex items-center gap-2">
@@ -421,6 +487,7 @@ export function LaunchAnalysisPage() {
           </div>
 
           <button
+            onClick={handleLaunchClick}
             disabled={!canLaunch}
             className="btn-premium flex items-center gap-2 px-8 disabled:opacity-50 disabled:cursor-not-allowed"
           >
@@ -432,6 +499,25 @@ export function LaunchAnalysisPage() {
 
       {/* Spacer for sticky footer */}
       <div className="h-20" />
+
+      {/* Launch Choice Modal */}
+      <LaunchChoiceModal
+        open={showChoiceModal}
+        onClose={() => setShowChoiceModal(false)}
+        onChoice={handleLaunch}
+        competitor={competitorsList.find(c => c.id === selectedCompetitor)?.name ?? ''}
+        analysisType={analysisTypes.find(t => t.id === analysisType)?.title ?? ''}
+        estimatedDuration={analysisType ? ANALYSIS_DURATION_ESTIMATES[analysisType] : 120}
+      />
+
+      {/* Progress Overlay */}
+      <ProgressOverlay
+        open={showProgressOverlay}
+        analysis={currentAnalysis}
+        progress={currentAnalysisId ? getProgress(currentAnalysisId) : 0}
+        onDismiss={handleDismissProgress}
+        onComplete={handleAnalysisComplete}
+      />
     </motion.div>
   )
 }

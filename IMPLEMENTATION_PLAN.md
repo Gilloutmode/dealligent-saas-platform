@@ -9,7 +9,7 @@ Refactor LaunchAnalysis.tsx from a 4-step wizard with fake animation to a single
 ## Tasks
 
 - [x] Task 1: Remove wizard infrastructure (step state, LaunchAnimation component, step indicator, prev/next buttons)
-- [ ] Task 2: Create new state structure (expandedSection, analysisType, selectedCompetitor, sources, modals)
+- [x] Task 2: Create new state structure (expandedSection, analysisType, selectedCompetitor, sources, modals)
 - [ ] Task 3: Extract AnalysisTypeCard to separate file or keep inline, simplify for single-page use
 - [ ] Task 4: Implement Section 1 (Type d'analyse) with CollapsibleSection wrapper
 - [ ] Task 5: Implement Section 2 (Concurrent à analyser) with single-select competitor grid
