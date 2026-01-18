@@ -52,3 +52,20 @@ export type {
   LabelProps,
   FormFieldProps,
 } from "./Input"
+
+// =============================================================================
+// AURORA DESIGN SYSTEM COMPONENTS
+// =============================================================================
+
+// GlassPanel - Enterprise-grade glass morphism panel
+export { GlassPanel } from "./GlassPanel"
+
+// IconWrapper - Icon with glow effect
+export { IconWrapper } from "./IconWrapper"
+
+// RotatingEarth - Interactive 3D globe
+export { default as RotatingEarth } from "./RotatingEarth"
+
+// AuroraStatusBadge - Threat level status badge
+export { AuroraStatusBadge } from "./AuroraStatusBadge"
+export type { ThreatLevel } from "./AuroraStatusBadge"

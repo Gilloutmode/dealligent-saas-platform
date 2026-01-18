@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useNavigate, Link } from 'react-router-dom'
 import {
@@ -9,12 +9,12 @@ import {
   Activity,
   TrendingUp,
   BarChart3,
-  RefreshCw,
   Shield,
   Play,
   PieChart as PieChartIcon,
   Clock,
   Zap,
+  Database,
 } from 'lucide-react'
 import {
   PieChart,
@@ -30,13 +30,15 @@ import {
 import { competitors } from '../data/clientData'
 import { useAnalysis } from '../contexts/AnalysisContext'
 import { EnrichedKPICard } from '../components/ui/EnrichedKPICard'
-import { PremiumCard } from '../components/ui/PremiumCard'
+import { GlassPanel } from '../components/ui/GlassPanel'
+import { IconWrapper } from '../components/ui/IconWrapper'
+import { AuroraStatusBadge } from '../components/ui/AuroraStatusBadge'
 import { useTheme } from '../contexts/ThemeContext'
 
 // =============================================================================
-// DASHBOARD PAGE - PREMIUM DESIGN
+// DASHBOARD PAGE - AURORA GLASS DESIGN
 // Clean KPIs with NumberTicker + Charts + Recent Analyses
-// Full light/dark mode support with cohesive design
+// Full light/dark mode support with Aurora cosmic design
 // =============================================================================
 
 const containerVariants = {
@@ -67,53 +69,63 @@ const THREAT_COLORS = {
 }
 
 function ThreatDistributionChart({ data }: { data: { name: string; value: number; color: string }[] }) {
-  const { isDark } = useTheme()
-
   return (
     <motion.div variants={itemVariants} className="h-full">
-      <PremiumCard variant="orange" enableHover delay={0.1} className="h-full">
-        <div className="h-full flex flex-col">
-          <div className="flex items-center gap-3 mb-5">
-            <div className="p-2.5 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 shadow-lg shadow-amber-500/25">
-              <PieChartIcon className="w-5 h-5 text-white" />
-            </div>
-            <h3 className={`text-lg font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-              Distribution des Menaces
-            </h3>
+      <GlassPanel className="h-full p-6 flex flex-col">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="p-2 rounded-lg bg-[var(--bg-surface-active)] border border-[var(--border-subtle)]">
+            <IconWrapper color="var(--c-brand)" glow={false}>
+              <PieChartIcon className="w-5 h-5 text-[var(--c-brand)]" />
+            </IconWrapper>
           </div>
-          <div className="flex-1 flex items-center gap-6">
-            <div className="w-32 h-32">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={data}
-                    innerRadius={35}
-                    outerRadius={55}
-                    paddingAngle={4}
-                    dataKey="value"
-                    strokeWidth={0}
-                  >
-                    {data.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                </PieChart>
-              </ResponsiveContainer>
+          <h3 className="text-lg font-bold text-[var(--text-primary)] tracking-tight">
+            Distribution des Menaces
+          </h3>
+        </div>
+
+        <div className="flex-1 flex flex-col items-center justify-center gap-6 py-4">
+          <div className="w-full aspect-square max-w-[180px] relative mx-auto">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={data}
+                  innerRadius="60%"
+                  outerRadius="85%"
+                  paddingAngle={5}
+                  dataKey="value"
+                  stroke="var(--bg-surface)"
+                  strokeWidth={2}
+                >
+                  {data.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+              </PieChart>
+            </ResponsiveContainer>
+            {/* Center Text */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+              <span className="text-3xl font-black text-[var(--text-primary)]">
+                {data.reduce((acc, curr) => acc + curr.value, 0)}
+              </span>
+              <span className="text-[10px] text-[var(--text-secondary)] uppercase font-bold tracking-widest">
+                Total
+              </span>
             </div>
-            <div className="flex-1 space-y-3">
-              {data.map((item) => (
-                <div key={item.name} className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }} />
-                    <span className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{item.name}</span>
-                  </div>
-                  <span className={`text-sm font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>{item.value}</span>
+          </div>
+
+          <div className="w-full grid grid-cols-1 gap-2 pt-4 border-t border-[var(--border-subtle)]">
+            {data.map((item) => (
+              <div key={item.name} className="flex items-center justify-between px-2 py-1">
+                <div className="flex items-center gap-3">
+                  <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: item.color, boxShadow: `0 0 10px ${item.color}40` }} />
+                  <span className="text-xs font-medium text-[var(--text-secondary)]">{item.name}</span>
                 </div>
-              ))}
-            </div>
+                <span className="text-sm font-bold text-[var(--text-primary)] tabular-nums">{item.value}</span>
+              </div>
+            ))}
           </div>
         </div>
-      </PremiumCard>
+      </GlassPanel>
     </motion.div>
   )
 }
@@ -122,24 +134,6 @@ function ThreatDistributionChart({ data }: { data: { name: string; value: number
 // RECENT ANALYSES LIST
 // =============================================================================
 
-const threatDotColors = {
-  HIGH: 'bg-red-500',
-  MEDIUM: 'bg-amber-500',
-  LOW: 'bg-emerald-500',
-}
-
-const threatBadgeStylesDark = {
-  HIGH: 'bg-red-500/15 text-red-400 border-red-500/20',
-  MEDIUM: 'bg-amber-500/15 text-amber-400 border-amber-500/20',
-  LOW: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/20',
-}
-
-const threatBadgeStylesLight = {
-  HIGH: 'bg-red-50 text-red-600 border-red-200',
-  MEDIUM: 'bg-amber-50 text-amber-600 border-amber-200',
-  LOW: 'bg-emerald-50 text-emerald-600 border-emerald-200',
-}
-
 function formatRelativeTime(isoString: string): string {
   const date = new Date(isoString)
   const now = new Date()
@@ -147,94 +141,86 @@ function formatRelativeTime(isoString: string): string {
   const diffHours = Math.floor(diffMs / (1000 * 60 * 60))
   const diffDays = Math.floor(diffHours / 24)
 
-  if (diffHours < 1) return 'Il y a quelques minutes'
+  if (diffHours < 1) return 'À l\'instant'
   if (diffHours < 24) return `Il y a ${diffHours}h`
   if (diffDays === 1) return 'Hier'
-  return `Il y a ${diffDays} jours`
+  return `Il y a ${diffDays}j`
 }
 
 function RecentAnalysesList() {
   const { completedAnalyses } = useAnalysis()
-  const { isDark } = useTheme()
   const recentAnalyses = completedAnalyses.slice(0, 5)
-  const threatBadgeStyles = isDark ? threatBadgeStylesDark : threatBadgeStylesLight
 
   if (recentAnalyses.length === 0) {
     return (
       <motion.div variants={itemVariants} className="h-full">
-        <PremiumCard variant="purple" enableHover delay={0.05} className="h-full">
-          <div className="h-full flex flex-col">
-            <div className="flex items-center gap-3 mb-5">
-              <div className="p-2.5 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 shadow-lg shadow-violet-500/25">
-                <Target className="w-5 h-5 text-white" />
-              </div>
-              <h3 className={`text-lg font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                Analyses Récentes
-              </h3>
-            </div>
-            <div className="flex-1 flex flex-col items-center justify-center py-8">
-              <Target className={`w-12 h-12 ${isDark ? 'text-gray-600' : 'text-gray-400'} mx-auto mb-3`} />
-              <p className={`text-sm ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>Aucune analyse complétée</p>
-              <Link
-                to="/launch-analysis"
-                className="inline-flex items-center gap-1.5 mt-3 text-sm text-blue-500 hover:text-blue-400 hover:underline"
-              >
-                <Play className="w-4 h-4" />
-                Lancer une analyse
-              </Link>
-            </div>
+        <GlassPanel className="h-full p-6 flex flex-col items-center justify-center text-center">
+          <div className="w-16 h-16 rounded-2xl bg-[var(--bg-surface-active)] flex items-center justify-center mb-4">
+            <Target className="w-8 h-8 text-[var(--text-secondary)]" />
           </div>
-        </PremiumCard>
+          <h3 className="text-lg font-medium text-[var(--text-primary)] mb-1">Aucune analyse</h3>
+          <p className="text-sm text-[var(--text-secondary)] mb-4">Lancez votre première analyse concurrentielle</p>
+          <Link
+            to="/launch-analysis"
+            className="btn-aurora-primary px-4 py-2 text-sm"
+          >
+            <Play className="w-4 h-4" />
+            Nouvelle Analyse
+          </Link>
+        </GlassPanel>
       </motion.div>
     )
   }
 
   return (
     <motion.div variants={itemVariants} className="h-full">
-      <PremiumCard variant="purple" enableHover delay={0.05} className="h-full">
-        <div className="h-full flex flex-col">
-          <div className="flex items-center gap-3 mb-5">
-            <div className="p-2.5 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 shadow-lg shadow-violet-500/25">
-              <Target className="w-5 h-5 text-white" />
+      <GlassPanel className="h-full p-0 flex flex-col">
+        <div className="p-6 border-b border-[var(--border-subtle)] flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-[var(--bg-surface-active)] border border-[var(--border-subtle)]">
+              <IconWrapper color="var(--c-brand)" glow={false}>
+                <Target className="w-5 h-5 text-[var(--c-brand)]" />
+              </IconWrapper>
             </div>
-            <h3 className={`text-lg font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+            <h3 className="text-lg font-bold text-[var(--text-primary)] tracking-tight">
               Analyses Récentes
             </h3>
           </div>
-          <div className="flex-1 space-y-1">
-            {recentAnalyses.map((analysis) => {
-              const threatLevel = (analysis.response?.data?.threatLevel || 'MEDIUM') as keyof typeof threatDotColors
-              return (
-                <div
-                  key={analysis.id}
-                  className={`flex items-center justify-between py-3 border-b last:border-0 ${
-                    isDark ? 'border-white/10' : 'border-gray-200'
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <div className={`w-2 h-2 rounded-full ${threatDotColors[threatLevel]}`} />
-                    <span className={`text-sm ${isDark ? 'text-white' : 'text-gray-900'}`}>{analysis.competitor}</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span className={`text-xs ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
-                      {analysis.completedAt ? formatRelativeTime(analysis.completedAt) : '-'}
-                    </span>
-                    <span className={`text-xs px-2 py-0.5 rounded-full border ${threatBadgeStyles[threatLevel]}`}>
-                      {threatLevel}
-                    </span>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-          <Link
-            to="/results"
-            className="block text-center text-sm text-blue-500 hover:text-blue-400 hover:underline mt-4"
-          >
-            Voir toutes les analyses →
+          <Link to="/results" className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-secondary)] hover:text-[var(--c-brand)] transition-colors">
+            Voir tout
           </Link>
         </div>
-      </PremiumCard>
+
+        <div className="flex-1 overflow-auto">
+          {recentAnalyses.map((analysis) => {
+            const threatLevel = (analysis.response?.data?.threatLevel || 'MEDIUM').toLowerCase()
+            const competitorName = analysis.competitor || 'Inconnu'
+            const companyInitial = competitorName.charAt(0).toUpperCase()
+
+            return (
+              <div
+                key={analysis.id}
+                className="group flex items-center justify-between p-4 border-b border-[var(--border-subtle)] last:border-0 hover:bg-[var(--bg-surface-hover)] transition-colors"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-lg bg-[var(--bg-surface-active)] border border-[var(--border-subtle)] flex items-center justify-center text-[var(--text-secondary)] font-bold">
+                    {companyInitial}
+                  </div>
+                  <div>
+                    <div className="font-medium text-[var(--text-primary)]">{competitorName}</div>
+                    <div className="text-xs text-[var(--text-secondary)] flex items-center gap-2">
+                      <Clock className="w-3 h-3" />
+                      {analysis.completedAt ? formatRelativeTime(analysis.completedAt) : '-'}
+                    </div>
+                  </div>
+                </div>
+
+                <AuroraStatusBadge level={threatLevel} size="sm" />
+              </div>
+            )
+          })}
+        </div>
+      </GlassPanel>
     </motion.div>
   )
 }
@@ -268,56 +254,68 @@ function ActivityTimelineChart() {
 
   return (
     <motion.div variants={itemVariants}>
-      <PremiumCard variant="cyan" enableHover delay={0.15}>
-        <div className="flex items-center gap-3 mb-5">
-          <div className="p-2.5 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 shadow-lg shadow-cyan-500/25">
-            <Activity className="w-5 h-5 text-white" />
+      <GlassPanel className="p-6">
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-[var(--bg-surface-active)] border border-[var(--border-subtle)]">
+              <IconWrapper color="var(--c-brand)" glow={false}>
+                <Activity className="w-5 h-5 text-[var(--c-brand)]" />
+              </IconWrapper>
+            </div>
+            <h3 className="text-lg font-bold text-[var(--text-primary)] tracking-tight">
+              Activité (7 jours)
+            </h3>
           </div>
-          <h3 className={`text-lg font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-            Activité (7 jours)
-          </h3>
+          <select className="bg-[var(--bg-surface-active)] border border-[var(--border-default)] rounded-lg text-xs px-2 py-1 text-[var(--text-secondary)] outline-none focus:border-[var(--c-brand)]">
+            <option>7 derniers jours</option>
+            <option>30 derniers jours</option>
+          </select>
         </div>
-        <div className="h-48">
+
+        <div className="h-[200px] w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={chartData}>
+            <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
               <defs>
                 <linearGradient id="colorAnalyses" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#0891b2" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="#0891b2" stopOpacity={0} />
+                  <stop offset="5%" stopColor="var(--c-brand)" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="var(--c-brand)" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <XAxis
                 dataKey="name"
                 axisLine={false}
                 tickLine={false}
-                tick={{ fill: isDark ? '#6b7280' : '#9ca3af', fontSize: 12 }}
+                tick={{ fill: isDark ? '#A1A1AA' : '#64748B', fontSize: 12 }}
+                dy={10}
               />
               <YAxis
                 axisLine={false}
                 tickLine={false}
-                tick={{ fill: isDark ? '#6b7280' : '#9ca3af', fontSize: 12 }}
+                tick={{ fill: isDark ? '#A1A1AA' : '#64748B', fontSize: 12 }}
                 allowDecimals={false}
               />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: isDark ? '#1f2937' : '#ffffff',
-                  border: isDark ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0,0,0,0.1)',
-                  borderRadius: '8px',
-                  color: isDark ? '#f9fafb' : '#111827',
+                  backgroundColor: isDark ? '#0F0F10' : '#FFFFFF',
+                  border: isDark ? '1px solid rgba(255,255,255,0.1)' : '1px solid #E2E8F0',
+                  borderRadius: '12px',
+                  color: isDark ? '#EDEDED' : '#0F172A',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.2)'
                 }}
               />
               <Area
                 type="monotone"
                 dataKey="analyses"
-                stroke="#0891b2"
-                strokeWidth={2}
+                stroke="var(--c-brand)"
+                strokeWidth={3}
                 fillOpacity={1}
                 fill="url(#colorAnalyses)"
+                activeDot={{ r: 6, strokeWidth: 0, fill: '#FFFFFF' }}
               />
             </AreaChart>
           </ResponsiveContainer>
         </div>
-      </PremiumCard>
+      </GlassPanel>
     </motion.div>
   )
 }
@@ -328,62 +326,50 @@ function ActivityTimelineChart() {
 
 function QuickActionsSection() {
   const navigate = useNavigate()
-  const { isDark } = useTheme()
 
   const actions = [
-    { label: 'Lancer Analyse', icon: Play, path: '/launch-analysis', variant: 'blue' as const },
-    { label: 'Voir Résultats', icon: BarChart3, path: '/results', variant: 'purple' as const },
-    { label: 'Watchlist', icon: Shield, path: '/watchlist', variant: 'green' as const },
-    { label: 'Mes Analyses', icon: Activity, path: '/my-analyses', variant: 'orange' as const },
+    { label: 'Lancer Analyse', icon: Play, path: '/launch-analysis', description: 'Nouvelle analyse concurrentielle' },
+    { label: 'Voir Résultats', icon: BarChart3, path: '/results', description: 'Historique des analyses' },
+    { label: 'Watchlist', icon: Shield, path: '/watchlist', description: 'Surveillance concurrents' },
+    { label: 'Mes Analyses', icon: Activity, path: '/my-analyses', description: 'Analyses en cours' },
   ]
-
-  const iconBgStyles = {
-    blue: 'bg-gradient-to-br from-blue-500 to-blue-600 shadow-blue-500/25',
-    green: 'bg-gradient-to-br from-emerald-500 to-green-600 shadow-emerald-500/25',
-    orange: 'bg-gradient-to-br from-amber-500 to-orange-600 shadow-amber-500/25',
-    purple: 'bg-gradient-to-br from-violet-500 to-purple-600 shadow-violet-500/25',
-  }
 
   return (
     <motion.div variants={itemVariants}>
-      <PremiumCard variant="green" enableHover delay={0.2}>
-        <div className="flex items-center gap-3 mb-5">
-          <div className="p-2.5 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 shadow-lg shadow-emerald-500/25">
-            <Zap className="w-5 h-5 text-white" />
+      <GlassPanel className="p-6">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="p-2 rounded-lg bg-[var(--bg-surface-active)] border border-[var(--border-subtle)]">
+            <IconWrapper color="var(--c-brand)" glow={false}>
+              <Zap className="w-5 h-5 text-[var(--c-brand)]" />
+            </IconWrapper>
           </div>
-          <h3 className={`text-lg font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+          <h3 className="text-lg font-bold text-[var(--text-primary)] tracking-tight">
             Actions Rapides
           </h3>
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {actions.map((action) => {
             const Icon = action.icon
             return (
-              <motion.button
+              <GlassPanel
                 key={action.path}
+                enableHover
+                className="p-4 flex flex-col gap-3 cursor-pointer"
                 onClick={() => navigate(action.path)}
-                className={`
-                  flex flex-col items-center gap-2 p-4 rounded-xl
-                  border transition-all
-                  ${isDark
-                    ? 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20'
-                    : 'bg-gray-50 border-gray-200 hover:bg-gray-100 hover:border-gray-300'
-                  }
-                `}
-                whileHover={{ y: -4, scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
               >
-                <div className={`p-2.5 rounded-lg ${iconBgStyles[action.variant]} shadow-lg`}>
-                  <Icon className="w-5 h-5 text-white" />
+                <div className="w-10 h-10 rounded-lg bg-[var(--bg-surface-active)] group-hover:bg-[var(--c-brand)] transition-colors flex items-center justify-center border border-[var(--border-subtle)] group-hover:border-[var(--c-brand)]">
+                  <Icon className="w-5 h-5 text-[var(--text-primary)] group-hover:text-white transition-colors" />
                 </div>
-                <span className={`text-sm font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                  {action.label}
-                </span>
-              </motion.button>
+                <div>
+                  <div className="font-semibold text-[var(--text-primary)]">{action.label}</div>
+                  <div className="text-xs text-[var(--text-secondary)]">{action.description}</div>
+                </div>
+              </GlassPanel>
             )
           })}
         </div>
-      </PremiumCard>
+      </GlassPanel>
     </motion.div>
   )
 }
@@ -394,8 +380,13 @@ function QuickActionsSection() {
 
 export function DashboardPage() {
   const navigate = useNavigate()
-  const { isDark } = useTheme()
   const { completedAnalyses, runningAnalyses } = useAnalysis()
+  const [time, setTime] = useState(new Date())
+
+  useEffect(() => {
+    const timer = setInterval(() => setTime(new Date()), 1000)
+    return () => clearInterval(timer)
+  }, [])
 
   // Calculate KPIs
   const totalCompetitors = competitors.length
@@ -443,71 +434,82 @@ export function DashboardPage() {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="p-8 space-y-6 max-w-7xl mx-auto"
+      className="p-8 space-y-8 max-w-[1600px] mx-auto min-h-screen"
     >
-      {/* Premium Welcome Header */}
+      {/* Aurora Glass Header */}
       <motion.div variants={itemVariants}>
-        <PremiumCard variant="default" enableHover={false}>
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className={`text-2xl font-bold flex items-center gap-3 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                <span className="animate-subtle-pulse text-3xl">👋</span>
-                Bienvenue sur Dealligent
-              </h1>
-              <p className={`mt-1 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-                Votre veille concurrentielle intelligente en temps réel
-              </p>
-            </div>
-            <div className="flex items-center gap-4">
-              {/* Live Status Indicator */}
-              <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full ${
-                isDark ? 'bg-emerald-500/10 border border-emerald-500/20' : 'bg-emerald-50 border border-emerald-200'
-              }`}>
-                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-subtle-pulse" />
-                <span className={`text-xs font-medium ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`}>
+        <GlassPanel className="p-8 relative overflow-hidden">
+          {/* Background Effect */}
+          <div className="absolute inset-0 opacity-[0.05] pointer-events-none ambient-data-grid" />
+
+          <div className="relative flex flex-col gap-6">
+            <div className="flex flex-col">
+              <div className="flex items-center gap-3 mb-1">
+                <div className="px-2 py-0.5 rounded-md bg-[var(--c-brand)]/10 border border-[var(--c-brand)]/20 text-[10px] font-bold text-[var(--c-brand)] uppercase tracking-widest">
+                  Intelligence Concurrentielle
+                </div>
+                <div className="flex items-center gap-2 text-[10px] font-bold text-[var(--c-success)] uppercase tracking-widest">
+                  <div className="w-1.5 h-1.5 rounded-full bg-[var(--c-success)] animate-pulse" />
                   Système actif
-                </span>
+                </div>
               </div>
-              {/* Last Update */}
-              <div className={`flex items-center gap-2 text-sm ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
-                <Clock className="w-4 h-4" />
-                <span>Mis à jour il y a 2h</span>
+              <h1 className="text-3xl font-black text-[var(--text-primary)] tracking-tight">
+                Dashboard <span className="text-glow">Dealligent</span>
+              </h1>
+              <div className="flex items-center gap-4 mt-1">
+                <p className="text-[var(--text-secondary)] font-medium">
+                  Pilotage en temps réel de votre veille concurrentielle.
+                </p>
+                <div className="h-4 w-px bg-white/10" />
+                <div className="flex items-center gap-2 tabular-nums text-[10px] font-bold text-[var(--c-brand)] tracking-widest">
+                  <Clock className="w-3 h-3" />
+                  {time.toLocaleTimeString()}
+                </div>
               </div>
+            </div>
+
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => navigate('/launch-analysis')}
+                className="btn-aurora-primary px-6 py-3 text-xs h-fit group w-fit"
+              >
+                <Play className="w-4 h-4 fill-current group-hover:scale-110 transition-transform" />
+                <span className="font-bold uppercase tracking-wider">Nouvelle Analyse</span>
+              </button>
+
+              {activeAnalyses > 0 && (
+                <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--c-brand)]/10 border border-[var(--c-brand)]/20">
+                  <Activity className="w-4 h-4 text-[var(--c-brand)] animate-pulse" />
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--c-brand)]">
+                    {activeAnalyses} analyse{activeAnalyses > 1 ? 's' : ''} en cours
+                  </span>
+                </div>
+              )}
             </div>
           </div>
-        </PremiumCard>
+
+          {/* Status Bar */}
+          <div className="relative mt-6 pt-6 border-t border-white/5 flex flex-wrap gap-8">
+            <div className="flex items-center gap-3">
+              <Shield className="w-4 h-4 text-[var(--c-brand)]" />
+              <span className="text-[10px] text-[var(--text-muted)] uppercase font-bold tracking-widest">Région: <span className="text-[var(--text-primary)]">FR-PAR</span></span>
+            </div>
+            <div className="flex items-center gap-3">
+              <Database className="w-4 h-4 text-[var(--c-brand)]" />
+              <span className="text-[10px] text-[var(--text-muted)] uppercase font-bold tracking-widest">Données: <span className="text-[var(--text-primary)] text-glow">Synchronisées</span></span>
+            </div>
+            <div className="flex items-center gap-3">
+              <Zap className="w-4 h-4 text-[var(--c-brand)]" />
+              <span className="text-[10px] text-[var(--text-muted)] uppercase font-bold tracking-widest">Moteur: <span className="text-[var(--text-primary)]">Aurora v1.0</span></span>
+            </div>
+          </div>
+        </GlassPanel>
       </motion.div>
 
-      {/* Action Buttons Row */}
-      <motion.div variants={itemVariants} className="flex items-center justify-end gap-3">
-        <motion.button
-          onClick={() => window.location.reload()}
-          className={`p-2.5 rounded-lg border transition-all ${
-            isDark
-              ? 'border-white/10 text-gray-400 hover:bg-white/5 hover:border-white/20'
-              : 'border-gray-200 text-gray-500 hover:bg-gray-100 hover:border-gray-300'
-          }`}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          aria-label="Actualiser"
-        >
-          <RefreshCw className="w-4 h-4" />
-        </motion.button>
-        <motion.button
-          onClick={() => navigate('/launch-analysis')}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-blue-500 text-white font-medium hover:bg-blue-600 transition-all"
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-        >
-          <Play className="w-4 h-4" />
-          Nouvelle Analyse
-        </motion.button>
-      </motion.div>
-
-      {/* KPI Cards - Professional B2B SaaS style with light/dark mode */}
+      {/* KPI Cards Grid */}
       <motion.div
         variants={containerVariants}
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
       >
         <EnrichedKPICard
           label="Concurrents"
@@ -532,7 +534,7 @@ export function DashboardPage() {
           value={avgScore}
           suffix="%"
           previousValue={Math.max(0, avgScore - 5)}
-          trend={{ direction: avgScore > 70 ? 'up' : 'neutral', value: 5, label: 'amélioration' }}
+          trend={{ direction: avgScore > 70 ? 'up' : 'neutral', value: 5, label: 'qualité' }}
           icon={<TrendingUp className="w-5 h-5" />}
           iconBg="green"
           delay={0.16}
@@ -547,17 +549,24 @@ export function DashboardPage() {
         />
       </motion.div>
 
-      {/* Content Grid - Equal height cards */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
-        <RecentAnalysesList />
-        <ThreatDistributionChart data={threatDistribution} />
+      {/* Main Content Split: Charts & List */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+        {/* Left Column: Threat Distribution (Donut) */}
+        <div className="lg:col-span-1">
+          <ThreatDistributionChart data={threatDistribution} />
+        </div>
+
+        {/* Right Column: Activity Timeline */}
+        <div className="lg:col-span-2">
+          <ActivityTimelineChart />
+        </div>
       </div>
 
-      {/* Activity Timeline */}
-      <ActivityTimelineChart />
-
-      {/* Quick Actions */}
-      <QuickActionsSection />
+      {/* Bottom Section: Recent Analyses & Actions */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <RecentAnalysesList />
+        <QuickActionsSection />
+      </div>
     </motion.div>
   )
 }
