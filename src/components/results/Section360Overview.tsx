@@ -4,7 +4,7 @@
 // Built with MCP Magic Builder + Project adaptations
 // =============================================================================
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   TrendingUp,
@@ -295,7 +295,7 @@ function Section360Card({ item }: Section360CardProps) {
               No data available
             </p>
           ) : (
-            <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
+            <p className="text-sm text-white/70 leading-relaxed">
               {item.content}
             </p>
           )}
@@ -380,6 +380,21 @@ function ReadingView({ items, currentIndex, onIndexChange }: ReadingViewProps) {
     if (currentIndex < items.length - 1) onIndexChange(currentIndex + 1)
   }
 
+  // Keyboard navigation with Arrow keys
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault()
+        if (currentIndex > 0) onIndexChange(currentIndex - 1)
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault()
+        if (currentIndex < items.length - 1) onIndexChange(currentIndex + 1)
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [currentIndex, items.length, onIndexChange])
+
   return (
     <div className="space-y-6">
       {/* Section Navigator */}
@@ -404,6 +419,7 @@ function ReadingView({ items, currentIndex, onIndexChange }: ReadingViewProps) {
           <button
             onClick={goToPrev}
             disabled={currentIndex === 0}
+            aria-label="Section précédente"
             className={`
               p-2 rounded-lg transition-all
               ${currentIndex === 0
@@ -420,6 +436,7 @@ function ReadingView({ items, currentIndex, onIndexChange }: ReadingViewProps) {
           <button
             onClick={goToNext}
             disabled={currentIndex === items.length - 1}
+            aria-label="Section suivante"
             className={`
               p-2 rounded-lg transition-all
               ${currentIndex === items.length - 1
@@ -459,9 +476,9 @@ function ReadingView({ items, currentIndex, onIndexChange }: ReadingViewProps) {
           />
 
           {/* Content - Reading mode optimized */}
-          <div className="relative p-8 z-10">
+          <div className="relative p-8 md:p-10 z-10">
             {/* Header */}
-            <div className="flex items-start gap-4 mb-6">
+            <div className="flex items-start gap-4 mb-8">
               <div
                 className={`
                   p-4 rounded-xl backdrop-blur-sm bg-gradient-to-br ${colors.gradient}
@@ -476,7 +493,7 @@ function ReadingView({ items, currentIndex, onIndexChange }: ReadingViewProps) {
                 >
                   {currentItem.title}
                 </h3>
-                <span className="text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">
+                <span className="text-xs font-semibold uppercase tracking-wider text-white/50">
                   Section {currentIndex + 1} sur {items.length}
                 </span>
               </div>
@@ -491,7 +508,7 @@ function ReadingView({ items, currentIndex, onIndexChange }: ReadingViewProps) {
               </div>
             ) : (
               <div className="prose prose-invert max-w-none">
-                <p className="text-base leading-relaxed text-[var(--text-secondary)] whitespace-pre-wrap">
+                <p className="text-lg leading-relaxed text-white/90 whitespace-pre-wrap">
                   {currentItem.content}
                 </p>
               </div>
@@ -507,7 +524,7 @@ function ReadingView({ items, currentIndex, onIndexChange }: ReadingViewProps) {
                     px-3 py-1.5 rounded-lg text-xs font-medium transition-all
                     ${idx === currentIndex
                       ? `bg-gradient-to-r ${categoryColors[item.category].gradient} text-white`
-                      : 'bg-white/5 text-[var(--text-secondary)] hover:bg-white/10 hover:text-[var(--text-primary)]'
+                      : 'bg-white/10 text-white/60 hover:bg-white/20 hover:text-white'
                     }
                   `}
                 >

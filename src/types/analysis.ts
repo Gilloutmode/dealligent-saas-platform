@@ -3,9 +3,11 @@
 // Types for analysis display and configuration
 // =============================================================================
 
+import type { StructuredSourceLink } from './n8n'
+
 /**
  * Interface for transformed UI analysis display
- * Aligned with n8n CDS-RAG DASHBOARD V12.1 output structure
+ * Aligned with n8n CDS-RAG DASHBOARD V12.2 output structure
  */
 export interface UIAnalysisResult {
   id: string
@@ -85,8 +87,8 @@ export interface UIAnalysisResult {
   // Source Links
   sourceLinks?: string  // Legacy format (comma-separated URLs)
 
-  /** Structured source links from n8n V12.1 */
-  sourceLinksStructured?: Array<{ title: string; url: string }>
+  /** Structured source links from n8n V12.2 (with optional category) */
+  sourceLinksStructured?: StructuredSourceLink[]
 
   // Error (if failed)
   error?: string

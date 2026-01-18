@@ -1,27 +1,52 @@
 "use client"
 
-import { motion } from 'framer-motion'
-import { Globe, ExternalLink, Link2 } from 'lucide-react'
+import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import {
+  Globe,
+  ExternalLink,
+  Link2,
+  Building2,
+  Newspaper,
+  TrendingUp,
+  FileText,
+  ChevronDown,
+  ChevronUp,
+} from 'lucide-react'
 import { useTheme } from '../../contexts/ThemeContext'
 import { cn } from '../../lib/utils'
+import type { SourceCategory, StructuredSourceLink } from '../../types/n8n'
 
 // =============================================================================
 // SOURCES SECTION COMPONENT
-// Shows source links used for the analysis
+// Shows source links used for the analysis (V12.2 with categories)
 // =============================================================================
 
 export interface SourcesSectionProps {
-  sourceLinks?: string                                     // Legacy format
-  sourceLinksStructured?: Array<{ title: string; url: string }>  // V12.1 format
+  sourceLinks?: string                              // Legacy format (string)
+  sourceLinksStructured?: StructuredSourceLink[]    // V12.2 format with optional category
   sources?: string[]
   className?: string
+}
+
+// Category configuration with icons and colors
+const categoryConfig: Record<SourceCategory, {
+  icon: typeof Building2
+  label: string
+  color: string
+  bg: string
+}> = {
+  official: { icon: Building2, label: 'Officiel', color: 'text-blue-400', bg: 'bg-blue-500/10' },
+  news: { icon: Newspaper, label: 'News', color: 'text-purple-400', bg: 'bg-purple-500/10' },
+  financial: { icon: TrendingUp, label: 'Finance', color: 'text-green-400', bg: 'bg-green-500/10' },
+  research: { icon: FileText, label: 'Recherche', color: 'text-amber-400', bg: 'bg-amber-500/10' },
 }
 
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { staggerChildren: 0.05 },
+    transition: { staggerChildren: 0.03 },
   },
 }
 
@@ -30,15 +55,22 @@ const itemVariants = {
   visible: {
     opacity: 1,
     scale: 1,
-    transition: { duration: 0.2 },
+    transition: { duration: 0.15 },
   },
 }
 
-// Parse source links from n8n format (can be comma-separated, newline-separated, or markdown links)
-function parseSourceLinks(sourceLinks: string): { url: string; label: string }[] {
+// Internal display link type
+interface DisplayLink {
+  url: string
+  label: string
+  category?: SourceCategory
+}
+
+// Parse source links from legacy string format
+function parseSourceLinks(sourceLinks: string): DisplayLink[] {
   if (!sourceLinks) return []
 
-  const links: { url: string; label: string }[] = []
+  const links: DisplayLink[] = []
 
   // Try to parse markdown links: [label](url)
   const markdownRegex = /\[([^\]]+)\]\(([^)]+)\)/g
@@ -63,6 +95,9 @@ function parseSourceLinks(sourceLinks: string): { url: string; label: string }[]
   })
 }
 
+// Constants
+const INITIAL_VISIBLE = 10
+
 export function SourcesSection({
   sourceLinks,
   sourceLinksStructured,
@@ -70,17 +105,27 @@ export function SourcesSection({
   className
 }: SourcesSectionProps) {
   const { isDark } = useTheme()
+  const [showAll, setShowAll] = useState(false)
 
   const cardBg = isDark ? 'rgba(6, 182, 212, 0.08)' : 'rgba(6, 182, 212, 0.06)'
   const cardBorder = isDark ? 'rgba(6, 182, 212, 0.2)' : 'rgba(6, 182, 212, 0.25)'
   const headerBg = isDark ? 'rgba(6, 182, 212, 0.15)' : 'rgba(6, 182, 212, 0.12)'
 
-  // Priority: structured links (V12.1) > parsed legacy > fallback sources
+  // Priority: structured links (V12.2/V12.1) > parsed legacy > fallback sources
   const structuredLinks = sourceLinksStructured || []
   const parsedLinks = sourceLinks ? parseSourceLinks(sourceLinks) : []
-  const displayLinks = structuredLinks.length > 0
-    ? structuredLinks.map(link => ({ url: link.url, label: link.title }))
+  const displayLinks: DisplayLink[] = structuredLinks.length > 0
+    ? structuredLinks.map(link => ({
+        url: link.url,
+        label: link.title,
+        category: link.category
+      }))
     : parsedLinks
+
+  // "Voir plus" logic
+  const hasMore = displayLinks.length > INITIAL_VISIBLE
+  const visibleLinks = showAll ? displayLinks : displayLinks.slice(0, INITIAL_VISIBLE)
+  const hiddenCount = displayLinks.length - INITIAL_VISIBLE
 
   // No sources to display
   if (displayLinks.length === 0 && sources.length === 0) {
@@ -99,56 +144,107 @@ export function SourcesSection({
     >
       {/* Header */}
       <div
-        className="px-5 py-4 flex items-center gap-3"
+        className="px-5 py-4 flex items-center justify-between"
         style={{ backgroundColor: headerBg }}
       >
-        <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center shadow-lg shadow-cyan-500/25">
-          <Globe className="w-4.5 h-4.5 text-white" />
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center shadow-lg shadow-cyan-500/25">
+            <Globe className="w-4.5 h-4.5 text-white" />
+          </div>
+          <div className="flex items-center gap-2">
+            <h3 className={`font-semibold ${isDark ? 'text-cyan-400' : 'text-cyan-600'}`}>
+              Sources Utilisees
+            </h3>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <h3 className={`font-semibold ${isDark ? 'text-cyan-400' : 'text-cyan-600'}`}>
-            Sources Utilisées
-          </h3>
-          <span className={`px-2 py-0.5 rounded-full text-xs font-medium bg-cyan-500/10 ${isDark ? 'text-cyan-400' : 'text-cyan-600'}`}>
-            {displayLinks.length > 0 ? displayLinks.length : sources.length}
-          </span>
-        </div>
+        {/* Badge with count */}
+        <span className={`px-3 py-1 rounded-full text-xs font-medium ${isDark ? 'bg-cyan-500/15 text-cyan-400' : 'bg-cyan-500/20 text-cyan-600'}`}>
+          {displayLinks.length > 0 ? displayLinks.length : sources.length} sources verifiees
+        </span>
       </div>
 
       {/* Content */}
       <div className="p-5">
-        {/* Source Links (V12.1 structured or legacy parsed) */}
+        {/* Source Links (V12.2/V12.1 structured or legacy parsed) */}
         {displayLinks.length > 0 && (
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-            className="flex flex-wrap gap-2"
-          >
-            {displayLinks.map((link, index) => (
-              <motion.a
-                key={index}
-                variants={itemVariants}
-                href={link.url}
-                target="_blank"
-                rel="noopener noreferrer"
+          <>
+            <motion.div
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              className="flex flex-wrap gap-2"
+            >
+              <AnimatePresence mode="popLayout">
+                {visibleLinks.map((link, index) => {
+                  const CategoryIcon = link.category ? categoryConfig[link.category].icon : Link2
+                  const iconColor = link.category
+                    ? categoryConfig[link.category].color
+                    : isDark ? 'text-cyan-400' : 'text-cyan-500'
+
+                  return (
+                    <motion.a
+                      key={`${link.url}-${index}`}
+                      variants={itemVariants}
+                      layout
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`
+                        inline-flex items-center gap-2 px-3 py-2 rounded-lg
+                        text-sm text-[var(--text-secondary)]
+                        ${isDark ? 'bg-white/5 hover:bg-white/10' : 'bg-white/70 hover:bg-white'}
+                        border border-[var(--border-light)]
+                        hover:border-cyan-500/30
+                        transition-all group
+                      `}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      title={link.category ? categoryConfig[link.category].label : undefined}
+                    >
+                      <CategoryIcon className={`w-3.5 h-3.5 ${iconColor} flex-shrink-0`} />
+                      <span className="max-w-[180px] truncate">{link.label}</span>
+                      <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-[var(--text-muted)] flex-shrink-0" />
+                    </motion.a>
+                  )
+                })}
+              </AnimatePresence>
+            </motion.div>
+
+            {/* "Voir plus/moins" button */}
+            {hasMore && (
+              <motion.button
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                onClick={() => setShowAll(!showAll)}
                 className={`
-                  inline-flex items-center gap-2 px-3 py-2 rounded-lg
-                  text-sm text-[var(--text-secondary)]
-                  ${isDark ? 'bg-white/5 hover:bg-white/10' : 'bg-white/70 hover:bg-white'}
+                  mt-4 w-full flex items-center justify-center gap-2
+                  px-4 py-2.5 rounded-lg
+                  text-sm font-medium
+                  ${isDark
+                    ? 'bg-white/5 hover:bg-white/10 text-cyan-400'
+                    : 'bg-cyan-50 hover:bg-cyan-100 text-cyan-600'
+                  }
                   border border-[var(--border-light)]
                   hover:border-cyan-500/30
-                  transition-all group
+                  transition-all
                 `}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.99 }}
               >
-                <Link2 className={`w-3.5 h-3.5 ${isDark ? 'text-cyan-400' : 'text-cyan-500'}`} />
-                <span className="max-w-[200px] truncate">{link.label}</span>
-                <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-[var(--text-muted)]" />
-              </motion.a>
-            ))}
-          </motion.div>
+                {showAll ? (
+                  <>
+                    <ChevronUp className="w-4 h-4" />
+                    Voir moins
+                  </>
+                ) : (
+                  <>
+                    <ChevronDown className="w-4 h-4" />
+                    Voir les {hiddenCount} autres sources
+                  </>
+                )}
+              </motion.button>
+            )}
+          </>
         )}
 
         {/* Source Tags (fallback when no links available) */}

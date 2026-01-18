@@ -14,6 +14,20 @@ export type N8nSource = 'Perplexity' | 'Exa' | 'SerpAPI'
 export type AnalysisDepth = 'standard' | 'detailed'
 
 /**
+ * Source link category (V12.2)
+ */
+export type SourceCategory = 'official' | 'news' | 'financial' | 'research'
+
+/**
+ * Structured source link (V12.2 with optional category)
+ */
+export interface StructuredSourceLink {
+  title: string
+  url: string
+  category?: SourceCategory
+}
+
+/**
  * Request payload sent to n8n webhook
  *
  * @example
@@ -108,15 +122,16 @@ export interface CompetitorAnalysisData {
   recommendedMessaging?: string
 
   // ===========================================
-  // SOURCES - Phase 4 (n8n V12.1)
+  // SOURCES - Phase 4 (n8n V12.1 → V12.2)
   // ===========================================
 
   /**
-   * Source links - supports both formats:
-   * - Structured: Array<{ title: string; url: string }>
+   * Source links - supports multiple formats:
+   * - V12.2 Structured with category: Array<{ title: string; url: string; category?: SourceCategory }>
+   * - V12.1 Structured: Array<{ title: string; url: string }>
    * - Legacy string: comma-separated URLs
    */
-  sourceLinks: Array<{ title: string; url: string }> | string
+  sourceLinks: Array<StructuredSourceLink> | string
 
   /** Allow additional properties for flexibility */
   [key: string]: unknown
