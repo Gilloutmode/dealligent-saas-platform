@@ -1515,6 +1515,7 @@
 
 .animate-nebula-slow {
   animation: nebula-sweep 30s infinite linear;
+  will-change: transform;
 }
 
 @keyframes scanline {
@@ -1527,6 +1528,7 @@
   background: linear-gradient(to right, transparent, var(--c-brand), transparent);
   opacity: 0.02;
   animation: scanline 15s linear infinite;
+  will-change: transform;
 }
 
 @keyframes scan-slow {
@@ -1559,27 +1561,21 @@
 .data-particle {
   @apply absolute w-1 h-1 bg-[var(--c-brand)] rounded-full blur-[1px] pointer-events-none;
   animation: float-particle 10s infinite linear;
+  will-change: transform, opacity;
 }
 
-/* Globe rotation animation */
-@keyframes globe-rotate {
-  from { transform: rotateY(0deg); }
-  to { transform: rotateY(360deg); }
+/* Float Bloom - Performance optimized CSS animation (replaces Framer Motion) */
+@keyframes float-bloom {
+  0%, 100% { opacity: 0.3; transform: translate(0, 0); }
+  50% { opacity: 0.6; transform: translate(50px, -30px); }
 }
 
-.animate-globe-rotate {
-  animation: globe-rotate 60s linear infinite;
+.animate-float-bloom {
+  animation: float-bloom 10s ease-in-out infinite;
+  will-change: transform, opacity;
 }
 
-/* Glow pulse animation */
-@keyframes glow-pulse {
-  0%, 100% { box-shadow: 0 0 20px var(--c-brand-glow); }
-  50% { box-shadow: 0 0 40px var(--c-brand-glow), 0 0 60px var(--c-brand-glow); }
-}
-
-.animate-glow-pulse {
-  animation: glow-pulse 2s ease-in-out infinite;
-}
+/* Performance optimization: Removed unused globe-rotate and glow-pulse animations */
 
 /* ═══════════════════════════════════════════════════════════════
    RESPONSIVE UTILITIES

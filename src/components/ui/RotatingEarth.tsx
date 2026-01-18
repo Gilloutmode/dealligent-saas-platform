@@ -10,12 +10,45 @@ interface RotatingEarthProps {
 /**
  * Interactive 3D Rotating Earth Globe
  * Aurora design system - Uses D3.js for geo projection with dotted landmasses
+ * Performance optimized: Pauses animation when not visible or tab is inactive
  */
 export default function RotatingEarth({ width = 800, height = 600, className = "" }: RotatingEarthProps) {
     const canvasRef = useRef<HTMLCanvasElement>(null)
+    const containerRef = useRef<HTMLDivElement>(null)
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
+    // Performance optimization: Track visibility state
+    const [isVisible, setIsVisible] = useState(false)
+    const [isTabVisible, setIsTabVisible] = useState(true)
 
+    // Performance: Store timer ref to properly stop/restart
+    const timerRef = useRef<d3.Timer | null>(null)
+    // Store render function reference for timer control
+    const renderFnRef = useRef<(() => void) | null>(null)
+    // Store rotation state
+    const rotationRef = useRef<[number, number]>([0, 0])
+    const autoRotateRef = useRef(true)
+    // Store projection for rotation
+    const projectionRef = useRef<d3.GeoProjection | null>(null)
+
+    // IntersectionObserver to pause when globe is not in viewport
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => setIsVisible(entry.isIntersecting),
+            { threshold: 0.1 }
+        )
+        if (containerRef.current) observer.observe(containerRef.current)
+        return () => observer.disconnect()
+    }, [])
+
+    // Track tab visibility
+    useEffect(() => {
+        const handleVisibilityChange = () => setIsTabVisible(!document.hidden)
+        document.addEventListener('visibilitychange', handleVisibilityChange)
+        return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
+    }, [])
+
+    // EFFECT 1: Setup canvas, projection, dots, events (only on dimension change)
     useEffect(() => {
         if (!canvasRef.current) return
 
@@ -41,6 +74,9 @@ export default function RotatingEarth({ width = 800, height = 600, className = "
             .scale(radius)
             .translate([containerWidth / 2, containerHeight / 2])
             .clipAngle(90)
+
+        // Store projection in ref for timer control
+        projectionRef.current = projection
 
         const path = d3.geoPath().projection(projection).context(context)
 
@@ -174,6 +210,9 @@ export default function RotatingEarth({ width = 800, height = 600, className = "
             }
         }
 
+        // Store render function in ref for timer control effect
+        renderFnRef.current = render
+
         const loadWorldData = async () => {
             try {
                 setIsLoading(true)
@@ -203,40 +242,39 @@ export default function RotatingEarth({ width = 800, height = 600, className = "
             }
         }
 
-        const rotation = [0, 0] as [number, number]
-        let autoRotate = true
         const rotationSpeed = 0.3
 
+        // Rotate function - no visibility check here, timer control handles it
         const rotate = () => {
-            if (autoRotate) {
-                rotation[0] += rotationSpeed
-                projection.rotate([rotation[0], rotation[1]])
+            if (autoRotateRef.current && projectionRef.current) {
+                rotationRef.current[0] += rotationSpeed
+                projectionRef.current.rotate([rotationRef.current[0], rotationRef.current[1]])
                 render()
             }
         }
 
-        const rotationTimer = d3.timer(rotate)
-
         const handleMouseDown = (event: MouseEvent) => {
-            autoRotate = false
+            autoRotateRef.current = false
             const startX = event.clientX
             const startY = event.clientY
-            const startRotation = [...rotation]
+            const startRotation = [...rotationRef.current]
 
             const handleMouseMove = (moveEvent: MouseEvent) => {
                 const sensitivity = 0.2
                 const dx = moveEvent.clientX - startX
                 const dy = moveEvent.clientY - startY
-                rotation[0] = startRotation[0] + dx * sensitivity
-                rotation[1] = Math.max(-90, Math.min(90, (startRotation[1] || 0) - dy * sensitivity))
-                projection.rotate([rotation[0], rotation[1]])
+                rotationRef.current[0] = startRotation[0] + dx * sensitivity
+                rotationRef.current[1] = Math.max(-90, Math.min(90, (startRotation[1] || 0) - dy * sensitivity))
+                if (projectionRef.current) {
+                    projectionRef.current.rotate([rotationRef.current[0], rotationRef.current[1]])
+                }
                 render()
             }
 
             const handleMouseUp = () => {
                 document.removeEventListener("mousemove", handleMouseMove)
                 document.removeEventListener("mouseup", handleMouseUp)
-                setTimeout(() => { autoRotate = true }, 100)
+                setTimeout(() => { autoRotateRef.current = true }, 100)
             }
 
             document.addEventListener("mousemove", handleMouseMove)
@@ -254,12 +292,46 @@ export default function RotatingEarth({ width = 800, height = 600, className = "
         canvas.addEventListener("wheel", handleWheel, { passive: false })
         loadWorldData()
 
+        // Create initial timer (will be controlled by visibility effect)
+        timerRef.current = d3.timer(rotate)
+
         return () => {
-            rotationTimer.stop()
+            // Stop timer on cleanup
+            if (timerRef.current) {
+                timerRef.current.stop()
+                timerRef.current = null
+            }
             canvas.removeEventListener("mousedown", handleMouseDown)
             canvas.removeEventListener("wheel", handleWheel)
+            renderFnRef.current = null
+            projectionRef.current = null
         }
-    }, [width, height])
+    }, [width, height]) // Only depends on dimensions - NOT visibility!
+
+    // EFFECT 2: Timer control based on visibility (proper stop/restart)
+    useEffect(() => {
+        const shouldAnimate = isVisible && isTabVisible
+
+        if (shouldAnimate) {
+            // Start timer if not running
+            if (!timerRef.current && renderFnRef.current && projectionRef.current) {
+                const rotationSpeed = 0.3
+                timerRef.current = d3.timer(() => {
+                    if (autoRotateRef.current && projectionRef.current && renderFnRef.current) {
+                        rotationRef.current[0] += rotationSpeed
+                        projectionRef.current.rotate([rotationRef.current[0], rotationRef.current[1]])
+                        renderFnRef.current()
+                    }
+                })
+            }
+        } else {
+            // Stop timer when not visible
+            if (timerRef.current) {
+                timerRef.current.stop()
+                timerRef.current = null
+            }
+        }
+    }, [isVisible, isTabVisible])
 
     if (error) {
         return (
@@ -270,7 +342,7 @@ export default function RotatingEarth({ width = 800, height = 600, className = "
     }
 
     return (
-        <div className={`relative flex items-center justify-center ${className}`}>
+        <div ref={containerRef} className={`relative flex items-center justify-center ${className}`}>
             <canvas ref={canvasRef} className="cursor-grab active:cursor-grabbing" />
             {isLoading && (
                 <div className="absolute inset-0 flex items-center justify-center">

@@ -16,6 +16,7 @@ import { SWOTGrid } from './SWOTGrid'
 import { RecentActivityPanel } from './RecentActivityPanel'
 import { ActionRequiredPanel } from './ActionRequiredPanel'
 import { SourcesSection } from './SourcesSection'
+import { Section360Overview } from './Section360Overview'
 import type { UIAnalysisResult } from '../../types/analysis'
 
 // =============================================================================
@@ -232,7 +233,12 @@ export function AnalysisDetailView({ analysis, onClose, isModal = false }: Analy
             />
           </motion.div>
 
-          {/* Row 4: Recent Activity + Action Required */}
+          {/* Row 4: 360° Overview (V12.1) */}
+          <motion.div variants={itemVariants}>
+            <Section360Overview analysis={analysis} />
+          </motion.div>
+
+          {/* Row 5: Recent Activity + Action Required */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <motion.div variants={itemVariants}>
               <RecentActivityPanel activities={analysis.recentActivity || []} />
@@ -246,10 +252,11 @@ export function AnalysisDetailView({ analysis, onClose, isModal = false }: Analy
             </motion.div>
           </div>
 
-          {/* Row 5: Sources */}
+          {/* Row 6: Sources */}
           <motion.div variants={itemVariants}>
             <SourcesSection
               sourceLinks={analysis.sourceLinks}
+              sourceLinksStructured={analysis.sourceLinksStructured}
               sources={analysis.sources}
             />
           </motion.div>

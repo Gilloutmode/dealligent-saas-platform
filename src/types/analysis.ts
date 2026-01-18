@@ -5,7 +5,7 @@
 
 /**
  * Interface for transformed UI analysis display
- * Aligned with n8n CDS-RAG PROD V11.2 output structure
+ * Aligned with n8n CDS-RAG DASHBOARD V12.1 output structure
  */
 export interface UIAnalysisResult {
   id: string
@@ -36,6 +36,40 @@ export interface UIAnalysisResult {
   actionRequired?: string      // "Periodic review"
   lastUpdated?: string         // ISO timestamp
 
+  // ===========================================
+  // 360° OVERVIEW - Phase 3 (n8n V12.1)
+  // ===========================================
+
+  /** Business model description */
+  businessModel?: string
+
+  /** Financial health assessment */
+  financialHealth?: string
+
+  /** Market position analysis */
+  marketPosition?: string
+
+  /** Product strategy overview */
+  productStrategy?: string
+
+  /** Technology approach and stack */
+  technologyApproach?: string
+
+  /** Target customer profile */
+  targetCustomerProfile?: string
+
+  /** Sales approach and methodology */
+  salesApproach?: string
+
+  /** Competitor's marketing claims */
+  competitorClaims?: string
+
+  /** Opportunities for CDS against this competitor */
+  cdsOpportunities?: string
+
+  /** Recommended messaging for sales team */
+  recommendedMessaging?: string
+
   // Competitive Analysis (2-column: strengths vs weaknesses)
   analysisData: {
     strengths: string[]
@@ -49,7 +83,10 @@ export interface UIAnalysisResult {
   keyFindings: string[]
 
   // Source Links
-  sourceLinks?: string
+  sourceLinks?: string  // Legacy format (comma-separated URLs)
+
+  /** Structured source links from n8n V12.1 */
+  sourceLinksStructured?: Array<{ title: string; url: string }>
 
   // Error (if failed)
   error?: string
@@ -72,11 +109,12 @@ export interface LaunchAnalysisConfig {
 
 /**
  * Estimated durations by analysis type (in seconds)
+ * Updated 2026-01-18: Increased to match real n8n V12.1 execution times (~3:36)
  */
 export const ANALYSIS_DURATION_ESTIMATES = {
-  quick: 60,      // 1 minute
-  standard: 120,  // 2 minutes
-  deep: 240       // 4 minutes
+  quick: 120,     // 2 minutes
+  standard: 240,  // 4 minutes (actual ~3:36)
+  deep: 360       // 6 minutes
 } as const
 
 /**

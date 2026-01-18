@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState, useEffect } from 'react'
+import { useMemo, useState, useEffect, memo } from 'react'
 import { motion } from 'framer-motion'
 import { useNavigate, Link } from 'react-router-dom'
 import {
@@ -68,7 +68,8 @@ const THREAT_COLORS = {
   LOW: '#10b981',
 }
 
-function ThreatDistributionChart({ data }: { data: { name: string; value: number; color: string }[] }) {
+// Performance optimization: Memoized to prevent unnecessary re-renders
+const ThreatDistributionChart = memo(function ThreatDistributionChart({ data }: { data: { name: string; value: number; color: string }[] }) {
   return (
     <motion.div variants={itemVariants} className="h-full">
       <GlassPanel className="h-full p-6 flex flex-col">
@@ -128,7 +129,7 @@ function ThreatDistributionChart({ data }: { data: { name: string; value: number
       </GlassPanel>
     </motion.div>
   )
-}
+})
 
 // =============================================================================
 // RECENT ANALYSES LIST
@@ -229,7 +230,8 @@ function RecentAnalysesList() {
 // ACTIVITY TIMELINE CHART
 // =============================================================================
 
-function ActivityTimelineChart() {
+// Performance optimization: Memoized to prevent unnecessary re-renders
+const ActivityTimelineChart = memo(function ActivityTimelineChart() {
   const { completedAnalyses } = useAnalysis()
   const { isDark } = useTheme()
 
@@ -318,13 +320,14 @@ function ActivityTimelineChart() {
       </GlassPanel>
     </motion.div>
   )
-}
+})
 
 // =============================================================================
 // QUICK ACTIONS SECTION
 // =============================================================================
 
-function QuickActionsSection() {
+// Performance optimization: Memoized to prevent unnecessary re-renders
+const QuickActionsSection = memo(function QuickActionsSection() {
   const navigate = useNavigate()
 
   const actions = [
@@ -372,7 +375,7 @@ function QuickActionsSection() {
       </GlassPanel>
     </motion.div>
   )
-}
+})
 
 // =============================================================================
 // DASHBOARD PAGE
@@ -383,8 +386,9 @@ export function DashboardPage() {
   const { completedAnalyses, runningAnalyses } = useAnalysis()
   const [time, setTime] = useState(new Date())
 
+  // Performance optimization: Update time every 60 seconds instead of 1 second
   useEffect(() => {
-    const timer = setInterval(() => setTime(new Date()), 1000)
+    const timer = setInterval(() => setTime(new Date()), 60000)
     return () => clearInterval(timer)
   }, [])
 
@@ -449,7 +453,7 @@ export function DashboardPage() {
                   Intelligence Concurrentielle
                 </div>
                 <div className="flex items-center gap-2 text-[10px] font-bold text-[var(--c-success)] uppercase tracking-widest">
-                  <div className="w-1.5 h-1.5 rounded-full bg-[var(--c-success)] animate-pulse" />
+                  <div className="w-1.5 h-1.5 rounded-full bg-[var(--c-success)]" />
                   Système actif
                 </div>
               </div>
@@ -479,7 +483,7 @@ export function DashboardPage() {
 
               {activeAnalyses > 0 && (
                 <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--c-brand)]/10 border border-[var(--c-brand)]/20">
-                  <Activity className="w-4 h-4 text-[var(--c-brand)] animate-pulse" />
+                  <Activity className="w-4 h-4 text-[var(--c-brand)]" />
                   <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--c-brand)]">
                     {activeAnalyses} analyse{activeAnalyses > 1 ? 's' : ''} en cours
                   </span>

@@ -11,7 +11,8 @@ import { cn } from '../../lib/utils'
 // =============================================================================
 
 export interface SourcesSectionProps {
-  sourceLinks?: string
+  sourceLinks?: string                                     // Legacy format
+  sourceLinksStructured?: Array<{ title: string; url: string }>  // V12.1 format
   sources?: string[]
   className?: string
 }
@@ -62,18 +63,27 @@ function parseSourceLinks(sourceLinks: string): { url: string; label: string }[]
   })
 }
 
-export function SourcesSection({ sourceLinks, sources = [], className }: SourcesSectionProps) {
+export function SourcesSection({
+  sourceLinks,
+  sourceLinksStructured,
+  sources = [],
+  className
+}: SourcesSectionProps) {
   const { isDark } = useTheme()
 
   const cardBg = isDark ? 'rgba(6, 182, 212, 0.08)' : 'rgba(6, 182, 212, 0.06)'
   const cardBorder = isDark ? 'rgba(6, 182, 212, 0.2)' : 'rgba(6, 182, 212, 0.25)'
   const headerBg = isDark ? 'rgba(6, 182, 212, 0.15)' : 'rgba(6, 182, 212, 0.12)'
 
-  // Parse source links
+  // Priority: structured links (V12.1) > parsed legacy > fallback sources
+  const structuredLinks = sourceLinksStructured || []
   const parsedLinks = sourceLinks ? parseSourceLinks(sourceLinks) : []
+  const displayLinks = structuredLinks.length > 0
+    ? structuredLinks.map(link => ({ url: link.url, label: link.title }))
+    : parsedLinks
 
   // No sources to display
-  if (parsedLinks.length === 0 && sources.length === 0) {
+  if (displayLinks.length === 0 && sources.length === 0) {
     return null
   }
 
@@ -100,22 +110,22 @@ export function SourcesSection({ sourceLinks, sources = [], className }: Sources
             Sources Utilisées
           </h3>
           <span className={`px-2 py-0.5 rounded-full text-xs font-medium bg-cyan-500/10 ${isDark ? 'text-cyan-400' : 'text-cyan-600'}`}>
-            {parsedLinks.length > 0 ? parsedLinks.length : sources.length}
+            {displayLinks.length > 0 ? displayLinks.length : sources.length}
           </span>
         </div>
       </div>
 
       {/* Content */}
       <div className="p-5">
-        {/* Source Links */}
-        {parsedLinks.length > 0 && (
+        {/* Source Links (V12.1 structured or legacy parsed) */}
+        {displayLinks.length > 0 && (
           <motion.div
             variants={containerVariants}
             initial="hidden"
             animate="visible"
             className="flex flex-wrap gap-2"
           >
-            {parsedLinks.map((link, index) => (
+            {displayLinks.map((link, index) => (
               <motion.a
                 key={index}
                 variants={itemVariants}
@@ -141,8 +151,8 @@ export function SourcesSection({ sourceLinks, sources = [], className }: Sources
           </motion.div>
         )}
 
-        {/* Source Tags (fallback) */}
-        {parsedLinks.length === 0 && sources.length > 0 && (
+        {/* Source Tags (fallback when no links available) */}
+        {displayLinks.length === 0 && sources.length > 0 && (
           <motion.div
             variants={containerVariants}
             initial="hidden"

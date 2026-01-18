@@ -90,10 +90,27 @@ function calculateScore(data?: StoredAnalysis['response']): number {
 
 /**
  * Transform a StoredAnalysis (localStorage) to UIAnalysisResult (display)
- * Aligned with n8n CDS-RAG PROD V11.2 output structure
+ * Aligned with n8n CDS-RAG DASHBOARD V12.1 output structure
  */
 export function transformStoredToUI(stored: StoredAnalysis): UIAnalysisResult {
+  // DEBUG: Full input logging
+  console.log('[Transform] ==================')
+  console.log('[Transform] Input stored.id:', stored.id)
+  console.log('[Transform] Input stored.status:', stored.status)
+  console.log('[Transform] Input stored.response:', stored.response)
+  console.log('[Transform] Input stored.response?.data:', stored.response?.data)
+
   const data = stored.response?.data
+
+  // DEBUG: Log raw data for insights troubleshooting
+  console.log('[Transform] Extracted data:', {
+    hasData: !!data,
+    dataType: typeof data,
+    allKeys: data ? Object.keys(data) : [],
+    strengths: data?.strengths,
+    weaknessesvsCDS: data?.weaknessesvsCDS,
+    recentActivity: data?.recentActivity,
+  })
 
   // Count total insights (strengths + weaknesses + recentActivity)
   const insightsCount = data
@@ -129,6 +146,20 @@ export function transformStoredToUI(stored: StoredAnalysis): UIAnalysisResult {
     actionRequired: data?.actionRequired as string | undefined,
     lastUpdated: data?.lastUpdated as string | undefined,
 
+    // ===========================================
+    // 360° OVERVIEW - Passthrough (n8n V12.1)
+    // ===========================================
+    businessModel: data?.businessModel as string | undefined,
+    financialHealth: data?.financialHealth as string | undefined,
+    marketPosition: data?.marketPosition as string | undefined,
+    productStrategy: data?.productStrategy as string | undefined,
+    technologyApproach: data?.technologyApproach as string | undefined,
+    targetCustomerProfile: data?.targetCustomerProfile as string | undefined,
+    salesApproach: data?.salesApproach as string | undefined,
+    competitorClaims: data?.competitorClaims as string | undefined,
+    cdsOpportunities: data?.cdsOpportunities as string | undefined,
+    recommendedMessaging: data?.recommendedMessaging as string | undefined,
+
     // Competitive analysis (2-column structure)
     analysisData: {
       strengths: (data?.strengths as string[]) || [],
@@ -144,8 +175,13 @@ export function transformStoredToUI(stored: StoredAnalysis): UIAnalysisResult {
       ...(data?.weaknessesvsCDS?.slice(0, 2) || []),
     ],
 
-    // Source links
-    sourceLinks: data?.sourceLinks as string | undefined,
+    // Source links (handle both formats from n8n V12.1)
+    sourceLinks: typeof data?.sourceLinks === 'string'
+      ? data.sourceLinks
+      : undefined,
+    sourceLinksStructured: Array.isArray(data?.sourceLinks)
+      ? (data.sourceLinks as Array<{ title: string; url: string }>)
+      : undefined,
 
     error: stored.error,
   }

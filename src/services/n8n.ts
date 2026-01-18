@@ -21,8 +21,8 @@ import { mapSourcesToN8n, mapDepthToN8n } from '../types/n8n'
 const N8N_WEBHOOK_URL = import.meta.env.DEV
   ? '/api/n8n'
   : import.meta.env.VITE_N8N_WEBHOOK_URL
-// n8n workflow is synchronous and takes 2-3 minutes (calls Perplexity, Exa, etc.)
-const REQUEST_TIMEOUT_MS = 180000 // 3 minutes
+// n8n workflow is synchronous and takes ~3:36 (calls Perplexity, Exa, Claude, etc.)
+const REQUEST_TIMEOUT_MS = 300000 // 5 minutes (workflow takes ~3:36)
 const STORAGE_KEY = 'dealligent_analyses'
 
 // =============================================================================
@@ -142,6 +142,148 @@ export async function launchAnalysis(
 
     throw new N8nError('Unknown error occurred', 'NETWORK')
   }
+}
+
+// =============================================================================
+// ASYNC POLLING API (pour contourner le timeout Cloudflare 100s)
+// =============================================================================
+
+const N8N_STATUS_URL = import.meta.env.DEV
+  ? '/api/n8n-status'
+  : import.meta.env.VITE_N8N_STATUS_URL
+
+/**
+ * Lance une analyse en mode async
+ * Le workflow n8n répond immédiatement avec un executionId (202 Accepted)
+ * puis continue le traitement en arrière-plan
+ */
+export async function launchAnalysisAsync(
+  competitorName: string,
+  sources: FrontendSourcesState,
+  analysisType: string
+): Promise<{ executionId: string; jobId: string }> {
+  if (!N8N_WEBHOOK_URL) {
+    throw new N8nError('N8N webhook URL not configured', 'NETWORK')
+  }
+
+  const payload: N8nAnalysisRequest = {
+    chatInput: competitorName,
+    sources: mapSourcesToN8n(sources),
+    depth: mapDepthToN8n(analysisType),
+  }
+
+  console.log('[n8n] Launching async analysis for:', competitorName)
+
+  const response = await fetch(N8N_WEBHOOK_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  })
+
+  if (!response.ok) {
+    throw new N8nError(`Launch failed: ${response.status}`, 'SERVER', response.status)
+  }
+
+  const data = await response.json()
+  console.log('[n8n] Launch response:', data)
+
+  // Extraire executionId de la réponse 202
+  const executionId = data.data?.executionId || data.executionId
+  const jobId = data.data?.jobId || data.jobId || executionId
+
+  if (!executionId) {
+    console.error('[n8n] No executionId in response:', data)
+    throw new N8nError('No executionId returned from n8n', 'INVALID_RESPONSE')
+  }
+
+  console.log('[n8n] Got executionId:', executionId)
+  return { executionId, jobId }
+}
+
+/**
+ * Vérifie le statut d'une analyse via le webhook status
+ */
+export async function checkAnalysisStatus(
+  executionId: string
+): Promise<{
+  status: 'processing' | 'completed' | 'failed' | 'not_found'
+  result?: N8nAnalysisResponse
+  error?: string
+}> {
+  if (!N8N_STATUS_URL) {
+    throw new N8nError('N8N status URL not configured', 'NETWORK')
+  }
+
+  console.log('[n8n] Checking status for:', executionId)
+
+  const response = await fetch(`${N8N_STATUS_URL}?executionId=${executionId}`)
+
+  if (!response.ok) {
+    throw new N8nError(`Status check failed: ${response.status}`, 'SERVER', response.status)
+  }
+
+  const data = await response.json()
+  console.log('[n8n] Status response:', data)
+
+  return {
+    status: data.data?.status || 'not_found',
+    result: data.data?.result,
+    error: data.data?.error,
+  }
+}
+
+/**
+ * Poll jusqu'à ce que l'analyse soit terminée
+ * @param executionId - ID de l'exécution n8n
+ * @param options - Options de polling (maxAttempts, pollInterval, onProgress)
+ */
+export async function pollForResults(
+  executionId: string,
+  options: {
+    maxAttempts?: number
+    pollInterval?: number
+    onProgress?: (attempt: number, maxAttempts: number) => void
+  } = {}
+): Promise<N8nAnalysisResponse> {
+  const { maxAttempts = 30, pollInterval = 10000, onProgress } = options
+
+  console.log('[n8n] Starting polling for:', executionId, { maxAttempts, pollInterval })
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    if (onProgress) onProgress(attempt, maxAttempts)
+
+    console.log(`[n8n] Poll attempt ${attempt}/${maxAttempts}`)
+
+    try {
+      const status = await checkAnalysisStatus(executionId)
+
+      if (status.status === 'completed' && status.result) {
+        console.log('[n8n] Analysis completed!')
+        return status.result
+      }
+
+      if (status.status === 'failed') {
+        throw new N8nError(status.error || 'Analysis failed', 'SERVER')
+      }
+
+      // Still processing or not found, wait and retry
+      if (attempt < maxAttempts) {
+        console.log(`[n8n] Status: ${status.status}, waiting ${pollInterval}ms...`)
+        await new Promise(resolve => setTimeout(resolve, pollInterval))
+      }
+    } catch (error) {
+      // Si erreur de polling, continuer à essayer (sauf si c'est une N8nError avec code SERVER)
+      if (error instanceof N8nError && error.code === 'SERVER') {
+        throw error
+      }
+      console.warn(`[n8n] Poll attempt ${attempt} failed, retrying...`, error)
+      if (attempt < maxAttempts) {
+        await new Promise(resolve => setTimeout(resolve, pollInterval))
+      }
+    }
+  }
+
+  throw new N8nError(`Analysis timeout after ${maxAttempts} polling attempts`, 'TIMEOUT')
 }
 
 // =============================================================================

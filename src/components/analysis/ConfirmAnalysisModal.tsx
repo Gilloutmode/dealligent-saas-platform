@@ -1,7 +1,7 @@
 "use client"
 
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Brain, Search, Newspaper, Clock, Rocket, Sparkles, Zap } from 'lucide-react'
+import { X, Brain, Search, Newspaper, Clock, Rocket, Zap, CheckCircle2, Loader2 } from 'lucide-react'
 import { useTheme } from '../../contexts/ThemeContext'
 
 // =============================================================================
@@ -181,17 +181,17 @@ export function ConfirmAnalysisModal({
               onClick={(e) => e.stopPropagation()}
             >
               {/* Modal Card */}
-              <div className={`relative ${styles.modal} border rounded-2xl shadow-2xl overflow-hidden`}>
+              <div className="panel-aurora hud-border rounded-3xl shadow-2xl overflow-hidden">
 
                 {/* Close Button */}
                 <motion.button
                   onClick={onClose}
-                  className={`absolute top-4 right-4 p-2 rounded-full ${styles.closeBtn} border transition-all z-10`}
-                  whileHover={{ scale: 1.1 }}
+                  className="absolute top-6 right-6 p-2 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all z-10"
+                  whileHover={{ scale: 1.1, rotate: 90 }}
                   whileTap={{ scale: 0.95 }}
                   aria-label="Fermer"
                 >
-                  <X className={`w-4 h-4 ${styles.closeBtnIcon}`} />
+                  <X className="w-4 h-4 text-[var(--text-secondary)]" />
                 </motion.button>
 
                 {/* Content */}
@@ -199,14 +199,14 @@ export function ConfirmAnalysisModal({
                   variants={contentVariants}
                   initial="hidden"
                   animate="visible"
-                  className="p-8"
+                  className="p-10"
                 >
                   {/* Header with Competitor Info */}
-                  <motion.div variants={itemVariants} className="mb-6">
-                    <div className="flex items-start gap-4">
+                  <motion.div variants={itemVariants} className="mb-8">
+                    <div className="flex items-start gap-6">
                       {/* Competitor Icon with Gradient */}
                       <motion.div
-                        className={`w-14 h-14 rounded-xl bg-gradient-to-br ${threat.gradient} flex items-center justify-center text-white font-bold text-xl shadow-lg ${threat.glow}`}
+                        className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${threat.gradient} flex items-center justify-center text-white font-black text-2xl shadow-xl ${threat.glow}`}
                         whileHover={{ scale: 1.05, rotate: 2 }}
                         transition={{ type: 'spring', stiffness: 400 }}
                       >
@@ -214,32 +214,30 @@ export function ConfirmAnalysisModal({
                       </motion.div>
 
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-3 flex-wrap">
-                          <h2 className={`text-xl font-bold ${styles.title}`}>
+                        <div className="flex items-center gap-3 flex-wrap mb-2">
+                          <h2 className="text-2xl font-black text-[var(--text-primary)] uppercase tracking-tight">
                             Analyser {competitor.name}
                           </h2>
-                          <span className={`px-2.5 py-1 rounded-lg text-xs font-semibold border ${threat.badge}`}>
-                            {threat.label}
-                          </span>
                         </div>
-                        <p className={`text-sm ${styles.subtitle} mt-1`}>
-                          Analyse concurrentielle complète avec IA
-                        </p>
+                        <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-[0.2em] border ${threat.badge}`}>
+                          <Zap className="w-3 h-3" />
+                          {threat.label}
+                        </div>
                       </div>
                     </div>
                   </motion.div>
 
                   {/* Sources Section */}
-                  <motion.div variants={itemVariants} className="mb-6">
-                    <div className="flex items-center gap-2 mb-3">
-                      <Sparkles className={`w-4 h-4 ${styles.sparklesIcon}`} />
-                      <p className={`text-sm font-medium ${styles.sectionTitle}`}>
-                        Sources d'intelligence
+                  <motion.div variants={itemVariants} className="mb-8">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-1 h-4 bg-[var(--c-brand)] rounded-full" />
+                      <p className="text-[10px] font-black uppercase tracking-[0.3em] text-[var(--text-secondary)]">
+                        Intelligence Stream Selection
                       </p>
                     </div>
 
                     {/* Source Badges */}
-                    <div className="flex flex-wrap gap-2">
+                    <div className="grid grid-cols-1 gap-3">
                       {SOURCES.map((source, index) => {
                         const Icon = source.icon
                         return (
@@ -247,28 +245,28 @@ export function ConfirmAnalysisModal({
                             key={source.name}
                             variants={badgeVariants}
                             custom={index}
-                            whileHover={{ scale: 1.05, y: -2 }}
                             className="group"
                           >
-                            <div className={`flex items-center gap-2 px-3 py-2 rounded-xl ${styles.sourceBadge} border transition-all cursor-default`}>
-                              <div className={`w-7 h-7 rounded-lg ${styles.sourceIconBg} flex items-center justify-center`}>
-                                <Icon className={`w-3.5 h-3.5 ${styles.sourceIcon}`} />
+                            <div className="flex items-center gap-4 px-4 py-3 rounded-2xl bg-white/5 border border-white/5 group-hover:bg-[var(--bg-surface-elevated)] group-hover:border-[var(--c-brand)]/20 transition-all cursor-default">
+                              <div className="w-10 h-10 rounded-xl bg-[var(--c-brand)]/10 flex items-center justify-center">
+                                <Icon className="w-5 h-5 text-[var(--c-brand)]" />
                               </div>
-                              <div className="flex flex-col">
-                                <span className={`text-xs font-semibold ${styles.sourceName}`}>
+                              <div className="flex-1">
+                                <span className="text-sm font-bold text-[var(--text-primary)] block">
                                   {source.name}
                                 </span>
-                                <span className={`text-[10px] ${styles.sourceDesc}`}>
+                                <span className="text-[10px] text-[var(--text-secondary)] font-medium">
                                   {source.description}
                                 </span>
                               </div>
                               {source.status === 'verified' && (
-                                <div className={`w-4 h-4 rounded-full ${styles.verifiedBg} flex items-center justify-center`}>
-                                  <Zap className={`w-2.5 h-2.5 ${styles.verifiedIcon}`} />
-                                </div>
+                                <CheckCircle2 className="w-4 h-4 text-[var(--c-success)]" />
                               )}
                               {source.status === 'active' && (
-                                <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+                                <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[var(--c-brand)]/10 text-[var(--c-brand)]">
+                                  <div className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" />
+                                  <span className="text-[8px] font-black uppercase">Active</span>
+                                </div>
                               )}
                             </div>
                           </motion.div>
@@ -280,57 +278,54 @@ export function ConfirmAnalysisModal({
                   {/* Duration Estimate */}
                   <motion.div
                     variants={itemVariants}
-                    className={`flex items-center gap-3 p-4 rounded-xl ${styles.durationBox} border mb-6`}
+                    className="flex items-center gap-4 p-5 rounded-2xl bg-[var(--c-warning)]/5 border border-[var(--c-warning)]/10 mb-8"
                   >
-                    <div className={`w-10 h-10 rounded-xl ${styles.durationIconBg} flex items-center justify-center`}>
-                      <Clock className={`w-5 h-5 ${styles.durationIcon}`} />
+                    <div className="w-12 h-12 rounded-2xl bg-[var(--c-warning)]/10 flex items-center justify-center">
+                      <Clock className="w-6 h-6 text-[var(--c-warning)]" />
                     </div>
                     <div>
-                      <p className={`text-sm font-medium ${styles.durationTitle}`}>
-                        Durée estimée
+                      <p className="text-xs font-black uppercase tracking-widest text-[var(--c-warning)] mb-1">
+                        Deployment Window
                       </p>
-                      <p className={`text-xs ${styles.durationText}`}>
-                        ~2 minutes pour une analyse complète
+                      <p className="text-sm text-[var(--text-primary)] font-medium">
+                        Environ <span className="font-black">120 secondes</span> pour une extraction complète.
                       </p>
                     </div>
                   </motion.div>
 
                   {/* Action Buttons */}
-                  <motion.div variants={itemVariants} className="flex gap-3">
+                  <motion.div variants={itemVariants} className="flex gap-4">
                     {/* Cancel Button */}
                     <motion.button
                       onClick={onClose}
                       disabled={isLoading}
-                      className={`flex-1 px-4 py-3 rounded-xl ${styles.cancelBtn} border font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed`}
+                      className="flex-1 px-6 py-4 rounded-2xl bg-white/5 border border-white/10 text-[var(--text-secondary)] font-black text-[10px] uppercase tracking-[0.2em] transition-all hover:bg-white/10 hover:text-white disabled:opacity-50"
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                     >
-                      Annuler
+                      Abort
                     </motion.button>
 
-                    {/* Launch Button - Gradient with Glow */}
+                    {/* Launch Button - HUD Style */}
                     <motion.button
                       onClick={onConfirm}
                       disabled={isLoading}
-                      className="flex-1 px-4 py-3 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white font-semibold shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                      whileHover={{ scale: 1.02, y: -1 }}
+                      className="flex-1 px-6 py-4 rounded-2xl bg-[var(--c-brand)] text-white font-black text-[10px] uppercase tracking-[0.15em] shadow-xl shadow-[var(--c-brand)]/30 hover:shadow-[var(--c-brand)]/50 transition-all disabled:opacity-50 flex items-center justify-center gap-3 overflow-hidden relative group"
+                      whileHover={{ scale: 1.05, y: -2 }}
                       whileTap={{ scale: 0.98 }}
                     >
+                      <div className="absolute inset-0 bg-white/20 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
                       {isLoading ? (
                         <>
-                          <motion.div
-                            animate={{ rotate: 360 }}
-                            transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-                            className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full"
-                          />
-                          <span>Lancement...</span>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          <span>Initializing...</span>
                         </>
                       ) : (
                         <>
-                          <Rocket className="w-5 h-5" />
-                          <span>Lancer l'analyse</span>
+                          <Rocket className="w-4 h-4" />
+                          <span>Execute Analysis</span>
                         </>
-                      )}
+                      ) as any}
                     </motion.button>
                   </motion.div>
                 </motion.div>

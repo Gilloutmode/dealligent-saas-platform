@@ -34,7 +34,7 @@ export interface N8nAnalysisRequest {
 
 /**
  * Competitor analysis data returned by n8n CDS-RAG workflow
- * Aligned with n8n CDS-RAG PROD V11.2 output structure
+ * Aligned with n8n CDS-RAG DASHBOARD V12.1 output structure
  */
 export interface CompetitorAnalysisData {
   /** Competitor company name (from request) */
@@ -64,17 +64,59 @@ export interface CompetitorAnalysisData {
   /** Intelligence grade (e.g., "A+ - Executive Elite") */
   intelligenceGrade: string
 
-  /** Source links used for analysis */
-  sourceLinks: string
+  /** Recommended action */
+  actionRequired: string
 
   /** Last update timestamp (ISO string) */
   lastUpdated: string
 
-  /** Recommended action */
-  actionRequired: string
-
   /** Analysis timestamp (ISO string) */
   timestamp: string
+
+  // ===========================================
+  // 360° OVERVIEW - Phase 3 (n8n V12.1)
+  // ===========================================
+
+  /** Business model description */
+  businessModel?: string
+
+  /** Financial health assessment */
+  financialHealth?: string
+
+  /** Market position analysis */
+  marketPosition?: string
+
+  /** Product strategy overview */
+  productStrategy?: string
+
+  /** Technology approach and stack */
+  technologyApproach?: string
+
+  /** Target customer profile */
+  targetCustomerProfile?: string
+
+  /** Sales approach and methodology */
+  salesApproach?: string
+
+  /** Competitor's marketing claims */
+  competitorClaims?: string
+
+  /** Opportunities for CDS against this competitor */
+  cdsOpportunities?: string
+
+  /** Recommended messaging for sales team */
+  recommendedMessaging?: string
+
+  // ===========================================
+  // SOURCES - Phase 4 (n8n V12.1)
+  // ===========================================
+
+  /**
+   * Source links - supports both formats:
+   * - Structured: Array<{ title: string; url: string }>
+   * - Legacy string: comma-separated URLs
+   */
+  sourceLinks: Array<{ title: string; url: string }> | string
 
   /** Allow additional properties for flexibility */
   [key: string]: unknown

@@ -1,5 +1,6 @@
 "use client"
 
+import { useState, useEffect } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Sidebar } from './Sidebar'
@@ -32,47 +33,56 @@ function PageTransition({ children }: { children: React.ReactNode }) {
 
 // Main Layout Component
 export function AppLayout() {
+  // Performance optimization: Pause animations when tab is not visible
+  const [isTabVisible, setIsTabVisible] = useState(true)
+
+  useEffect(() => {
+    const handleVisibilityChange = () => setIsTabVisible(!document.hidden)
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
+  }, [])
+
   return (
     <div className="flex min-h-screen relative overflow-hidden">
       {/* BACKGROUND LAYERS - AURORA COSMIC STYLE */}
       <div className="fixed inset-0 z-0 pointer-events-none bg-[var(--bg-void)]">
-        {/* Deep Nebula blobs - Softer & Dynamic */}
-        <div className="absolute top-[-25%] left-[-15%] w-[1200px] h-[1200px] bg-[var(--c-brand)]/5 rounded-full blur-[180px] animate-nebula-slow" />
-        <div className="absolute bottom-[-30%] right-[-20%] w-[1400px] h-[1400px] bg-[var(--c-accent)]/3 rounded-full blur-[200px] animate-nebula-slow" style={{ animationDirection: 'reverse', animationDuration: '45s' }} />
-        <div className="absolute top-[20%] left-[30%] w-[800px] h-[800px] bg-[var(--c-info)]/3 rounded-full blur-[150px] animate-nebula-slow" style={{ animationDuration: '35s' }} />
+        {/* Deep Nebula blobs - Softer & Dynamic - Only animate when tab is visible */}
+        {isTabVisible && (
+          <>
+            <div className="absolute top-[-25%] left-[-15%] w-[1200px] h-[1200px] bg-[var(--c-brand)]/5 rounded-full blur-[180px] animate-nebula-slow" />
+            <div className="absolute bottom-[-30%] right-[-20%] w-[1400px] h-[1400px] bg-[var(--c-accent)]/3 rounded-full blur-[200px] animate-nebula-slow" style={{ animationDirection: 'reverse', animationDuration: '45s' }} />
+            <div className="absolute top-[20%] left-[30%] w-[800px] h-[800px] bg-[var(--c-info)]/3 rounded-full blur-[150px] animate-nebula-slow" style={{ animationDuration: '35s' }} />
+          </>
+        )}
 
-        {/* Floating Light Bloom */}
-        <motion.div
-          animate={{
-            opacity: [0.3, 0.6, 0.3],
-            x: [0, 50, 0],
-            y: [0, -30, 0]
-          }}
-          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-1/2 left-1/4 w-[500px] h-[500px] bg-[var(--c-brand)]/5 rounded-full blur-[120px]"
-        />
+        {/* Floating Light Bloom - CSS animation for better performance */}
+        {isTabVisible && (
+          <div className="absolute top-1/2 left-1/4 w-[500px] h-[500px] bg-[var(--c-brand)]/5 rounded-full blur-[120px] animate-float-bloom" />
+        )}
 
         {/* Subtle tactical grid overlay */}
         <div className="absolute inset-0 opacity-[0.15] ambient-data-grid" />
 
-        {/* Animated Particles */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {[...Array(6)].map((_, i) => (
-            <div
-              key={i}
-              className="data-particle"
-              style={{
-                left: `${15 + i * 15}%`,
-                top: `${10 + i * 12}%`,
-                animationDelay: `${i * 2}s`,
-                opacity: 0.15
-              }}
-            />
-          ))}
-        </div>
+        {/* Animated Particles - Reduced from 6 to 3, only when tab visible */}
+        {isTabVisible && (
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            {[...Array(3)].map((_, i) => (
+              <div
+                key={i}
+                className="data-particle"
+                style={{
+                  left: `${20 + i * 25}%`,
+                  top: `${15 + i * 20}%`,
+                  animationDelay: `${i * 3}s`,
+                  opacity: 0.15
+                }}
+              />
+            ))}
+          </div>
+        )}
 
-        {/* Scanline Effect */}
-        <div className="scanline" />
+        {/* Scanline Effect - Only when tab visible */}
+        {isTabVisible && <div className="scanline" />}
       </div>
 
       {/* Skip Link for Accessibility */}

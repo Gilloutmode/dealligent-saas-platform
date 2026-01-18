@@ -10,7 +10,8 @@ import { ANALYSIS_DURATION_ESTIMATES } from '../types/analysis'
 import {
   getStoredAnalyses,
   saveAnalysis,
-  launchAnalysis as n8nLaunch,
+  launchAnalysisAsync,
+  pollForResults,
 } from '../services/n8n'
 import { mapSourcesToN8n, mapDepthToN8n } from '../types/n8n'
 
@@ -147,20 +148,41 @@ export function AnalysisProvider({ children }: { children: React.ReactNode }): R
     saveAnalysis(newAnalysis)
     console.log('[AnalysisContext] Analysis created with status: running')
 
-    // Launch n8n webhook in background (non-blocking)
-    // The webhook runs asynchronously while the UI shows the progress overlay
+    // Launch n8n webhook with async polling (non-blocking)
+    // Contourne le timeout Cloudflare 100s via polling
     const runWebhook = async () => {
       try {
-        console.log('[AnalysisContext] Calling n8n webhook for:', config.competitor)
-        const response = await n8nLaunch(
+        console.log('[AnalysisContext] Launching ASYNC analysis for:', config.competitor)
+
+        // 1. Lancer l'analyse (réponse immédiate avec executionId)
+        const { executionId } = await launchAnalysisAsync(
           config.competitor,
           frontendSources,
           config.analysisType
         )
 
-        console.log('[AnalysisContext] n8n response received for', id, ':', {
+        console.log('[AnalysisContext] Got executionId:', executionId)
+        console.log('[AnalysisContext] Starting polling...')
+
+        // 2. Polling pour les résultats
+        const response = await pollForResults(executionId, {
+          maxAttempts: 30,      // 30 * 10s = 5 minutes max
+          pollInterval: 10000,  // 10 secondes
+          onProgress: (attempt, max) => {
+            console.log(`[AnalysisContext] Polling ${attempt}/${max}`)
+          }
+        })
+
+        console.log('[AnalysisContext] ==================')
+        console.log('[AnalysisContext] n8n RESPONSE RECEIVED for', id)
+        console.log('[AnalysisContext] Full response:', JSON.stringify(response, null, 2))
+        console.log('[AnalysisContext] Response summary:', {
           success: response.success,
           hasData: !!response.data,
+          dataKeys: response.data ? Object.keys(response.data) : [],
+          strengths: response.data?.strengths,
+          weaknessesvsCDS: response.data?.weaknessesvsCDS,
+          recentActivity: response.data?.recentActivity,
         })
 
         // Mark as completed
