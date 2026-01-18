@@ -1,10 +1,11 @@
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom'
 import { AppLayout } from './components/layout'
 
 // Pages
+import { HomePage } from './pages/Home'
 import { DashboardPage } from './pages/Dashboard'
 import { MyCompanyPage } from './pages/MyCompany'
-import { WatchlistPage } from './pages/Watchlist'
+import { CompetitorsPage } from './pages/Competitors'
 import { LaunchAnalysisPage } from './pages/LaunchAnalysis'
 import { MyAnalysesPage } from './pages/MyAnalyses'
 import { ResultsPage } from './pages/Results'
@@ -21,7 +22,11 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <DashboardPage />,
+        element: <HomePage />,
+      },
+      {
+        path: 'home',
+        element: <HomePage />,
       },
       {
         path: 'dashboard',
@@ -32,8 +37,13 @@ const router = createBrowserRouter([
         element: <MyCompanyPage />,
       },
       {
+        path: 'competitors',
+        element: <CompetitorsPage />,
+      },
+      {
+        // Legacy redirect: watchlist → competitors
         path: 'watchlist',
-        element: <WatchlistPage />,
+        element: <Navigate to="/competitors" replace />,
       },
       {
         path: 'launch-analysis',
@@ -44,6 +54,7 @@ const router = createBrowserRouter([
         element: <MyAnalysesPage />,
       },
       {
+        // Keep results page accessible for deep linking
         path: 'results',
         element: <ResultsPage />,
       },

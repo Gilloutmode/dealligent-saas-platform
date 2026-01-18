@@ -1,9 +1,12 @@
 {
   "mcpServers": {
-    "context7": {
+    "magic": {
       "command": "npx",
-      "args": ["-y", "@context7/mcp-server"],
-      "purpose": "Documentation technique"
+      "args": ["-y", "@21st-dev/magic@latest"],
+      "env": {
+        "API_KEY": "96cd57f7cc02f02e3c83e537bb5e9eb2b01138545e6725209da8ed1e2f7ad41b"
+      },
+      "purpose": "UI component generation from 21st.dev"
     },
     "github": {
       "command": "npx",
@@ -12,28 +15,23 @@
     },
     "playwright": {
       "command": "npx",
-      "args": ["-y", "@anthropic/mcp-playwright"],
+      "args": ["-y", "@playwright/mcp"],
       "purpose": "Tests E2E automatises"
-    },
-    "serena": {
-      "command": "npx",
-      "args": ["-y", "@anthropic/mcp-serena"],
-      "purpose": "Navigation code semantique"
     },
     "sequential-thinking": {
       "command": "npx",
-      "args": ["-y", "@anthropic/mcp-sequential-thinking"],
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"],
       "purpose": "Raisonnement complexe"
     }
   },
   "profiles": {
     "saas-dev": {
       "description": "Developpement quotidien",
-      "servers": ["context7", "github", "playwright", "serena"]
+      "servers": ["magic", "github", "playwright"]
     },
     "saas-research": {
       "description": "Recherche et exploration",
-      "servers": ["context7", "sequential-thinking"]
+      "servers": ["sequential-thinking"]
     },
     "minimal": {
       "description": "Aucun MCP",

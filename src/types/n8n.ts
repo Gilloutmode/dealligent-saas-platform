@@ -33,19 +33,50 @@ export interface N8nAnalysisRequest {
 }
 
 /**
- * Competitor analysis data returned by n8n
+ * Competitor analysis data returned by n8n CDS-RAG workflow
+ * Aligned with n8n CDS-RAG PROD V11.2 output structure
  */
 export interface CompetitorAnalysisData {
-  competitor: string
-  threatLevel: 'HIGH' | 'MEDIUM' | 'LOW'
+  /** Competitor company name (from request) */
+  competitor?: string
+
+  /** Company headquarters location */
+  headquarters: string
+
+  /** Year the company was founded */
+  foundedYear: string
+
+  /** Competitor's key strengths */
   strengths: string[]
+
+  /** Weaknesses compared to CDS */
   weaknessesvsCDS: string[]
-  opportunities: string[]
-  threats: string[]
-  marketPosition?: string
-  recentNews?: string[]
-  technologies?: string[]
-  pricing?: string
+
+  /** Recent activity and news */
+  recentActivity: string[]
+
+  /** Threat level assessment */
+  threatLevel: 'HIGH' | 'MEDIUM' | 'LOW'
+
+  /** Quality score in format "11/12 (92%)" */
+  qualityScore: string
+
+  /** Intelligence grade (e.g., "A+ - Executive Elite") */
+  intelligenceGrade: string
+
+  /** Source links used for analysis */
+  sourceLinks: string
+
+  /** Last update timestamp (ISO string) */
+  lastUpdated: string
+
+  /** Recommended action */
+  actionRequired: string
+
+  /** Analysis timestamp (ISO string) */
+  timestamp: string
+
+  /** Allow additional properties for flexibility */
   [key: string]: unknown
 }
 

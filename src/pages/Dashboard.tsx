@@ -1,49 +1,49 @@
 "use client"
 
+import { useMemo } from 'react'
 import { motion } from 'framer-motion'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import {
-  TrendingUp,
-  TrendingDown,
   Users,
   Target,
   Activity,
-  Eye,
-  Zap,
-  Play,
-  DollarSign,
-  Briefcase,
-  Sparkles,
-  ChevronRight,
+  TrendingUp,
   BarChart3,
-  Clock,
+  RefreshCw,
   Shield,
-  Building2,
-  PieChart,
-  AlertTriangle,
+  Play,
+  PieChart as PieChartIcon,
+  Clock,
+  Zap,
 } from 'lucide-react'
-import { PremiumStatCard, type ChartDataPoint } from '../components/ui/PremiumStatCard'
 import {
-  companyInfo,
-  dashboardStats,
-  competitors,
-  recentActivity,
-  watchlistItems,
-  customers,
-  kpiMetrics,
-} from '../data/clientData'
+  PieChart,
+  Pie,
+  Cell,
+  ResponsiveContainer,
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  Tooltip,
+} from 'recharts'
+import { competitors } from '../data/clientData'
+import { useAnalysis } from '../contexts/AnalysisContext'
+import { EnrichedKPICard } from '../components/ui/EnrichedKPICard'
+import { PremiumCard } from '../components/ui/PremiumCard'
+import { useTheme } from '../contexts/ThemeContext'
 
 // =============================================================================
-// ANIMATION VARIANTS
+// DASHBOARD PAGE - PREMIUM DESIGN
+// Clean KPIs with NumberTicker + Charts + Recent Analyses
+// Full light/dark mode support with cohesive design
 // =============================================================================
 
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: {
-      staggerChildren: 0.06,
-    },
+    transition: { staggerChildren: 0.08 },
   },
 }
 
@@ -52,242 +52,93 @@ const itemVariants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: {
-      duration: 0.5,
-      ease: [0.25, 0.46, 0.45, 0.94] as const,
-    },
+    transition: { duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] as const },
   },
 }
 
 // =============================================================================
-// MOCK CHART DATA
+// THREAT DISTRIBUTION CHART
 // =============================================================================
 
-const pipelineChartData: ChartDataPoint[] = [
-  { name: 'Jan', value: 4200 },
-  { name: 'Feb', value: 3800 },
-  { name: 'Mar', value: 5100 },
-  { name: 'Apr', value: 4600 },
-  { name: 'May', value: 5800 },
-  { name: 'Jun', value: 6200 },
-  { name: 'Jul', value: 7100 },
-]
-
-const dealsChartData: ChartDataPoint[] = [
-  { name: 'Jan', value: 12 },
-  { name: 'Feb', value: 15 },
-  { name: 'Mar', value: 18 },
-  { name: 'Apr', value: 14 },
-  { name: 'May', value: 22 },
-  { name: 'Jun', value: 28 },
-  { name: 'Jul', value: 35 },
-]
-
-const competitorsChartData: ChartDataPoint[] = [
-  { name: 'Jan', value: 8 },
-  { name: 'Feb', value: 9 },
-  { name: 'Mar', value: 11 },
-  { name: 'Apr', value: 12 },
-  { name: 'May', value: 14 },
-  { name: 'Jun', value: 15 },
-  { name: 'Jul', value: 18 },
-]
-
-const activeDealsChartData: ChartDataPoint[] = [
-  { name: 'Jan', value: 25 },
-  { name: 'Feb', value: 28 },
-  { name: 'Mar', value: 32 },
-  { name: 'Apr', value: 30 },
-  { name: 'May', value: 35 },
-  { name: 'Jun', value: 42 },
-  { name: 'Jul', value: 47 },
-]
-
-// =============================================================================
-// PREMIUM ACTIVITY ITEM
-// =============================================================================
-
-interface ActivityItemProps {
-  title: string
-  description: string
-  time: string
-  status: 'success' | 'warning' | 'info'
-  icon: string
+const THREAT_COLORS = {
+  HIGH: '#ef4444',
+  MEDIUM: '#f59e0b',
+  LOW: '#10b981',
 }
 
-function ActivityItem({ title, description, time, status, icon }: ActivityItemProps) {
-  const statusStyles = {
-    success: 'bg-gradient-to-br from-emerald-500 to-emerald-600 shadow-emerald-500/30',
-    warning: 'bg-gradient-to-br from-amber-500 to-orange-600 shadow-amber-500/30',
-    info: 'bg-gradient-to-br from-[#5E6AD2] to-[#7C85DE] shadow-[#5E6AD2]/30',
-  }
+function ThreatDistributionChart({ data }: { data: { name: string; value: number; color: string }[] }) {
+  const { isDark } = useTheme()
 
   return (
-    <motion.div
-      variants={itemVariants}
-      className="flex items-start gap-4 p-4 rounded-xl hover:bg-white/[0.03] transition-all duration-300 cursor-pointer group"
-      whileHover={{ x: 4 }}
-    >
-      <div className={`p-2.5 rounded-xl ${statusStyles[status]} shadow-lg text-white flex items-center justify-center`}>
-        <span className="text-lg">{icon}</span>
-      </div>
-      <div className="flex-1 min-w-0">
-        <p className="font-medium text-sm text-[var(--text-primary)] group-hover:text-[#5E6AD2] transition-colors">{title}</p>
-        <p className="text-sm text-[var(--text-muted)] truncate">{description}</p>
-      </div>
-      <div className="flex flex-col items-end gap-1">
-        <span className="text-xs text-[var(--text-muted)] whitespace-nowrap">{time}</span>
-        <ChevronRight className="w-4 h-4 text-[var(--text-muted)] opacity-0 group-hover:opacity-100 transition-opacity" />
-      </div>
-    </motion.div>
-  )
-}
-
-// =============================================================================
-// PREMIUM COMPETITOR CARD
-// =============================================================================
-
-interface CompetitorCardProps {
-  name: string
-  threatLevel: string
-  marketShare: number
-  trend?: 'up' | 'down' | 'stable'
-  score?: number
-}
-
-function CompetitorCard({ name, threatLevel, marketShare, trend = 'stable', score }: CompetitorCardProps) {
-  const threatConfig = {
-    high: {
-      gradient: 'from-red-500 to-rose-600',
-      text: 'text-red-400',
-      label: 'Menace élevée',
-      ring: 'ring-1 ring-red-500/30'
-    },
-    medium: {
-      gradient: 'from-amber-500 to-orange-600',
-      text: 'text-amber-400',
-      label: 'Menace modérée',
-      ring: 'ring-1 ring-amber-500/30'
-    },
-    low: {
-      gradient: 'from-emerald-500 to-green-600',
-      text: 'text-emerald-400',
-      label: 'Menace faible',
-      ring: 'ring-1 ring-emerald-500/20'
-    },
-  }
-
-  const trendIcons = {
-    up: <TrendingUp className="w-4 h-4 text-red-400" />,
-    down: <TrendingDown className="w-4 h-4 text-emerald-400" />,
-    stable: <Activity className="w-4 h-4 text-[var(--text-muted)]" />,
-  }
-
-  const config = threatConfig[threatLevel as keyof typeof threatConfig]
-
-  return (
-    <motion.div
-      variants={itemVariants}
-      className={`
-        relative overflow-hidden rounded-2xl
-        border border-white/[0.08]
-        bg-[var(--bg-card)]/60 backdrop-blur-xl
-        p-5 cursor-pointer
-        transition-all duration-300
-        hover:border-white/[0.15]
-        hover:bg-[var(--bg-card)]/80
-        ${config.ring}
-      `}
-      whileHover={{ scale: 1.02, y: -4 }}
-      whileTap={{ scale: 0.98 }}
-    >
-      <div className="flex items-center gap-4">
-        <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${config.gradient} flex items-center justify-center text-white font-bold text-lg shadow-lg`}>
-          {name.charAt(0)}
-        </div>
-        <div className="flex-1 min-w-0">
-          <p className="font-semibold truncate text-[var(--text-primary)]">{name}</p>
-          <div className="flex items-center gap-2 mt-1.5">
-            <div className="h-1.5 flex-1 bg-white/10 rounded-full overflow-hidden">
-              <motion.div
-                initial={{ width: 0 }}
-                animate={{ width: `${marketShare}%` }}
-                transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] as const }}
-                className={`h-full bg-gradient-to-r ${config.gradient} rounded-full`}
-              />
+    <motion.div variants={itemVariants} className="h-full">
+      <PremiumCard variant="orange" enableHover delay={0.1} className="h-full">
+        <div className="h-full flex flex-col">
+          <div className="flex items-center gap-3 mb-5">
+            <div className="p-2.5 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 shadow-lg shadow-amber-500/25">
+              <PieChartIcon className="w-5 h-5 text-white" />
             </div>
-            <span className="text-xs text-[var(--text-muted)] font-medium">{marketShare}%</span>
+            <h3 className={`text-lg font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+              Distribution des Menaces
+            </h3>
+          </div>
+          <div className="flex-1 flex items-center gap-6">
+            <div className="w-32 h-32">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={data}
+                    innerRadius={35}
+                    outerRadius={55}
+                    paddingAngle={4}
+                    dataKey="value"
+                    strokeWidth={0}
+                  >
+                    {data.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="flex-1 space-y-3">
+              {data.map((item) => (
+                <div key={item.name} className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }} />
+                    <span className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{item.name}</span>
+                  </div>
+                  <span className={`text-sm font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>{item.value}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
-
-      <div className="flex items-center justify-between mt-4 pt-4 border-t border-white/[0.06]">
-        <div className="flex items-center gap-2">
-          {trendIcons[trend]}
-          {score && (
-            <span className="text-sm text-[var(--text-muted)]">
-              Score: <span className="text-[var(--text-primary)] font-semibold">{score}</span>
-            </span>
-          )}
-        </div>
-        <span className={`text-xs font-semibold px-2.5 py-1 rounded-full bg-white/5 ${config.text}`}>
-          {config.label}
-        </span>
-      </div>
+      </PremiumCard>
     </motion.div>
   )
 }
 
 // =============================================================================
-// PREMIUM QUICK ACTION
+// RECENT ANALYSES LIST
 // =============================================================================
 
-interface QuickActionProps {
-  icon: React.ReactNode
-  label: string
-  gradient: 'blue' | 'green' | 'purple' | 'orange'
-  onClick?: () => void
+const threatDotColors = {
+  HIGH: 'bg-red-500',
+  MEDIUM: 'bg-amber-500',
+  LOW: 'bg-emerald-500',
 }
 
-function QuickAction({ icon, label, gradient, onClick }: QuickActionProps) {
-  const gradients = {
-    blue: 'from-[#5E6AD2] to-[#7C85DE]',
-    green: 'from-emerald-500 to-green-600',
-    purple: 'from-purple-500 to-violet-600',
-    orange: 'from-amber-500 to-orange-600',
-  }
-
-  const shadows = {
-    blue: 'shadow-[#5E6AD2]/40 hover:shadow-[#5E6AD2]/60',
-    green: 'shadow-emerald-500/40 hover:shadow-emerald-500/60',
-    purple: 'shadow-purple-500/40 hover:shadow-purple-500/60',
-    orange: 'shadow-amber-500/40 hover:shadow-amber-500/60',
-  }
-
-  return (
-    <motion.button
-      variants={itemVariants}
-      onClick={onClick}
-      className={`
-        flex flex-col items-center gap-3 p-6 rounded-2xl
-        bg-gradient-to-br ${gradients[gradient]}
-        shadow-lg ${shadows[gradient]}
-        text-white transition-all duration-300
-      `}
-      whileHover={{ scale: 1.05, y: -4 }}
-      whileTap={{ scale: 0.95 }}
-    >
-      <div className="p-3 rounded-xl bg-white/20 backdrop-blur-sm">
-        {icon}
-      </div>
-      <span className="font-semibold text-sm">{label}</span>
-    </motion.button>
-  )
+const threatBadgeStylesDark = {
+  HIGH: 'bg-red-500/15 text-red-400 border-red-500/20',
+  MEDIUM: 'bg-amber-500/15 text-amber-400 border-amber-500/20',
+  LOW: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/20',
 }
 
-// =============================================================================
-// HELPERS
-// =============================================================================
+const threatBadgeStylesLight = {
+  HIGH: 'bg-red-50 text-red-600 border-red-200',
+  MEDIUM: 'bg-amber-50 text-amber-600 border-amber-200',
+  LOW: 'bg-emerald-50 text-emerald-600 border-emerald-200',
+}
 
 function formatRelativeTime(isoString: string): string {
   const date = new Date(isoString)
@@ -302,24 +153,239 @@ function formatRelativeTime(isoString: string): string {
   return `Il y a ${diffDays} jours`
 }
 
-function getActivityStatus(type: string): 'success' | 'warning' | 'info' {
-  switch (type) {
-    case 'deal_won':
-    case 'analysis_complete':
-      return 'success'
-    case 'competitor_alert':
-      return 'warning'
-    default:
-      return 'info'
+function RecentAnalysesList() {
+  const { completedAnalyses } = useAnalysis()
+  const { isDark } = useTheme()
+  const recentAnalyses = completedAnalyses.slice(0, 5)
+  const threatBadgeStyles = isDark ? threatBadgeStylesDark : threatBadgeStylesLight
+
+  if (recentAnalyses.length === 0) {
+    return (
+      <motion.div variants={itemVariants} className="h-full">
+        <PremiumCard variant="purple" enableHover delay={0.05} className="h-full">
+          <div className="h-full flex flex-col">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="p-2.5 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 shadow-lg shadow-violet-500/25">
+                <Target className="w-5 h-5 text-white" />
+              </div>
+              <h3 className={`text-lg font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                Analyses Récentes
+              </h3>
+            </div>
+            <div className="flex-1 flex flex-col items-center justify-center py-8">
+              <Target className={`w-12 h-12 ${isDark ? 'text-gray-600' : 'text-gray-400'} mx-auto mb-3`} />
+              <p className={`text-sm ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>Aucune analyse complétée</p>
+              <Link
+                to="/launch-analysis"
+                className="inline-flex items-center gap-1.5 mt-3 text-sm text-blue-500 hover:text-blue-400 hover:underline"
+              >
+                <Play className="w-4 h-4" />
+                Lancer une analyse
+              </Link>
+            </div>
+          </div>
+        </PremiumCard>
+      </motion.div>
+    )
   }
+
+  return (
+    <motion.div variants={itemVariants} className="h-full">
+      <PremiumCard variant="purple" enableHover delay={0.05} className="h-full">
+        <div className="h-full flex flex-col">
+          <div className="flex items-center gap-3 mb-5">
+            <div className="p-2.5 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 shadow-lg shadow-violet-500/25">
+              <Target className="w-5 h-5 text-white" />
+            </div>
+            <h3 className={`text-lg font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+              Analyses Récentes
+            </h3>
+          </div>
+          <div className="flex-1 space-y-1">
+            {recentAnalyses.map((analysis) => {
+              const threatLevel = (analysis.response?.data?.threatLevel || 'MEDIUM') as keyof typeof threatDotColors
+              return (
+                <div
+                  key={analysis.id}
+                  className={`flex items-center justify-between py-3 border-b last:border-0 ${
+                    isDark ? 'border-white/10' : 'border-gray-200'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className={`w-2 h-2 rounded-full ${threatDotColors[threatLevel]}`} />
+                    <span className={`text-sm ${isDark ? 'text-white' : 'text-gray-900'}`}>{analysis.competitor}</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className={`text-xs ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
+                      {analysis.completedAt ? formatRelativeTime(analysis.completedAt) : '-'}
+                    </span>
+                    <span className={`text-xs px-2 py-0.5 rounded-full border ${threatBadgeStyles[threatLevel]}`}>
+                      {threatLevel}
+                    </span>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+          <Link
+            to="/results"
+            className="block text-center text-sm text-blue-500 hover:text-blue-400 hover:underline mt-4"
+          >
+            Voir toutes les analyses →
+          </Link>
+        </div>
+      </PremiumCard>
+    </motion.div>
+  )
 }
 
-function formatCurrency(value: number) {
-  return new Intl.NumberFormat('fr-FR', {
-    style: 'currency',
-    currency: 'EUR',
-    maximumFractionDigits: 0,
-  }).format(value)
+// =============================================================================
+// ACTIVITY TIMELINE CHART
+// =============================================================================
+
+function ActivityTimelineChart() {
+  const { completedAnalyses } = useAnalysis()
+  const { isDark } = useTheme()
+
+  // Generate last 7 days data
+  const chartData = useMemo(() => {
+    const days = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']
+    const today = new Date()
+
+    return days.map((day, index) => {
+      const date = new Date(today)
+      date.setDate(date.getDate() - (6 - index))
+
+      const count = completedAnalyses.filter((a) => {
+        if (!a.completedAt) return false
+        const analysisDate = new Date(a.completedAt)
+        return analysisDate.toDateString() === date.toDateString()
+      }).length
+
+      return { name: day, analyses: count }
+    })
+  }, [completedAnalyses])
+
+  return (
+    <motion.div variants={itemVariants}>
+      <PremiumCard variant="cyan" enableHover delay={0.15}>
+        <div className="flex items-center gap-3 mb-5">
+          <div className="p-2.5 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 shadow-lg shadow-cyan-500/25">
+            <Activity className="w-5 h-5 text-white" />
+          </div>
+          <h3 className={`text-lg font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+            Activité (7 jours)
+          </h3>
+        </div>
+        <div className="h-48">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={chartData}>
+              <defs>
+                <linearGradient id="colorAnalyses" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#0891b2" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#0891b2" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <XAxis
+                dataKey="name"
+                axisLine={false}
+                tickLine={false}
+                tick={{ fill: isDark ? '#6b7280' : '#9ca3af', fontSize: 12 }}
+              />
+              <YAxis
+                axisLine={false}
+                tickLine={false}
+                tick={{ fill: isDark ? '#6b7280' : '#9ca3af', fontSize: 12 }}
+                allowDecimals={false}
+              />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: isDark ? '#1f2937' : '#ffffff',
+                  border: isDark ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0,0,0,0.1)',
+                  borderRadius: '8px',
+                  color: isDark ? '#f9fafb' : '#111827',
+                }}
+              />
+              <Area
+                type="monotone"
+                dataKey="analyses"
+                stroke="#0891b2"
+                strokeWidth={2}
+                fillOpacity={1}
+                fill="url(#colorAnalyses)"
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      </PremiumCard>
+    </motion.div>
+  )
+}
+
+// =============================================================================
+// QUICK ACTIONS SECTION
+// =============================================================================
+
+function QuickActionsSection() {
+  const navigate = useNavigate()
+  const { isDark } = useTheme()
+
+  const actions = [
+    { label: 'Lancer Analyse', icon: Play, path: '/launch-analysis', variant: 'blue' as const },
+    { label: 'Voir Résultats', icon: BarChart3, path: '/results', variant: 'purple' as const },
+    { label: 'Watchlist', icon: Shield, path: '/watchlist', variant: 'green' as const },
+    { label: 'Mes Analyses', icon: Activity, path: '/my-analyses', variant: 'orange' as const },
+  ]
+
+  const iconBgStyles = {
+    blue: 'bg-gradient-to-br from-blue-500 to-blue-600 shadow-blue-500/25',
+    green: 'bg-gradient-to-br from-emerald-500 to-green-600 shadow-emerald-500/25',
+    orange: 'bg-gradient-to-br from-amber-500 to-orange-600 shadow-amber-500/25',
+    purple: 'bg-gradient-to-br from-violet-500 to-purple-600 shadow-violet-500/25',
+  }
+
+  return (
+    <motion.div variants={itemVariants}>
+      <PremiumCard variant="green" enableHover delay={0.2}>
+        <div className="flex items-center gap-3 mb-5">
+          <div className="p-2.5 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 shadow-lg shadow-emerald-500/25">
+            <Zap className="w-5 h-5 text-white" />
+          </div>
+          <h3 className={`text-lg font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+            Actions Rapides
+          </h3>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          {actions.map((action) => {
+            const Icon = action.icon
+            return (
+              <motion.button
+                key={action.path}
+                onClick={() => navigate(action.path)}
+                className={`
+                  flex flex-col items-center gap-2 p-4 rounded-xl
+                  border transition-all
+                  ${isDark
+                    ? 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20'
+                    : 'bg-gray-50 border-gray-200 hover:bg-gray-100 hover:border-gray-300'
+                  }
+                `}
+                whileHover={{ y: -4, scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <div className={`p-2.5 rounded-lg ${iconBgStyles[action.variant]} shadow-lg`}>
+                  <Icon className="w-5 h-5 text-white" />
+                </div>
+                <span className={`text-sm font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                  {action.label}
+                </span>
+              </motion.button>
+            )
+          })}
+        </div>
+      </PremiumCard>
+    </motion.div>
+  )
 }
 
 // =============================================================================
@@ -328,371 +394,170 @@ function formatCurrency(value: number) {
 
 export function DashboardPage() {
   const navigate = useNavigate()
+  const { isDark } = useTheme()
+  const { completedAnalyses, runningAnalyses } = useAnalysis()
+
+  // Calculate KPIs
+  const totalCompetitors = competitors.length
+  const analysesThisMonth = useMemo(() => {
+    const now = new Date()
+    return completedAnalyses.filter((a) => {
+      if (!a.completedAt) return false
+      const date = new Date(a.completedAt)
+      return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear()
+    }).length
+  }, [completedAnalyses])
+
+  const avgScore = useMemo(() => {
+    if (completedAnalyses.length === 0) return 0
+    const scores = completedAnalyses
+      .map((a) => {
+        const scoreStr = a.response?.data?.qualityScore
+        if (!scoreStr) return 0
+        const match = String(scoreStr).match(/(\d+)/)
+        return match ? parseInt(match[1], 10) : 0
+      })
+      .filter((s) => s > 0)
+    if (scores.length === 0) return 0
+    return Math.round(scores.reduce((a, b) => a + b, 0) / scores.length)
+  }, [completedAnalyses])
+
+  const activeAnalyses = runningAnalyses.length
+
+  // Threat distribution data
+  const threatDistribution = useMemo(() => {
+    const counts = { HIGH: 0, MEDIUM: 0, LOW: 0 }
+    competitors.forEach((c) => {
+      const level = c.threatLevel.toUpperCase() as keyof typeof counts
+      if (level in counts) counts[level]++
+    })
+    return [
+      { name: 'Élevée', value: counts.HIGH, color: THREAT_COLORS.HIGH },
+      { name: 'Moyenne', value: counts.MEDIUM, color: THREAT_COLORS.MEDIUM },
+      { name: 'Faible', value: counts.LOW, color: THREAT_COLORS.LOW },
+    ]
+  }, [])
 
   return (
     <motion.div
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="space-y-8 pb-8"
+      className="p-8 space-y-6 max-w-7xl mx-auto"
     >
-      {/* ====== PREMIUM HERO HEADER ====== */}
-      <motion.div
-        variants={itemVariants}
-        className="relative overflow-hidden rounded-2xl border border-white/[0.08] bg-[var(--bg-card)]/80 backdrop-blur-xl p-8"
-      >
-        {/* Background gradient mesh */}
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 left-0 w-96 h-96 bg-[#5E6AD2]/20 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl" />
-        </div>
-
-        <div className="relative z-10 flex items-center justify-between flex-wrap gap-6">
-          <div className="flex items-center gap-5">
-            <motion.div
-              className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#5E6AD2] to-[#7C85DE] flex items-center justify-center text-4xl shadow-xl shadow-[#5E6AD2]/30"
-              whileHover={{ scale: 1.1, rotate: 5 }}
-              transition={{ type: "spring", stiffness: 300 }}
-            >
-              {companyInfo.logo}
-            </motion.div>
+      {/* Premium Welcome Header */}
+      <motion.div variants={itemVariants}>
+        <PremiumCard variant="default" enableHover={false}>
+          <div className="flex items-center justify-between">
             <div>
-              <div className="flex items-center gap-3">
-                <h1 className="text-3xl font-bold text-[var(--text-primary)]">{companyInfo.brandName}</h1>
-                <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-[#5E6AD2] to-[#7C85DE] text-white shadow-lg shadow-[#5E6AD2]/30">
-                  <Sparkles className="w-3 h-3" />
-                  Pro
-                </span>
-              </div>
-              <p className="text-[var(--text-secondary)] mt-1">{companyInfo.tagline}</p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <motion.button
-              onClick={() => navigate('/launch-analysis')}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#5E6AD2] to-[#7C85DE] text-white font-semibold shadow-lg shadow-[#5E6AD2]/30 hover:shadow-xl hover:shadow-[#5E6AD2]/40 transition-all duration-300"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Play className="w-4 h-4" />
-              Nouvelle Analyse
-            </motion.button>
-            <motion.button
-              onClick={() => navigate('/results')}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/[0.1] bg-white/[0.03] text-[var(--text-primary)] font-semibold hover:bg-white/[0.06] transition-all duration-300"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <BarChart3 className="w-4 h-4" />
-              Résultats
-            </motion.button>
-          </div>
-        </div>
-      </motion.div>
-
-      {/* ====== PREMIUM STAT CARDS WITH CHARTS ====== */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-        <PremiumStatCard
-          title="Pipeline Total"
-          value={formatCurrency(dashboardStats.totalPipelineValue)}
-          change="+15.2% ce trimestre"
-          changeType="positive"
-          icon={DollarSign}
-          chartData={pipelineChartData}
-          iconColor="green"
-        />
-        <PremiumStatCard
-          title="Deals Gagnés"
-          value={formatCurrency(dashboardStats.wonDealsValue)}
-          change="+23% vs Q3"
-          changeType="positive"
-          icon={Briefcase}
-          chartData={dealsChartData}
-          iconColor="blue"
-        />
-        <PremiumStatCard
-          title="Concurrents surveillés"
-          value={dashboardStats.competitorCount.toString()}
-          change="+8.5% ce mois"
-          changeType="positive"
-          icon={Target}
-          chartData={competitorsChartData}
-          iconColor="purple"
-        />
-        <PremiumStatCard
-          title="Deals en cours"
-          value={dashboardStats.activeDeals.toString()}
-          change="+12 nouveaux"
-          changeType="positive"
-          icon={Activity}
-          chartData={activeDealsChartData}
-          iconColor="orange"
-        />
-      </div>
-
-      {/* ====== KPI METRICS ROW ====== */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-        {[
-          { ...kpiMetrics.timeSavings, icon: Clock, color: 'blue' },
-          { ...kpiMetrics.costSavings, icon: DollarSign, color: 'green' },
-          { ...kpiMetrics.productivityGain, icon: TrendingUp, color: 'purple' },
-          { ...kpiMetrics.weightReduction, icon: Shield, color: 'orange' },
-        ].map((kpi, index) => (
-          <motion.div
-            key={index}
-            variants={itemVariants}
-            className="relative overflow-hidden rounded-2xl border border-white/[0.08] bg-[var(--bg-card)]/60 backdrop-blur-xl p-6 text-center group"
-            whileHover={{ y: -4, scale: 1.02 }}
-          >
-            <div className={`
-              w-14 h-14 rounded-2xl mx-auto mb-4 flex items-center justify-center
-              bg-gradient-to-br
-              ${kpi.color === 'blue' ? 'from-[#5E6AD2] to-[#7C85DE] shadow-[#5E6AD2]/30' : ''}
-              ${kpi.color === 'green' ? 'from-emerald-500 to-green-600 shadow-emerald-500/30' : ''}
-              ${kpi.color === 'purple' ? 'from-purple-500 to-violet-600 shadow-purple-500/30' : ''}
-              ${kpi.color === 'orange' ? 'from-amber-500 to-orange-600 shadow-amber-500/30' : ''}
-              shadow-lg
-            `}>
-              <kpi.icon className="w-6 h-6 text-white" />
-            </div>
-            <p className="text-3xl font-bold text-[var(--text-primary)] mb-1">{kpi.value}</p>
-            <p className="text-sm font-semibold text-[var(--text-primary)] mb-1">{kpi.label}</p>
-            <p className="text-xs text-[var(--text-muted)]">{kpi.description}</p>
-          </motion.div>
-        ))}
-      </div>
-
-      {/* ====== MAIN CONTENT GRID ====== */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Recent Activity */}
-        <motion.div
-          variants={itemVariants}
-          className="lg:col-span-2 rounded-2xl border border-white/[0.08] bg-[var(--bg-card)]/60 backdrop-blur-xl p-6"
-        >
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-xl bg-gradient-to-br from-[#5E6AD2] to-[#7C85DE] shadow-lg shadow-[#5E6AD2]/30">
-                <Activity className="w-5 h-5 text-white" />
-              </div>
-              <h2 className="text-xl font-bold text-[var(--text-primary)]">Activité récente</h2>
-            </div>
-            <button className="text-sm text-[#5E6AD2] hover:text-[#7C85DE] transition-colors flex items-center gap-1 font-medium">
-              Voir tout
-              <ChevronRight className="w-4 h-4" />
-            </button>
-          </div>
-
-          <div className="space-y-1">
-            {recentActivity.map((activity, index) => (
-              <ActivityItem
-                key={index}
-                title={activity.title}
-                description={activity.description}
-                time={formatRelativeTime(activity.timestamp)}
-                status={getActivityStatus(activity.type)}
-                icon={activity.icon}
-              />
-            ))}
-          </div>
-        </motion.div>
-
-        {/* Quick Actions */}
-        <motion.div
-          variants={itemVariants}
-          className="rounded-2xl border border-white/[0.08] bg-[var(--bg-card)]/60 backdrop-blur-xl p-6"
-        >
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 rounded-xl bg-gradient-to-br from-purple-500 to-violet-600 shadow-lg shadow-purple-500/30">
-              <Zap className="w-5 h-5 text-white" />
-            </div>
-            <h2 className="text-xl font-bold text-[var(--text-primary)]">Actions rapides</h2>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <QuickAction
-              icon={<Play className="w-6 h-6" />}
-              label="Nouvelle analyse"
-              gradient="blue"
-              onClick={() => navigate('/launch-analysis')}
-            />
-            <QuickAction
-              icon={<Eye className="w-6 h-6" />}
-              label="Voir résultats"
-              gradient="purple"
-              onClick={() => navigate('/results')}
-            />
-            <QuickAction
-              icon={<Users className="w-6 h-6" />}
-              label="Watchlist"
-              gradient="green"
-              onClick={() => navigate('/watchlist')}
-            />
-            <QuickAction
-              icon={<Building2 className="w-6 h-6" />}
-              label="Mon Entreprise"
-              gradient="orange"
-              onClick={() => navigate('/my-company')}
-            />
-          </div>
-        </motion.div>
-      </div>
-
-      {/* ====== TOP COMPETITORS ====== */}
-      <motion.div
-        variants={itemVariants}
-        className="rounded-2xl border border-white/[0.08] bg-[var(--bg-card)]/60 backdrop-blur-xl p-6"
-      >
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 shadow-lg shadow-amber-500/30">
-              <AlertTriangle className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <h2 className="text-xl font-bold text-[var(--text-primary)]">Concurrents principaux</h2>
-              <p className="text-sm text-[var(--text-muted)]">Classés par niveau de menace et part de marché</p>
-            </div>
-          </div>
-          <motion.button
-            onClick={() => navigate('/watchlist')}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-[#5E6AD2] to-[#7C85DE] text-white font-medium text-sm shadow-lg shadow-[#5E6AD2]/30"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            Voir la watchlist
-            <ChevronRight className="w-4 h-4" />
-          </motion.button>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {competitors.slice(0, 6).map((competitor, index) => {
-            const watchlistItem = watchlistItems.find(w => w.competitor.name === competitor.name)
-            return (
-              <CompetitorCard
-                key={index}
-                name={competitor.name}
-                threatLevel={competitor.threatLevel}
-                marketShare={competitor.marketShare}
-                trend={watchlistItem?.trend as 'up' | 'down' | 'stable' | undefined}
-                score={watchlistItem?.score}
-              />
-            )
-          })}
-        </div>
-      </motion.div>
-
-      {/* ====== CUSTOMERS PIPELINE ====== */}
-      <motion.div
-        variants={itemVariants}
-        className="rounded-2xl border border-white/[0.08] bg-[var(--bg-card)]/60 backdrop-blur-xl p-6"
-      >
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-gradient-to-br from-emerald-500 to-green-600 shadow-lg shadow-emerald-500/30">
-              <Briefcase className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <h2 className="text-xl font-bold text-[var(--text-primary)]">Pipeline Clients</h2>
-              <p className="text-sm text-[var(--text-muted)]">
-                {customers.won.length} deals gagnés • {customers.pipeline.length} en cours
+              <h1 className={`text-2xl font-bold flex items-center gap-3 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                <span className="animate-subtle-pulse text-3xl">👋</span>
+                Bienvenue sur Dealligent
+              </h1>
+              <p className={`mt-1 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                Votre veille concurrentielle intelligente en temps réel
               </p>
             </div>
+            <div className="flex items-center gap-4">
+              {/* Live Status Indicator */}
+              <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full ${
+                isDark ? 'bg-emerald-500/10 border border-emerald-500/20' : 'bg-emerald-50 border border-emerald-200'
+              }`}>
+                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-subtle-pulse" />
+                <span className={`text-xs font-medium ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`}>
+                  Système actif
+                </span>
+              </div>
+              {/* Last Update */}
+              <div className={`flex items-center gap-2 text-sm ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
+                <Clock className="w-4 h-4" />
+                <span>Mis à jour il y a 2h</span>
+              </div>
+            </div>
           </div>
-          <div className="flex gap-3">
-            <span className="px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-400">
-              Gagnés: {formatCurrency(dashboardStats.wonDealsValue)}
-            </span>
-            <span className="px-3 py-1.5 rounded-full text-xs font-semibold bg-[#5E6AD2]/20 text-[#5E6AD2]">
-              Pipeline: {formatCurrency(dashboardStats.totalPipelineValue)}
-            </span>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-          {[...customers.won.slice(0, 3), ...customers.pipeline.slice(0, 3)].map((customer, index) => (
-            <motion.div
-              key={index}
-              variants={itemVariants}
-              className="rounded-2xl border border-white/[0.08] bg-[var(--bg-card)]/40 backdrop-blur-xl p-4 text-center cursor-pointer"
-              whileHover={{ y: -6, scale: 1.05 }}
-            >
-              <span className="text-4xl inline-block mb-2">{customer.logo}</span>
-              <p className="font-semibold text-sm truncate text-[var(--text-primary)]">{customer.name}</p>
-              <p className="text-xs text-[var(--text-muted)] mb-2">{customer.industry}</p>
-              <p className="text-sm font-bold text-[#5E6AD2]">{formatCurrency(customer.dealValue)}</p>
-            </motion.div>
-          ))}
-        </div>
+        </PremiumCard>
       </motion.div>
 
-      {/* ====== PERFORMANCE CHART ====== */}
+      {/* Action Buttons Row */}
+      <motion.div variants={itemVariants} className="flex items-center justify-end gap-3">
+        <motion.button
+          onClick={() => window.location.reload()}
+          className={`p-2.5 rounded-lg border transition-all ${
+            isDark
+              ? 'border-white/10 text-gray-400 hover:bg-white/5 hover:border-white/20'
+              : 'border-gray-200 text-gray-500 hover:bg-gray-100 hover:border-gray-300'
+          }`}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          aria-label="Actualiser"
+        >
+          <RefreshCw className="w-4 h-4" />
+        </motion.button>
+        <motion.button
+          onClick={() => navigate('/launch-analysis')}
+          className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-blue-500 text-white font-medium hover:bg-blue-600 transition-all"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+        >
+          <Play className="w-4 h-4" />
+          Nouvelle Analyse
+        </motion.button>
+      </motion.div>
+
+      {/* KPI Cards - Professional B2B SaaS style with light/dark mode */}
       <motion.div
-        variants={itemVariants}
-        className="rounded-2xl border border-white/[0.08] bg-[var(--bg-card)]/60 backdrop-blur-xl p-6"
+        variants={containerVariants}
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
       >
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-gradient-to-br from-purple-500 to-violet-600 shadow-lg shadow-purple-500/30">
-              <PieChart className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <h2 className="text-xl font-bold text-[var(--text-primary)]">Performance de veille</h2>
-              <p className="text-sm text-[var(--text-muted)]">Évolution des analyses sur 12 mois</p>
-            </div>
-          </div>
-          <div className="flex gap-2">
-            {['30 jours', '90 jours', '1 an'].map((period, i) => (
-              <motion.button
-                key={period}
-                className={`text-sm py-2 px-4 rounded-xl transition-all duration-300 ${
-                  i === 0
-                    ? 'bg-gradient-to-r from-[#5E6AD2] to-[#7C85DE] text-white shadow-lg shadow-[#5E6AD2]/30'
-                    : 'border border-white/[0.1] text-[var(--text-secondary)] hover:bg-white/[0.05]'
-                }`}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                {period}
-              </motion.button>
-            ))}
-          </div>
-        </div>
-
-        {/* Chart visualization */}
-        <div className="relative h-72 rounded-2xl overflow-hidden bg-gradient-to-br from-white/[0.02] to-transparent border border-white/[0.05]">
-          {/* Grid lines */}
-          <div className="absolute inset-0">
-            {[...Array(5)].map((_, i) => (
-              <div
-                key={i}
-                className="absolute left-0 right-0 border-t border-white/[0.03]"
-                style={{ top: `${(i + 1) * 20}%` }}
-              />
-            ))}
-          </div>
-
-          {/* Bar chart */}
-          <div className="absolute inset-0 flex items-end justify-around p-6 gap-3">
-            {[65, 45, 78, 56, 89, 67, 92, 74, 85, 68, 95, 82].map((height, i) => (
-              <motion.div
-                key={i}
-                initial={{ height: 0 }}
-                animate={{ height: `${height}%` }}
-                transition={{ delay: i * 0.08, duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] as const }}
-                className="flex-1 rounded-t-lg bg-gradient-to-t from-[#5E6AD2] to-[#7C85DE] hover:from-[#7C85DE] hover:to-purple-500 transition-all duration-300 cursor-pointer relative group"
-              >
-                {/* Glow effect */}
-                <div className="absolute inset-0 rounded-t-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-lg shadow-[#5E6AD2]/50" />
-
-                {/* Tooltip */}
-                <div className="absolute -top-10 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-[var(--bg-elevated)] border border-white/10 text-[var(--text-primary)] text-xs px-3 py-1.5 rounded-lg whitespace-nowrap shadow-xl">
-                  {height}%
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
+        <EnrichedKPICard
+          label="Concurrents"
+          value={totalCompetitors}
+          previousValue={totalCompetitors - 2}
+          trend={{ direction: 'up', value: 8, label: 'ce mois' }}
+          icon={<Users className="w-5 h-5" />}
+          iconBg="blue"
+          delay={0}
+        />
+        <EnrichedKPICard
+          label="Analyses"
+          value={analysesThisMonth}
+          previousValue={Math.max(0, analysesThisMonth - 3)}
+          trend={{ direction: 'up', value: 12, label: 'vs mois dernier' }}
+          icon={<BarChart3 className="w-5 h-5" />}
+          iconBg="purple"
+          delay={0.08}
+        />
+        <EnrichedKPICard
+          label="Score Moyen"
+          value={avgScore}
+          suffix="%"
+          previousValue={Math.max(0, avgScore - 5)}
+          trend={{ direction: avgScore > 70 ? 'up' : 'neutral', value: 5, label: 'amélioration' }}
+          icon={<TrendingUp className="w-5 h-5" />}
+          iconBg="green"
+          delay={0.16}
+        />
+        <EnrichedKPICard
+          label="En cours"
+          value={activeAnalyses}
+          trend={{ direction: 'neutral', value: 0, label: 'actives' }}
+          icon={<Activity className="w-5 h-5" />}
+          iconBg="orange"
+          delay={0.24}
+        />
       </motion.div>
+
+      {/* Content Grid - Equal height cards */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+        <RecentAnalysesList />
+        <ThreatDistributionChart data={threatDistribution} />
+      </div>
+
+      {/* Activity Timeline */}
+      <ActivityTimelineChart />
+
+      {/* Quick Actions */}
+      <QuickActionsSection />
     </motion.div>
   )
 }

@@ -1,0 +1,1692 @@
+{
+  "name": "CDS-RAG DASHBOARD - V12.1 FIXED (Sync Response)",
+  "nodes": [
+    {
+      "parameters": {
+        "text": "={{ $json.output }}",
+        "attributes": {
+          "attributes": [
+            {
+              "name": "competitor_name",
+              "description": "Name of the competitor company"
+            },
+            {
+              "name": "market_cap",
+              "description": "Market cap in billions USD (exact figure found in research)"
+            },
+            {
+              "name": "executives",
+              "description": "CEO, CTO, CFO with full names"
+            },
+            {
+              "name": "products",
+              "description": "List of key products"
+            },
+            {
+              "name": "industries",
+              "description": "Target industries"
+            },
+            {
+              "name": "customers",
+              "description": "Major customers"
+            },
+            {
+              "name": "headquarters",
+              "description": "Company HQ location"
+            },
+            {
+              "name": "founded_year",
+              "description": "Year founded"
+            },
+            {
+              "name": "strengths",
+              "description": "Key competitive advantages (bullet points)"
+            },
+            {
+              "name": "weaknesses",
+              "description": "Weaknesses vs CDS (bullet points)"
+            },
+            {
+              "name": "recent_activity",
+              "description": "Mergers, acquisitions, funding with dates"
+            },
+            {
+              "name": "threat_level",
+              "description": "HIGH, MEDIUM, or LOW"
+            },
+            {
+              "name": "source_urls",
+              "description": "Extract ALL URLs from the REFERENCES section at the end of the text. Parse markdown links in format [Source Name](URL) and return ONLY the URLs as a comma-separated list. Example: https://url1.com, https://url2.com, https://url3.com. If no URLs found, return 'No sources available'."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1,
+      "position": [
+        -1936,
+        -560
+      ],
+      "id": "fb0a1246-882a-4002-9e14-f34e1365f3f0",
+      "name": "🧠 Information Extractor",
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "retryOnFail": true,
+      "maxTries": 2,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "claude-opus-4-5-20251101",
+          "mode": "list",
+          "cachedResultName": "Claude Opus 4.5"
+        },
+        "options": {
+          "maxTokensToSample": 8192
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        -1856,
+        -336
+      ],
+      "id": "9b698103-b937-4e9b-bee3-529fcd264456",
+      "name": "Anthropic Chat Model2",
+      "credentials": {
+        "anthropicApi": {
+          "id": "iOFRvKyuH588polg",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// ═══════════════════════════════════════════════════════════════\n// 🔒 DATA QUALITY VALIDATOR\n// ═══════════════════════════════════════════════════════════════\n\nconst agentData = items[0].json;\nconst output = agentData.output || '';\nconst timestamp = new Date().toISOString();\n\nconsole.log(`\\n[VALIDATION START] ${timestamp}`);\nconsole.log(`[OUTPUT LENGTH] ${output.length} characters`);\n\n// CHECK FOR TOOLS\nconst toolsCalledPattern = /CDS_Knowledge_Base_Retriever|Market_Intelligence_Agent|Perplexity|Exa|SerpAPI/gi;\nconst toolsMentioned = output.match(toolsCalledPattern);\nconst toolsCount = toolsMentioned ? toolsMentioned.length : 0;\n\n// CHECK FOR DATA\nconst cdsPatterns = [/Cognitive Design/i, /CDS/, /manufacturability/i];\nconst cdsDataPresent = cdsPatterns.some(pattern => pattern.test(output));\n\nconst validationSummary = {\n  timestamp: timestamp,\n  executionId: $execution.id,\n  validationStatus: 'PASSED',\n  cdsDataPresent: cdsDataPresent,\n  toolsCount: toolsCount,\n  outputLength: output.length\n};\n\nreturn [{\n  json: {\n    ...agentData,\n    _validation: validationSummary\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2160,
+        -656
+      ],
+      "id": "967da6b4-0f56-4a6e-9191-0278788bf3af",
+      "name": "🔒 Data Quality Validator1",
+      "onError": "stopOnError"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "claude-opus-4-5-20251101",
+          "mode": "list",
+          "cachedResultName": "Claude Opus 4.5"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        -2368,
+        -528
+      ],
+      "id": "3c377256-2b17-4950-8d1d-12a6c63a5df3",
+      "name": "Anthropic Chat Model3",
+      "credentials": {
+        "anthropicApi": {
+          "id": "iOFRvKyuH588polg",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "claude-opus-4-5-20251101",
+          "mode": "list",
+          "cachedResultName": "Claude Opus 4.5"
+        },
+        "options": {
+          "maxTokensToSample": 8192,
+          "temperature": 0.1
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        -3248,
+        -528
+      ],
+      "id": "7adc9db4-e88b-451d-a62d-274fa5aa87bd",
+      "name": "Anthropic Chat Model4",
+      "credentials": {
+        "anthropicApi": {
+          "id": "iOFRvKyuH588polg",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b9e54386-cbfd-41e1-a846-74dfbd6788b9",
+              "name": "id",
+              "value": "={{ $json.metadata.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -3024,
+        -16
+      ],
+      "id": "dc086ecc-c54c-499d-b8b2-90c78ffd6471",
+      "name": "Edit Fields1",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "setAllData": false,
+        "destinationKey": "fileContent",
+        "options": {
+          "encoding": "base64",
+          "keepAsBase64": true
+        }
+      },
+      "name": "Move Binary Data1",
+      "type": "n8n-nodes-base.moveBinaryData",
+      "typeVersion": 1,
+      "position": [
+        -3472,
+        -16
+      ],
+      "id": "25a42eb9-9768-4f9b-876e-8e66d76c0285"
+    },
+    {
+      "parameters": {
+        "model": "sonar-pro",
+        "messages": {
+          "message": [
+            {
+              "content": "={{ $fromAI('message0_Text', ``, 'string') }}"
+            }
+          ]
+        },
+        "options": {
+          "maxTokens": 4000,
+          "topP": 0.2,
+          "searchRecency": "month"
+        },
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.perplexityTool",
+      "typeVersion": 1,
+      "position": [
+        -3040,
+        -528
+      ],
+      "id": "ffcf6283-4424-4b3e-abdd-dde75c861124",
+      "name": "Message a model in Perplexity1",
+      "credentials": {
+        "perplexityApi": {
+          "id": "xIkVLmeC7fTuDR3w",
+          "name": "Perplexity account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonMode": "expressionData",
+        "jsonData": "={{ $json.pageContent }}",
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "source",
+                "value": "={{ $json.metadata.source }}"
+              },
+              {
+                "name": "fileId",
+                "value": "={{ $json.metadata.fileId }}"
+              },
+              {
+                "name": "chunkIndex",
+                "value": "={{ $json.metadata.chunkIndex }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        -2672,
+        224
+      ],
+      "id": "51b0d578-df1e-49ff-a305-13009b62204d",
+      "name": "Default Data Loader1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Simple hash function compatible with N8N environment\nconst simpleHash = (str) => {\n  let hash = 0;\n  for (let i = 0; i < str.length; i++) {\n    const char = str.charCodeAt(i);\n    hash = ((hash << 5) - hash) + char;\n    hash = hash & hash;\n  }\n  return Math.abs(hash).toString(36).substring(0, 8);\n};\nconst outputItems = [];\nconst chunkSize = 1000;\nconst chunkOverlap = 200;\n\nfor (let itemIndex = 0; itemIndex < items.length; itemIndex++) {\n  const item = items[itemIndex];\n  let text = '';\n  let fileName = item.json?.name || 'unknown_file';\n  let fileId = item.json?.id || '';\n\n  if (item.json?.fileContent && typeof item.json.fileContent === 'string') {\n    try {\n      text = Buffer.from(item.json.fileContent, 'base64').toString('utf-8');\n    } catch (e) {\n      continue;\n    }\n  } else if (item.json?.data && typeof item.json.data === 'string') {\n    text = item.json.data;\n  }\n\n  if (!text || text.length === 0) continue;\n\n  const chunks = [];\n  if (text.length <= chunkSize) {\n    chunks.push(text);\n  } else {\n    for (let i = 0; i < text.length; i += (chunkSize - chunkOverlap)) {\n      const chunk = text.substring(i, i + chunkSize);\n      if (chunk.trim().length > 50) chunks.push(chunk.trim());\n    }\n  }\n\n  for (let chunkIdx = 0; chunkIdx < chunks.length; chunkIdx++) {\n    const timestamp = Date.now();\n    const contentHash = simpleHash(chunks[chunkIdx] + timestamp);\n    const uniqueId = fileId.substring(0, 8) + \"_f\" + itemIndex + \"_c\" + chunkIdx + \"_\" + contentHash;\n\n    outputItems.push({\n      json: {\n        id: uniqueId,\n        pageContent: chunks[chunkIdx],\n        metadata: {\n          id: uniqueId,\n          source: fileName,\n          fileId: fileId,\n          chunkIndex: chunkIdx,\n          totalChunks: chunks.length,\n          vectorId: uniqueId,\n          timestamp: timestamp\n        }\n      },\n      pairedItem: {item: itemIndex}\n    });\n  }\n}\n\nreturn outputItems.length > 0 ? outputItems : [{json: {error: \"No chunks\"}, pairedItem: {item: 0}}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3248,
+        -16
+      ],
+      "id": "4d692cae-ee9d-41d1-bb14-68584c8d9fc6",
+      "name": "Process Text and Create Chunks1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://webhook.site/YOUR-WEBHOOK-URL-HERE",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.logData, null, 2) }}",
+        "options": {
+          "timeout": 5000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -464,
+        -560
+      ],
+      "id": "30e37897-af95-4101-a428-939900e1238d",
+      "name": "📤 Send Logs to Webhook1",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 🎯 CENTRAL LOG AGGREGATOR - ROBUST V11\nconst timestamp = new Date().toISOString();\nconst executionId = $execution.id;\nconst incomingData = items[0].json;\n\n// Helper to safely get input log\nconst getChatLog = () => {\n  try {\n    return $('📍 LOG 01: Chat Input1').first().json._log01;\n  } catch (e) {\n    return { status: \"missing\" };\n  }\n};\n\nconst log01 = getChatLog();\n\nconst completeLog = {\n  sessionSummary: {\n    timestamp: timestamp,\n    executionId: executionId,\n    workflowId: $workflow.id,\n    workflowName: $workflow.name || 'CDS-RAG PROD V11',\n    executionUrl: `https://gilloutmode.app.n8n.cloud/execution/${executionId}`,\n    finalStatus: 'COMPLETED',\n    dataFreshness: `Analysis run on ${new Date().toLocaleDateString()}`\n  },\n  \n  diagnostics: {\n    dataWrittenToSheet: true,\n    qualityScore: incomingData.Quality_Score || 'N/A',\n    actionTaken: incomingData.Action_Required || 'Logged',\n    sourcesFound: !!incomingData.source_urls\n  },\n  \n  logs: {\n    chatInput: log01,\n    lastStepData: {\n       competitor: incomingData.Competitor,\n       threatLevel: incomingData.Threat_Level,\n       marketCap: incomingData.Market_Cap_USD\n    }\n  }\n};\n\nreturn [{json: {logData: completeLog}}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -688,
+        -560
+      ],
+      "id": "11e673a0-dfbc-423d-985f-ec5c5200acac",
+      "name": "🎯 Central Log Aggregator1",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "text",
+              "name": "text",
+              "value": "={{ \"📅 Analysis Date: \" + $now.format('MMMM D, YYYY') + \"\\n\\n\" + $('Orchestrator Agent1').first().json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -240,
+        -560
+      ],
+      "id": "239dcc97-ee40-439c-859a-399bcc6174a7",
+      "name": "Return Chat Response1"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1u-7igJku1Nf0azmb7UctXV1frdqwatDTuJURDCgYa1U",
+          "mode": "list",
+          "cachedResultName": "CDS Market Intelligence Hub"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2022187014,
+          "mode": "list",
+          "cachedResultName": "Competitor_Tracking",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1u-7igJku1Nf0azmb7UctXV1frdqwatDTuJURDCgYa1U/edit#gid=2022187014"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Competitor": "={{ $json.Competitor }}",
+            "Category": "={{ $json.Category }}",
+            "Market_Cap_USD": "={{ $json.Market_Cap_USD }}",
+            "Key_Products": "={{ $json.Key_Products }}",
+            "Target_Industries": "={{ $json.Target_Industries }}",
+            "Key_Customers": "={{ $json.Key_Customers }}",
+            "Executives": "={{ $json.Executives }}",
+            "Strengths": "={{ $json.Strengths }}",
+            "Weaknesses_vs_CDS": "={{ $json.Weaknesses_vs_CDS }}",
+            "Recent_Activity": "={{ $json.Recent_Activity }}",
+            "Threat_Level": "={{ $json.Threat_Level }}",
+            "Action_Required": "={{ $json.Action_Required }}",
+            "Last_Updated": "={{ $json.Last_Updated }}",
+            "Quality_Score": "={{ $json.Quality_Score }}",
+            "Intelligence_Grade": "={{ $json.Intelligence_Grade }}",
+            "Source_Links": "={{ $json.source_urls || 'N/A' }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Competitor",
+              "displayName": "Competitor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Category",
+              "displayName": "Category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Market_Cap_USD",
+              "displayName": "Market_Cap_USD",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Key_Products",
+              "displayName": "Key_Products",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Target_Industries",
+              "displayName": "Target_Industries",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Strengths",
+              "displayName": "Strengths",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Weaknesses_vs_CDS",
+              "displayName": "Weaknesses_vs_CDS",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Recent_Activity",
+              "displayName": "Recent_Activity",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Threat_Level",
+              "displayName": "Threat_Level",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Last_Updated",
+              "displayName": "Last_Updated",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Action_Required",
+              "displayName": "Action_Required",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Key_Customers",
+              "displayName": "Key_Customers",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Executives",
+              "displayName": "Executives",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Quality_Score",
+              "displayName": "Quality_Score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Intelligence_Grade",
+              "displayName": "Intelligence_Grade",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Source_Links",
+              "displayName": "Source_Links",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -912,
+        -560
+      ],
+      "id": "94ccd2fd-99dd-4b92-922a-5b250445df71",
+      "name": "Write to Google Sheets1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "QThik6pkSDGoqjj6",
+          "name": "Google Sheets account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Recent market activity {{ $now.format('YYYY') }}: acquisitions (company name, amount, date), partnerships (company, date), funding (series, amount, date), product launches (name, date). Must include specific dates and dollar amounts.",
+        "url": "https://serpapi.com/search",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "={{$json.query}} acquisitions partnerships funding news {{ $now.format('YYYY') }}"
+            },
+            {
+              "name": "api_key",
+              "value": "a75bc48ba33e8dce83ffeda0d01e63695c6657725db08747a4f59a9bf8f6fbbb"
+            },
+            {
+              "name": "engine",
+              "value": "google"
+            },
+            {
+              "name": "num",
+              "value": "6"
+            },
+            {
+              "name": "tbs",
+              "value": "qdr:y2"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        -2912,
+        -528
+      ],
+      "id": "54cf9583-cc25-4731-90d7-04328f93bd46",
+      "name": "SerpAPI Tool1",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Product portfolio, customer base, and market data: Top 3 products with descriptions, 5 major customers (company names only), target industries, technology platform",
+        "method": "POST",
+        "url": "https://api.exa.ai/search",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "468f0f29-e52d-4aa9-a1c5-aa866758f14a"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\"query\":\"{{$json.query}} products customers industries\",\"num_results\":6,\"type\":\"neural\",\"contents\":{\"text\":true}}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        -2784,
+        -528
+      ],
+      "id": "4c33d0ff-a32f-4cd9-9e61-f1d160300013",
+      "name": "Exa Tool1",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Comprehensive competitive intelligence extraction",
+        "text": "={{ $fromAI('company') }}",
+        "options": {
+          "systemMessage": "DATA EXTRACTION SPECIALIST - Extract comprehensive structured data.\n📅 TODAY'S DATE: {{ $now.format('MMMM D, YYYY') }}\n\n🚨 CRITICAL: Call ALL 3 tools with COLUMN-SPECIFIC queries covering ALL required fields:\n\n1. Perplexity - STRUCTURED COMPANY PROFILE:\n   Query: \"{company} complete company profile {{ $now.format('YYYY') }}:\n\n   FINANCIAL DATA: Stock ticker symbol (NYSE/NASDAQ/exchange), Market capitalization USD billions latest {{ $now.format('YYYY') }}, Annual revenue USD fiscal year {{ $now.minus(1, 'year').format('YYYY') }}\n   LEADERSHIP TEAM: CEO full name and title, CTO Chief Technology Officer name, CFO Chief Financial Officer name\n   COMPANY BASICS: Headquarters full address city state country, Founded year established, Number of employees\n   COMPETITIVE POSITIONING: TOP 5 COMPETITIVE STRENGTHS specific advantages that differentiate (market share technology patents brand distribution), TOP 5 WEAKNESSES OR CHALLENGES known limitations vulnerabilities (dependencies debt competition regulatory)\n   BUSINESS STRATEGY: {{ $now.format('YYYY') }} strategic priorities initiatives market expansion investment areas\n\n   FORMAT: Return structured list with clear labels for each field\"\n\n   VALIDATION: Must return 5/7 fields minimum (vs 3/7 previously)\n   FILLS COLUMNS: Stock_Ticker, Market_Cap_Billions, Revenue_USD, CEO, CTO, CFO, Headquarters, Founded_Year, Competitive_Strengths, Weaknesses_vs_CDS, Strategy\n\n2. Exa - PRODUCTS CUSTOMERS INDUSTRIES (5 required fields):\n   Query: \"{company} products customers industries {{ $now.format('YYYY') }}:\n\n   PRODUCT PORTFOLIO: List flagship products services with Product name Brief description 1-2 sentences Key features capabilities Target use cases\n   Example format: 'AutoCAD: Professional CAD software for 2D/3D design widely used in architecture and engineering'\n   MINIMUM: 3 flagship products with descriptions\n\n   MAJOR CUSTOMERS: List enterprise customers notable clients Company names specific organizations Industry sectors of customers Use cases applications\n   MINIMUM: 5 customer company names\n\n   TARGET INDUSTRIES: Primary vertical markets sectors served Industry names (Aerospace Defense Automotive Manufacturing) Market segments Geographic markets\n   MINIMUM: 3 target industries\n\n   TECHNOLOGY STACK: Core technology platforms architecture Proprietary technology IP Technology partnerships\n\n   FORMAT: Return bulleted lists with clear section headers\"\n\n   VALIDATION: Must return 3/5 fields minimum (vs 2/5 previously)\n   FILLS COLUMNS: Key_Products, Target_Industries, Key_Customers, (partial) Competitive_Strengths\n\n3. SerpAPI - RECENT ACTIVITY NEWS (6 required fields):\n   Query: \"{company} recent activity news {{ $now.format('YYYY') }} {{ $now.minus(1, 'year').format('YYYY') }}:\n\n   ACQUISITIONS M&A: Company acquired date month/year amount USD strategic rationale\n   Example: 'Acquired FlowFactor in Q3 {{ $now.format('YYYY') }} for $1.2 billion to expand manufacturing capabilities'\n\n   PARTNERSHIPS ALLIANCES: Partner company name date announced type of partnership\n   Example: 'Strategic partnership with Microsoft announced June {{ $now.format('YYYY') }} for cloud integration'\n\n   FUNDING FINANCING: Funding round Series A/B/C date amount raised lead investors IPO secondary offerings\n   Example: 'Series D funding $250M led by Sequoia in March {{ $now.format('YYYY') }}'\n\n   PRODUCT LAUNCHES: Product name launch date key capabilities\n   Example: 'AutoCAD {{ $now.plus(1, 'year').format('YYYY') }} released October {{ $now.format('YYYY') }} with AI-powered design assistance'\n\n   EXECUTIVE CHANGES: Position person name effective date\n   Example: 'Appointed Jane Smith as new CFO effective January {{ $now.format('YYYY') }}'\n\n   OTHER NEWS: Major contracts awards regulatory approvals market expansion office openings controversies challenges\n\n   REQUIREMENTS: Focus {{ $now.format('YYYY') }} events most recent 18 months, Include SPECIFIC DATES month/year minimum, Include SPECIFIC AMOUNTS when mentioned, Prioritize most material significant events\n   MINIMUM: 5 recent activities with dates\n\n   FORMAT: Chronological list with dates organized by category\"\n\n   VALIDATION: Must return 4/6 fields minimum (vs 3/6 previously)\n   FILLS COLUMNS: Recent_Activity, (partial) Strategy, (partial) Weaknesses_vs_CDS\n\n🔒 MANDATORY EXECUTION:\n- Call ALL 3 tools (Perplexity + Exa + SerpAPI) - NO EXCEPTIONS\n- Each query MUST be marked \"COMPREHENSIVE\" with ALL column requirements\n- Return structured data with clear field labels (use '**Field:** value' format)\n- If data not found for a field, return \"Not available\" (not blank/empty)\n- Flag which tool provided which data for traceability\n- Use parallel execution if possible for speed optimization\n\n🚫 CRITICAL FAILURES TO AVOID:\n- Calling only 1 or 2 tools (ALL 3 REQUIRED - failure = reject entire output)\n- Generic queries without column specificity\n- Missing dates in Recent_Activity (must include month/year minimum)\n- Missing amounts in acquisitions/funding (must include USD value if mentioned)\n- Vague product descriptions (must include features not just names)\n- Executive titles without names (must include actual person names)\n- Using \"recent\" or \"recently\" without actual dates ({{ $now.format('YYYY') }} required)\n- Returning blank/empty for fields (use \"Not available\" if truly missing)\n\n✅ SUCCESS CRITERIA:\n- Perplexity Score: 5/7 minimum (71% coverage)\n- Exa Score: 3/5 minimum (60% coverage)\n- SerpAPI Score: 4/6 minimum (67% coverage)\n- Overall Quality Score: 12/18 minimum (67% vs 44% previously)\n- All 17 Google Sheets columns filled (no undefined/null)\n\n🔗 BIBLIOGRAPHY REQUIREMENT:\n- You MUST end your report with a section titled '## 🔗 REFERENCES'\n- List 3-5 specific URLs found during your research (from Perplexity or SerpAPI)\n- Format: '- [Source Name](URL)'\n\n📋 OUTPUT FORMAT:\nReturn data in structured format with clear section headers:\n\n**PERPLEXITY DATA:**\n- Stock_Ticker: [value]\n- Market_Cap_Billions: [value]\n- Revenue_USD: [value]\n...\n\n**EXA DATA:**\n- Key_Products: [value]\n- Target_Industries: [value]\n...\n\n**SERPAPI DATA:**\n- Recent_Activity: [value]\n...\n\n## 🔗 REFERENCES\n- [Source 1](url)\n- [Source 2](url)",
+          "maxIterations": 4
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        -3056,
+        -736
+      ],
+      "id": "9f71b1e8-441e-4979-b914-8dcfb65e27e7",
+      "name": "Market_Intelligence_Agent1",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "options": {
+          "dimensions": 512
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.1,
+      "position": [
+        -2496,
+        -352
+      ],
+      "id": "4e9e36ac-c076-4486-943e-f37c2d1b7549",
+      "name": "OpenAI Query Embeddings1",
+      "credentials": {
+        "openAiApi": {
+          "id": "rN03lkUSMUTmFWoD",
+          "name": "New OpenAi connexion"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "cds-knowledge-base",
+          "mode": "list"
+        },
+        "options": {
+          "pineconeNamespace": "cds-docs"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1,
+      "position": [
+        -2624,
+        -528
+      ],
+      "id": "4442b1d5-5c39-4645-be3a-8da19f200a27",
+      "name": "Pinecone Vector Store RETRIEVE1",
+      "credentials": {
+        "pineconeApi": {
+          "id": "oLsZaqE63LqKfPuD",
+          "name": "PineconeApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "Retrieve information about Cognitive Design Systems (CDS) and Cognitive Design 2.0 methodology.\n\nSEARCH FOR:\n• Cognitive Design 2.0 approach and features\n• User-centered design methodologies\n• Manufacturability check processes\n• Design exploration techniques\n• CDS technical architecture and capabilities\n\nKEYWORDS TO MATCH:\nCognitive Design, user-centered, design methodology, manufacturability, \ndesign exploration, human factors, usability, decision-making\n\nUSE THIS TOOL WHEN query mentions:\nCDS, Cognitive Design, design systems, design methodology, user experience,\nmanufacturability, or technical CDS documentation.",
+        "topK": 5
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
+      "typeVersion": 1.1,
+      "position": [
+        -2528,
+        -736
+      ],
+      "id": "97f96b76-eacd-412a-ac58-89d3b0a0ee35",
+      "name": "CDS Knowledge Base Retriever1"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "=={{ $json.sessionId }}",
+        "contextWindowLength": 2
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -3184,
+        -736
+      ],
+      "id": "4458eaa0-c2ab-4f1a-8daa-53eae0e6e08d",
+      "name": "Memory Manager1",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// 📍 LOG POINT 2: AGENT RESPONSE WITH CONTENT ANALYSIS\nconst agentData = items[0].json;\nconst timestamp = new Date().toISOString();\nconst output = agentData.output || '';\n\n// 🔍 Simple content detection for tool usage verification\nconst hasCDSContent = output.includes('Cognitive Design') || output.includes('80%') || output.includes('90%');\nconst hasAutodeskContent = output.includes('Autodesk') || output.includes('ADSK') || output.includes('billion');\n\nconst logEntry = {\n  logPoint: \"02_AGENT_RESPONSE\",\n  timestamp: timestamp,\n  executionId: $execution.id,\n  agentOutput: agentData.output || '',\n  outputLength: (agentData.output || '').length,\n  outputPreview: output.substring(0, 200),\n  \n  // Content-based tool detection\n  contentDetection: {\n    hasCDSContent: hasCDSContent,\n    hasAutodeskContent: hasAutodeskContent,\n    bothSourcesPresent: hasCDSContent && hasAutodeskContent\n  },\n  \n  // Original fields (for compatibility)\n  toolsUsed: agentData.usedTools || [],\n  toolsCount: (agentData.usedTools || []).length,\n  cdsRetrieverUsed: (agentData.usedTools || []).includes('CDS Knowledge Base Retriever'),\n  marketIntelUsed: (agentData.usedTools || []).includes('Market_Intelligence_Agent'),\n  status: agentData.status || 'unknown',\n  error: agentData.error || null\n};\n\nconsole.log('[DEBUG 02] Agent Response:', JSON.stringify(logEntry, null, 2));\n\nreturn [{\n  json: {\n    ...agentData,\n    _log02: logEntry\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2160,
+        -464
+      ],
+      "id": "6b2bee9d-ff49-4320-8c33-ab633bab3e1d",
+      "name": "📍 LOG 02: Agent Response1",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=={{ $json.chatInput }}",
+        "options": {
+          "systemMessage": "📅 CURRENT DATE: {{ $json.current_date }}\n\nYou are the CDS Competitive Intelligence Orchestrator.\n\n🚨 CRITICAL RULE: YOU MUST USE TOOLS - NEVER ANSWER FROM MEMORY\n\n❌ FORBIDDEN BEHAVIORS:\n- Answering questions WITHOUT calling tools first\n- Using pre-trained knowledge about companies or CDS\n- Generating responses based on assumptions\n- Skipping tool calls because you \"already know\" the answer\n\n✅ MANDATORY TOOL USAGE WORKFLOW:\n\nFor EVERY user query, you MUST execute these steps IN ORDER:\n\nSTEP 1 - CDS Baseline Research (NON-NEGOTIABLE):\n  Tool: CDS_Knowledge_Base_Retriever\n  Query: \"Cognitive Design 2.0 methodology features user-centered design\"\n  YOU MUST CALL THIS TOOL FIRST - NO EXCEPTIONS\n  \nSTEP 2 - Competitor Intelligence (MANDATORY):\n  Tool: Market_Intelligence_Agent  \n  Query: [Exact competitor company name from user]\n  WAIT for Step 1 to complete, then call this tool\n  \nSTEP 3 - Synthesis (ONLY AFTER STEPS 1 & 2):\n  Compare actual data from tools (not your memory)\n  Format: CDS strengths vs Competitor analysis\n  Date your analysis: \"Fresh Analysis - {{ $json.current_year }}\"\n\n🔒 ENFORCEMENT:\n- If you haven't called CDS_Knowledge_Base_Retriever → STOP and call it now\n- If you haven't called Market_Intelligence_Agent → STOP and call it now  \n- DO NOT write a response until BOTH tools have been called\n- Your response MUST cite specific data from the tool results\n\n💰 FINANCIAL CONSISTENCY RULE:\nWhen synthesizing data, you MUST use the EXACT financial figures (Market Cap, Revenue) found by the Market_Intelligence_Agent. Do not 'estimate' or use your internal knowledge base for numbers. If the tool says '$60B', you say '$60B'.\n\n📋 VERIFICATION CHECKLIST:\nBefore responding, verify:\n[ ] Called CDS_Knowledge_Base_Retriever?\n[ ] Called Market_Intelligence_Agent?\n[ ] Using data from tools (not memory)?\n[ ] Cited specific facts from tool outputs?\n\nIf ANY checkbox is unchecked → DO NOT RESPOND, call missing tools first.",
+          "maxIterations": 10
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -3152,
+        -960
+      ],
+      "id": "7a9e8d5f-8af3-4c4f-96ee-5a9073297673",
+      "name": "Orchestrator Agent1",
+      "alwaysOutputData": true,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 📍 LOG POINT 1: CHAT INPUT\nconst chatData = items[0].json;\nconst timestamp = new Date().toISOString();\n\nconst logEntry = {\n  logPoint: \"01_CHAT_INPUT\",\n  timestamp: timestamp,\n  executionId: $execution.id,\n  workflowId: $workflow.id,\n  sessionId: chatData.session_id || 'unknown',\n  userQuery: chatData.chatInput,\n  rawInput: chatData,\n  executionUrl: `https://gilloutmode.app.n8n.cloud/execution/${$execution.id}`\n};\n\nconsole.log('[DEBUG 01] Chat Input:', JSON.stringify(logEntry, null, 2));\n\nreturn [{\n  json: {\n    ...chatData,\n    _log01: logEntry\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3472,
+        -656
+      ],
+      "id": "722575ff-3274-4a55-bb89-706bbe6c165d",
+      "name": "📍 LOG 01: Chat Input1",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "session_id",
+              "name": "session_id",
+              "value": "={{ $json.sessionId || 'session_' + $now.toUnixInteger() }}",
+              "type": "string"
+            },
+            {
+              "id": "chatInput",
+              "name": "chatInput",
+              "value": "={{ $json.chatInput || $json.message || 'No message' }}",
+              "type": "string"
+            },
+            {
+              "id": "c3657489-1350-4d6d-8c42-697ec5dd63a8",
+              "name": "current_date",
+              "value": "={{ $now.format('MMMM D, YYYY') }}",
+              "type": "string"
+            },
+            {
+              "id": "1607c22f-642a-49a5-9008-56729554c808",
+              "name": "current_year",
+              "value": "={{ $now.format('YYYY') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -3696,
+        -656
+      ],
+      "id": "5441253b-1b31-405b-b8fb-ca4a6d16e802",
+      "name": "Prepare Context1"
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Download File from Drive1').item.json.id }}",
+          "mode": "id"
+        },
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive",
+          "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1IJ-mDVPo3yVper3eOs1UX8GBTgOGmnJV",
+          "mode": "list",
+          "cachedResultName": "Processed",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1IJ-mDVPo3yVper3eOs1UX8GBTgOGmnJV"
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -2448,
+        -16
+      ],
+      "id": "4d5808c6-3d03-4477-9cb7-6ddf9077b54d",
+      "name": "Move to Processed Folder1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "jEwJ2q9l5JixOgWN",
+          "name": "Google Drive account 2"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "cds-knowledge-base",
+          "mode": "list",
+          "cachedResultName": "cds-knowledge-base"
+        },
+        "options": {
+          "pineconeNamespace": "cds-docs"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1,
+      "position": [
+        -2800,
+        -16
+      ],
+      "id": "e9ce9aa6-e56b-42b3-8bb3-088322033de6",
+      "name": "Pinecone Vector Store INSERT1",
+      "credentials": {
+        "pineconeApi": {
+          "id": "oLsZaqE63LqKfPuD",
+          "name": "PineconeApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "text-embedding-3-large",
+        "options": {
+          "dimensions": 512
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.1,
+      "position": [
+        -2800,
+        224
+      ],
+      "id": "68b2aa57-3d11-4395-8a85-e9f030caa875",
+      "name": "OpenAI Embeddings (512-dim)1",
+      "credentials": {
+        "openAiApi": {
+          "id": "rN03lkUSMUTmFWoD",
+          "name": "New OpenAi connexion"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {
+          "googleFileConversion": {
+            "conversion": {
+              "docsToFormat": "text/plain"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -3696,
+        -16
+      ],
+      "id": "1374d0e3-98fc-42bd-8861-80839c08c603",
+      "name": "Download File from Drive1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "jEwJ2q9l5JixOgWN",
+          "name": "Google Drive account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "searchMethod": "query",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "1iOH1nyHer6Dif6rQT1r0CHaZvfmpx_v4",
+            "mode": "list",
+            "cachedResultName": "To_Process",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1iOH1nyHer6Dif6rQT1r0CHaZvfmpx_v4"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -3920,
+        -16
+      ],
+      "id": "f1914371-4308-48c9-bb46-cf6db7ab7c9b",
+      "name": "List New Drive Files1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "jEwJ2q9l5JixOgWN",
+          "name": "Google Drive account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "months"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -4144,
+        -16
+      ],
+      "id": "b7401daa-4887-463a-a526-5d04a31eb689",
+      "name": "Schedule: RAG Ingestion Every 15min1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "field-competitor",
+              "name": "Competitor",
+              "value": "={{ $json.competitor_name || $json.output.competitor_name || 'Unknown' }}",
+              "type": "string"
+            },
+            {
+              "id": "field-category",
+              "name": "Category",
+              "value": "Competitive Intelligence",
+              "type": "string"
+            },
+            {
+              "id": "field-marketcap",
+              "name": "Market_Cap_USD",
+              "value": "={{ $json.market_cap || $json.output.market_cap || 'N/A' }}",
+              "type": "string"
+            },
+            {
+              "id": "field-products",
+              "name": "Key_Products",
+              "value": "={{ ($json.products || $json.output.products || 'Products not extracted').toString().replaceAll('**', '') }}",
+              "type": "string"
+            },
+            {
+              "id": "field-industries",
+              "name": "Target_Industries",
+              "value": "={{ ($json.industries || $json.output.industries || 'Industries not extracted').toString().replaceAll('**', '') }}",
+              "type": "string"
+            },
+            {
+              "id": "field-customers",
+              "name": "Key_Customers",
+              "value": "={{ ($json.customers || $json.output.customers || 'Customers not extracted').toString().replaceAll('**', '') }}",
+              "type": "string"
+            },
+            {
+              "id": "field-executives",
+              "name": "Executives",
+              "value": "={{ $json.executives || $json.output.executives || 'Not available' }}",
+              "type": "string"
+            },
+            {
+              "id": "field-hq",
+              "name": "Headquarters",
+              "value": "={{ $json.headquarters || $json.output.headquarters || 'Unknown' }}",
+              "type": "string"
+            },
+            {
+              "id": "field-founded",
+              "name": "Founded_Year",
+              "value": "={{ $json.founded_year || $json.output.founded_year || 'Unknown' }}",
+              "type": "string"
+            },
+            {
+              "id": "field-strengths",
+              "name": "Strengths",
+              "value": "={{ ($json.strengths || $json.output.strengths || 'Strengths not extracted').toString().replaceAll('**', '') }}",
+              "type": "string"
+            },
+            {
+              "id": "field-weaknesses",
+              "name": "Weaknesses_vs_CDS",
+              "value": "={{ ($json.weaknesses || $json.output.weaknesses || 'Weaknesses not extracted').toString().replaceAll('**', '') }}",
+              "type": "string"
+            },
+            {
+              "id": "field-activity",
+              "name": "Recent_Activity",
+              "value": "={{ ($json.recent_activity || $json.output.recent_activity || 'No recent activity').toString().replaceAll('**', '') }}",
+              "type": "string"
+            },
+            {
+              "id": "field-threat",
+              "name": "Threat_Level",
+              "value": "={{ $json.threat_level || $json.output.threat_level || 'UNKNOWN' }}",
+              "type": "string"
+            },
+            {
+              "id": "field-updated",
+              "name": "Last_Updated",
+              "value": "={{ new Date().toISOString() }}",
+              "type": "string"
+            },
+            {
+              "id": "field-action",
+              "name": "Action_Required",
+              "value": "={{ ($json.threat_level === 'HIGH' || $json.output.threat_level === 'HIGH') ? 'Monitor closely' : 'Periodic review' }}",
+              "type": "string"
+            },
+            {
+              "id": "field-sources",
+              "name": "source_urls",
+              "value": "={{ $json.source_urls || $json.output.source_urls || 'N/A' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1584,
+        -560
+      ],
+      "id": "96a8da3c-e7dd-4ff0-9b07-a63a5302a84c",
+      "name": "📝 Format Extracted Data1",
+      "notesInFlow": false,
+      "onError": "continueRegularOutput",
+      "notes": "FIXED: Removed .output prefix and clean markdown stars (**)"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ROBUST QUALITY SCORE CALCULATION V11\n// Checks for actual content presence, not exact string matches\n\nconst data = items[0].json;\n\n// Helper to check if a field has meaningful content (>5 chars)\nconst hasContent = (val) => {\n  if (!val) return 0;\n  if (val === 'N/A' || val === 'Unknown' || val === 'Not available') return 0;\n  return val.toString().length > 5 ? 1 : 0;\n};\n\nconst validFields = [\n  hasContent(data.Competitor),\n  hasContent(data.Market_Cap_USD),\n  hasContent(data.Key_Products),\n  hasContent(data.Target_Industries),\n  hasContent(data.Key_Customers),\n  hasContent(data.Executives),\n  hasContent(data.Headquarters),\n  hasContent(data.Founded_Year),\n  hasContent(data.Strengths),\n  hasContent(data.Weaknesses_vs_CDS),\n  hasContent(data.Recent_Activity),\n  hasContent(data.Threat_Level)\n].reduce((a, b) => a + b, 0);\n\nconst totalFields = 12;\nconst percent = Math.round((validFields / totalFields) * 100);\n\nlet grade = 'C';\nif (percent >= 90) grade = 'A+ - Executive Elite';\nelse if (percent >= 80) grade = 'A - Strategic Quality';\nelse if (percent >= 70) grade = 'B+ - Good Intelligence';\nelse if (percent >= 60) grade = 'B - Acceptable';\n\nreturn [{\n  json: {\n    ...data,\n    fields_filled: validFields,\n    quality_percent: percent,\n    Quality_Score: `${validFields}/${totalFields} (${percent}%)`,\n    Intelligence_Grade: grade\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1360,
+        -560
+      ],
+      "id": "68f2c359-07d9-41d0-b6ed-a59bf87c9a0b",
+      "name": "📊 Calculate Quality Score1",
+      "notesInFlow": false,
+      "onError": "continueRegularOutput",
+      "notes": "Calcul automatique du score de qualité et grade d'intelligence"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d2f1ad5e-c082-48ba-b569-7ad04d335306",
+              "name": "Action_Required",
+              "value": "={{ $json.quality_percent < 70 ? '⚠️ LOW QUALITY - REVIEW NEEDED' : $json.Action_Required }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1136,
+        -560
+      ],
+      "id": "1b109197-420d-4353-8890-cd5df5e049b2",
+      "name": "Set Quality Tag1"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "61ea8949-d762-49f1-8f5c-75169b5a4190",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -4144,
+        -752
+      ],
+      "id": "265837dd-3b35-4bb3-87ec-e1c668588bfa",
+      "name": "Webhook",
+      "webhookId": "61ea8949-d762-49f1-8f5c-75169b5a4190",
+      "alwaysOutputData": true,
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f7b7b41b-9ae9-4fe7-a2fa-79ae0f45c297",
+              "name": "chatInput",
+              "value": "={{ $json.body.chatInput || $json.chatInput || 'Unknown Company' }}",
+              "type": "string"
+            },
+            {
+              "id": "a6248f3c-238f-4979-a594-14d276c38c45",
+              "name": "sessionId",
+              "value": "={{ 'dashboard_' + $now.toUnixInteger() }}",
+              "type": "string"
+            },
+            {
+              "id": "c4bdc196-3a31-4672-bd88-b5cdcd022492",
+              "name": "current_date",
+              "value": "={{ $now.format('MMMM D, YYYY') }}",
+              "type": "string"
+            },
+            {
+              "id": "3241ed0a-d175-4f75-a9fb-3bb6030c9dc1",
+              "name": "current_year",
+              "value": "={{ $now.format('YYYY') }}",
+              "type": "string"
+            },
+            {
+              "id": "c57ac377-fbfe-4906-bdc2-f6dcb2edf474",
+              "name": "dashboard_sources",
+              "value": "={{ $json.body.sources || ['Perplexity', 'Exa', 'SerpAPI'] }}",
+              "type": "string"
+            },
+            {
+              "id": "a9555b81-f8c4-4f5b-b763-62d7ab77a748",
+              "name": "dashboard_depth",
+              "value": "={{ $json.body.depth || 'detailed' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -3920,
+        -752
+      ],
+      "id": "d0c7ffce-5a99-4ad5-a0f2-54717938d044",
+      "name": "🔄 Transform Dashboard Input"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 📦 DASHBOARD RESPONSE FORMATTER V12.1 - SYNC RESPONSE\n// This node formats the final response for the webhook\n  const parseArrayField = (field) => {\n    if (!field || field === 'N/A' || field === 'Not available') return [];\n    const items = field.split(/[•\\n,]/).map(s => s.trim()).filter(s => s.length > 0);\n    return items.length > 0 ? items : [field];\n  };\n\n  try {\n    const sheetData = $('Set Quality Tag1').first().json;\n\n    const response = {\n      success: true,\n      data: {\n        competitor: sheetData.Competitor || 'Unknown',\n        category: sheetData.Category || 'Competitive Intelligence',\n        marketCapUSD: sheetData.Market_Cap_USD || 'N/A',\n        keyProducts: parseArrayField(sheetData.Key_Products),\n        targetIndustries: parseArrayField(sheetData.Target_Industries),\n        keyCustomers: parseArrayField(sheetData.Key_Customers),\n        executives: sheetData.Executives || 'Not available',\n        headquarters: sheetData.Headquarters || 'Unknown',\n        foundedYear: sheetData.Founded_Year || 'Unknown',\n        strengths: parseArrayField(sheetData.Strengths),\n        weaknessesvsCDS: parseArrayField(sheetData.Weaknesses_vs_CDS),\n        recentActivity: parseArrayField(sheetData.Recent_Activity),\n        threatLevel: sheetData.Threat_Level || 'MEDIUM',\n        qualityScore: sheetData.Quality_Score || '0/12 (0%)',\n        intelligenceGrade: sheetData.Intelligence_Grade || 'C',\n        sourceLinks: sheetData.source_urls || 'N/A',\n        lastUpdated: sheetData.Last_Updated || new Date().toISOString(),\n        actionRequired: sheetData.Action_Required || 'Review'\n      },\n      meta: {\n        executionId: $execution.id,\n        workflowVersion: 'V12.1-SYNC',\n        processingMode: 'synchronous'\n      },\n      timestamp: new Date().toISOString()\n    };\n\n    return [{ json: response }];\n\n  } catch (error) {\n    return [{\n      json: {\n        success: false,\n        data: null,\n        error: `Failed to format response: ${error.message}`,\n        meta: {\n          executionId: $execution.id,\n          workflowVersion: 'V12.1-SYNC'\n        },\n        timestamp: new Date().toISOString()\n      }\n    }];\n  }\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -16,
+        -560
+      ],
+      "id": "ae9dcd59-4996-48f8-9aff-cbaa5fa75658",
+      "name": "📦 Format Dashboard Response"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        208,
+        -560
+      ],
+      "id": "f64fc1c2-be11-4775-855a-b78f73020e67",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "🧠 Information Extractor": {
+      "main": [
+        [
+          {
+            "node": "📝 Format Extracted Data1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "🧠 Information Extractor",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔒 Data Quality Validator1": {
+      "main": [
+        [
+          {
+            "node": "🧠 Information Extractor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "CDS Knowledge Base Retriever1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model4": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Market_Intelligence_Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Orchestrator Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Pinecone Vector Store INSERT1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Move Binary Data1": {
+      "main": [
+        [
+          {
+            "node": "Process Text and Create Chunks1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model in Perplexity1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Market_Intelligence_Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader1": {
+      "ai_document": [
+        [
+          {
+            "node": "Pinecone Vector Store INSERT1",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Text and Create Chunks1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📤 Send Logs to Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Return Chat Response1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🎯 Central Log Aggregator1": {
+      "main": [
+        [
+          {
+            "node": "📤 Send Logs to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write to Google Sheets1": {
+      "main": [
+        [
+          {
+            "node": "🎯 Central Log Aggregator1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SerpAPI Tool1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Market_Intelligence_Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Exa Tool1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Market_Intelligence_Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Market_Intelligence_Agent1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Orchestrator Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Query Embeddings1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store RETRIEVE1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Vector Store RETRIEVE1": {
+      "ai_vectorStore": [
+        [
+          {
+            "node": "CDS Knowledge Base Retriever1",
+            "type": "ai_vectorStore",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CDS Knowledge Base Retriever1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Orchestrator Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Memory Manager1": {
+      "ai_memory": [
+        [
+          {
+            "node": "Orchestrator Agent1",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📍 LOG 02: Agent Response1": {
+      "main": [
+        [
+          {
+            "node": "🧠 Information Extractor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Orchestrator Agent1": {
+      "main": [
+        [
+          {
+            "node": "🔒 Data Quality Validator1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📍 LOG 01: Chat Input1": {
+      "main": [
+        [
+          {
+            "node": "Orchestrator Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Context1": {
+      "main": [
+        [
+          {
+            "node": "📍 LOG 01: Chat Input1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Vector Store INSERT1": {
+      "main": [
+        [
+          {
+            "node": "Move to Processed Folder1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Embeddings (512-dim)1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store INSERT1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download File from Drive1": {
+      "main": [
+        [
+          {
+            "node": "Move Binary Data1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "List New Drive Files1": {
+      "main": [
+        [
+          {
+            "node": "Download File from Drive1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule: RAG Ingestion Every 15min1": {
+      "main": [
+        [
+          {
+            "node": "List New Drive Files1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📝 Format Extracted Data1": {
+      "main": [
+        [
+          {
+            "node": "📊 Calculate Quality Score1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📊 Calculate Quality Score1": {
+      "main": [
+        [
+          {
+            "node": "Set Quality Tag1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Quality Tag1": {
+      "main": [
+        [
+          {
+            "node": "Write to Google Sheets1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "🔄 Transform Dashboard Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔄 Transform Dashboard Input": {
+      "main": [
+        [
+          {
+            "node": "Prepare Context1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Return Chat Response1": {
+      "main": [
+        [
+          {
+            "node": "📦 Format Dashboard Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📦 Format Dashboard Response": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true
+  },
+  "versionId": "v12.1-sync-response",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "32831241200b534db91d34a916ee7fb845fffeb1fcb7fe2246f893ee8c6765a5"
+  },
+  "id": "OQyvPpH6c9sEz203",
+  "tags": [
+    {
+      "updatedAt": "2025-12-01T15:04:27.608Z",
+      "createdAt": "2025-12-01T15:04:27.608Z",
+      "id": "ttxiQdzUdLPaJ8Ij",
+      "name": "Workflow CDS Webhook"
+    }
+  ]
+}

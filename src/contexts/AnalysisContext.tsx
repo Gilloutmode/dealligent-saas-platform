@@ -18,6 +18,15 @@ import { mapSourcesToN8n, mapDepthToN8n } from '../types/n8n'
 // TYPES
 // =============================================================================
 
+/**
+ * Result returned by launchAnalysis to avoid race condition
+ * where the analysis isn't in state yet when the caller needs it
+ */
+export interface LaunchAnalysisResult {
+  id: string
+  analysis: StoredAnalysis
+}
+
 interface AnalysisContextValue {
   // State
   analyses: StoredAnalysis[]
@@ -26,7 +35,7 @@ interface AnalysisContextValue {
   failedAnalyses: StoredAnalysis[]
 
   // Actions
-  launchAnalysis: (config: LaunchAnalysisConfig) => Promise<string>
+  launchAnalysis: (config: LaunchAnalysisConfig) => Promise<LaunchAnalysisResult>
   cancelAnalysis: (id: string) => void
   retryAnalysis: (id: string) => void
   clearAnalysis: (id: string) => void
@@ -104,7 +113,7 @@ export function AnalysisProvider({ children }: { children: React.ReactNode }): R
   }, [analyses])
 
   // Launch an analysis
-  const launchAnalysis = useCallback(async (config: LaunchAnalysisConfig): Promise<string> => {
+  const launchAnalysis = useCallback(async (config: LaunchAnalysisConfig): Promise<LaunchAnalysisResult> => {
     const id = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
     const now = new Date().toISOString()
 
@@ -138,74 +147,83 @@ export function AnalysisProvider({ children }: { children: React.ReactNode }): R
     saveAnalysis(newAnalysis)
     console.log('[AnalysisContext] Analysis created with status: running')
 
-    // Launch n8n webhook in background
-    try {
-      console.log('[AnalysisContext] Calling n8n webhook for:', config.competitor)
-      const response = await n8nLaunch(
-        config.competitor,
-        frontendSources,
-        config.analysisType
-      )
+    // Launch n8n webhook in background (non-blocking)
+    // The webhook runs asynchronously while the UI shows the progress overlay
+    const runWebhook = async () => {
+      try {
+        console.log('[AnalysisContext] Calling n8n webhook for:', config.competitor)
+        const response = await n8nLaunch(
+          config.competitor,
+          frontendSources,
+          config.analysisType
+        )
 
-      console.log('[AnalysisContext] n8n response received for', id, ':', {
-        success: response.success,
-        hasData: !!response.data,
-      })
+        console.log('[AnalysisContext] n8n response received for', id, ':', {
+          success: response.success,
+          hasData: !!response.data,
+        })
 
-      // Mark as completed
-      console.log('[AnalysisContext] Updating state to completed for:', id)
-      setAnalyses(prev => prev.map(a =>
-        a.id === id
-          ? {
-              ...a,
-              status: 'completed' as const,
-              completedAt: new Date().toISOString(),
-              response
-            }
-          : a
-      ))
+        // Mark as completed
+        console.log('[AnalysisContext] Updating state to completed for:', id)
+        setAnalyses(prev => prev.map(a =>
+          a.id === id
+            ? {
+                ...a,
+                status: 'completed' as const,
+                completedAt: new Date().toISOString(),
+                response
+              }
+            : a
+        ))
 
-      // Also save to localStorage
-      const updatedAnalysis: StoredAnalysis = {
-        ...newAnalysis,
-        status: 'completed',
-        completedAt: new Date().toISOString(),
-        response,
+        // Also save to localStorage
+        const updatedAnalysis: StoredAnalysis = {
+          ...newAnalysis,
+          status: 'completed',
+          completedAt: new Date().toISOString(),
+          response,
+        }
+        saveAnalysis(updatedAnalysis)
+        console.log('[AnalysisContext] Analysis completed successfully:', id)
+
+        // Dispatch custom event for toast notification
+        window.dispatchEvent(new CustomEvent('analysis-complete', {
+          detail: { id, competitor: config.competitor, status: 'completed' }
+        }))
+
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue'
+        console.error('[AnalysisContext] Error during analysis', id, ':', errorMessage)
+
+        // Mark as failed
+        setAnalyses(prev => prev.map(a =>
+          a.id === id
+            ? { ...a, status: 'failed' as const, error: errorMessage }
+            : a
+        ))
+
+        // Also save to localStorage
+        const failedAnalysis: StoredAnalysis = {
+          ...newAnalysis,
+          status: 'failed',
+          error: errorMessage,
+        }
+        saveAnalysis(failedAnalysis)
+
+        // Dispatch custom event for toast notification
+        window.dispatchEvent(new CustomEvent('analysis-complete', {
+          detail: { id, competitor: config.competitor, status: 'failed', error: errorMessage }
+        }))
       }
-      saveAnalysis(updatedAnalysis)
-      console.log('[AnalysisContext] Analysis completed successfully:', id)
-
-      // Dispatch custom event for toast notification
-      window.dispatchEvent(new CustomEvent('analysis-complete', {
-        detail: { id, competitor: config.competitor, status: 'completed' }
-      }))
-
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue'
-      console.error('[AnalysisContext] Error during analysis', id, ':', errorMessage)
-
-      // Mark as failed
-      setAnalyses(prev => prev.map(a =>
-        a.id === id
-          ? { ...a, status: 'failed' as const, error: errorMessage }
-          : a
-      ))
-
-      // Also save to localStorage
-      const failedAnalysis: StoredAnalysis = {
-        ...newAnalysis,
-        status: 'failed',
-        error: errorMessage,
-      }
-      saveAnalysis(failedAnalysis)
-
-      // Dispatch custom event for toast notification
-      window.dispatchEvent(new CustomEvent('analysis-complete', {
-        detail: { id, competitor: config.competitor, status: 'failed', error: errorMessage }
-      }))
     }
 
-    return id
+    // Start webhook in background (fire-and-forget pattern)
+    // This allows the UI to show progress immediately while the analysis runs
+    runWebhook()
+
+    // Return immediately with the running analysis
+    // The progress overlay can now display while the webhook executes
+    return { id, analysis: newAnalysis }
   }, [])
 
   // Cancel an analysis (just sets status, no real cancel on n8n side)

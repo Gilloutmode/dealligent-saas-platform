@@ -40,38 +40,66 @@ function mapThreatLevel(level?: string): 'high' | 'medium' | 'low' {
 }
 
 /**
- * Calculate quality score based on completeness of data
+ * Parse quality score from n8n format (e.g., "11/12 (92%)") to percentage
+ */
+function parseQualityScore(qualityScore?: string): number {
+  if (!qualityScore) return 0
+
+  // Try to extract percentage from format like "11/12 (92%)"
+  const percentMatch = qualityScore.match(/\((\d+)%\)/)
+  if (percentMatch) {
+    return parseInt(percentMatch[1], 10)
+  }
+
+  // Try to extract fraction like "11/12"
+  const fractionMatch = qualityScore.match(/(\d+)\/(\d+)/)
+  if (fractionMatch) {
+    const num = parseInt(fractionMatch[1], 10)
+    const denom = parseInt(fractionMatch[2], 10)
+    return Math.round((num / denom) * 100)
+  }
+
+  return 0
+}
+
+/**
+ * Calculate quality score based on n8n qualityScore or data completeness
  */
 function calculateScore(data?: StoredAnalysis['response']): number {
   if (!data?.data) return 0
 
   const d = data.data
+
+  // Use n8n qualityScore if available
+  if (d.qualityScore) {
+    return parseQualityScore(d.qualityScore as string)
+  }
+
+  // Fallback: calculate based on data completeness
   let score = 0
 
-  if (d.strengths?.length > 0) score += 15
-  if (d.weaknessesvsCDS?.length > 0) score += 15
-  if (d.opportunities?.length > 0) score += 15
-  if (d.threats?.length > 0) score += 15
-  if (d.marketPosition) score += 15
-  if ((d.recentNews?.length ?? 0) > 0) score += 10
-  if ((d.technologies?.length ?? 0) > 0) score += 10
-  if (d.pricing) score += 5
+  if (d.strengths?.length > 0) score += 25
+  if (d.weaknessesvsCDS?.length > 0) score += 25
+  if (d.recentActivity?.length > 0) score += 20
+  if (d.headquarters) score += 10
+  if (d.foundedYear) score += 10
+  if (d.intelligenceGrade) score += 10
 
   return Math.min(score, 100)
 }
 
 /**
  * Transform a StoredAnalysis (localStorage) to UIAnalysisResult (display)
+ * Aligned with n8n CDS-RAG PROD V11.2 output structure
  */
 export function transformStoredToUI(stored: StoredAnalysis): UIAnalysisResult {
   const data = stored.response?.data
 
-  // Count total insights
+  // Count total insights (strengths + weaknesses + recentActivity)
   const insightsCount = data
     ? (data.strengths?.length || 0) +
       (data.weaknessesvsCDS?.length || 0) +
-      (data.opportunities?.length || 0) +
-      (data.threats?.length || 0)
+      (data.recentActivity?.length || 0)
     : 0
 
   return {
@@ -83,31 +111,41 @@ export function transformStoredToUI(stored: StoredAnalysis): UIAnalysisResult {
     duration: formatDuration(stored.startedAt, stored.completedAt, stored.status),
 
     type: stored.analysisType || 'standard',
+    analysisType: stored.analysisType || 'standard',
     competitor: stored.competitor,
     sources: stored.sources || [],
+
+    // Company info from n8n
+    headquarters: data?.headquarters as string | undefined,
+    foundedYear: data?.foundedYear as string | undefined,
 
     score: stored.status === 'completed' ? calculateScore(stored.response) : undefined,
     insights: insightsCount,
     threatLevel: mapThreatLevel(data?.threatLevel),
 
-    marketPosition: {
-      strengths: data?.strengths || [],
-      weaknesses: data?.weaknessesvsCDS || [],
-      opportunities: data?.opportunities || [],
-      threats: data?.threats || [],
+    // n8n quality metrics
+    qualityScore: data?.qualityScore as string | undefined,
+    intelligenceGrade: data?.intelligenceGrade as string | undefined,
+    actionRequired: data?.actionRequired as string | undefined,
+    lastUpdated: data?.lastUpdated as string | undefined,
+
+    // Competitive analysis (2-column structure)
+    analysisData: {
+      strengths: (data?.strengths as string[]) || [],
+      weaknesses: (data?.weaknessesvsCDS as string[]) || [],
     },
 
+    // Recent activity (renamed from recentNews)
+    recentActivity: (data?.recentActivity as string[]) || [],
+
+    // Key findings derived from strengths and weaknesses
     keyFindings: [
       ...(data?.strengths?.slice(0, 2) || []),
       ...(data?.weaknessesvsCDS?.slice(0, 2) || []),
     ],
-    recommendations: data?.opportunities || [],
-    recentNews: (data?.recentNews || []).map((news: string) => ({
-      title: news,
-      source: 'n8n Analysis',
-      date: new Date().toLocaleDateString('fr-FR'),
-      sentiment: 'neutral' as const,
-    })),
+
+    // Source links
+    sourceLinks: data?.sourceLinks as string | undefined,
 
     error: stored.error,
   }

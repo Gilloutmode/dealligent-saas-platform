@@ -14,7 +14,7 @@ import { motion, type HTMLMotionProps } from "framer-motion"
 
 export interface CardProps extends Omit<HTMLMotionProps<"div">, "ref"> {
   /** Card visual variant */
-  variant?: "glass" | "glass-elevated" | "glass-subtle" | "solid" | "outlined"
+  variant?: "glass" | "glass-elevated" | "glass-subtle" | "solid" | "outlined" | "premium-v2" | "stat-animated"
   /** Hover effect */
   hoverable?: boolean
   /** Click handler (makes card interactive) */
@@ -35,34 +35,34 @@ const glowColors = {
   purple: "from-[#8B5CF6]/20 via-[#8B5CF6]/10 to-transparent",
 }
 
+// Linear/Vercel-style card variants - clean borders, minimal blur
 const variants = {
   glass: `
-    bg-[var(--bg-card)]/80
-    backdrop-blur-xl
-    border border-white/[0.08]
-    shadow-[0_0_0_1px_rgba(255,255,255,0.05),0_2px_4px_rgba(0,0,0,0.1),0_8px_16px_rgba(0,0,0,0.1)]
+    bg-[var(--bg-card)]
+    border border-[var(--border-default)]
+    shadow-[var(--shadow-sm)]
   `,
   "glass-elevated": `
-    bg-[var(--bg-card)]/90
-    backdrop-blur-2xl
-    border border-white/[0.12]
-    shadow-[0_0_0_1px_rgba(255,255,255,0.08),0_4px_8px_rgba(0,0,0,0.15),0_16px_32px_rgba(0,0,0,0.2)]
+    bg-[var(--bg-elevated)]
+    border border-[var(--border-hover)]
+    shadow-[var(--shadow-md)]
   `,
   "glass-subtle": `
-    bg-[var(--bg-card)]/60
-    backdrop-blur-md
-    border border-white/[0.05]
-    shadow-[0_2px_4px_rgba(0,0,0,0.05)]
+    bg-[var(--bg-secondary)]
+    border border-[var(--border-light)]
   `,
   solid: `
     bg-[var(--bg-card)]
     border border-[var(--border-default)]
-    shadow-sm
   `,
   outlined: `
     bg-transparent
-    border-2 border-[var(--border-default)]
+    border border-[var(--border-default)]
+    hover:border-[var(--border-hover)]
   `,
+  // T1: Premium V2 variants with CSS-based animations
+  "premium-v2": `card-premium-v2`,
+  "stat-animated": `stat-card-animated`,
 }
 
 const Card = React.forwardRef<HTMLDivElement, CardProps>(

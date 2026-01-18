@@ -5,6 +5,7 @@
 
 /**
  * Interface for transformed UI analysis display
+ * Aligned with n8n CDS-RAG PROD V11.2 output structure
  */
 export interface UIAnalysisResult {
   id: string
@@ -16,31 +17,39 @@ export interface UIAnalysisResult {
 
   // Metadata
   type: 'quick' | 'standard' | 'deep'
+  analysisType?: 'quick' | 'standard' | 'deep'  // Alias for type
   competitor: string
   sources: string[]
+
+  // Company Info (from n8n)
+  headquarters?: string
+  foundedYear?: string
 
   // Results (only if completed)
   score?: number           // 0-100
   insights: number         // Total insights count
   threatLevel: 'high' | 'medium' | 'low'
 
-  // SWOT Analysis
-  marketPosition: {
+  // n8n Quality Metrics
+  qualityScore?: string        // "11/12 (92%)"
+  intelligenceGrade?: string   // "A+ - Executive Elite"
+  actionRequired?: string      // "Periodic review"
+  lastUpdated?: string         // ISO timestamp
+
+  // Competitive Analysis (2-column: strengths vs weaknesses)
+  analysisData: {
     strengths: string[]
-    weaknesses: string[]
-    opportunities: string[]
-    threats: string[]
+    weaknesses: string[]  // weaknessesvsCDS from n8n
   }
 
-  // Findings
+  // Recent Activity (renamed from recentNews)
+  recentActivity: string[]
+
+  // Findings (derived from analysis)
   keyFindings: string[]
-  recommendations: string[]
-  recentNews: Array<{
-    title: string
-    source: string
-    date: string
-    sentiment: 'positive' | 'negative' | 'neutral'
-  }>
+
+  // Source Links
+  sourceLinks?: string
 
   // Error (if failed)
   error?: string
