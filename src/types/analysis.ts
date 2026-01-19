@@ -90,6 +90,13 @@ export interface UIAnalysisResult {
   /** Structured source links from n8n V12.2 (with optional category) */
   sourceLinksStructured?: StructuredSourceLink[]
 
+  // Source Metrics (n8n V12.3)
+  /** Total number of sources consulted during analysis */
+  sourcesConsulted?: number
+
+  /** Number of sources with extracted URLs (cited) */
+  sourcesCited?: number
+
   // Error (if failed)
   error?: string
 }

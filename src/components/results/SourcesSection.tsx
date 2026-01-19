@@ -26,7 +26,109 @@ export interface SourcesSectionProps {
   sourceLinks?: string                              // Legacy format (string)
   sourceLinksStructured?: StructuredSourceLink[]    // V12.2 format with optional category
   sources?: string[]
+  totalSourcesConsulted?: number                    // Total sources consulted (for badge)
   className?: string
+}
+
+// =============================================================================
+// SOURCE RELEVANCE FILTER
+// Excludes API docs, dev portals, data providers, and other non-client-relevant sources
+// Checks BOTH URL and title to ensure only real articles/news are shown
+// =============================================================================
+
+const IRRELEVANT_URL_PATTERNS = [
+  // API documentation
+  /^https?:\/\/api\./i,
+  /\/api\/|\/api$/i,
+  /\/docs\/|\/docs$/i,
+  /^https?:\/\/docs\./i,
+  /swagger/i,
+  /openapi/i,
+  /\/reference\//i,
+
+  // Developer portals
+  /^https?:\/\/developer\./i,
+  /^https?:\/\/developers\./i,
+  /\/developer\//i,
+
+  // Code repositories & tech sites
+  /github\.com/i,
+  /gitlab\.com/i,
+  /bitbucket\.org/i,
+  /stackoverflow\.com/i,
+  /npmjs\.com/i,
+  /pypi\.org/i,
+  /rubygems\.org/i,
+
+  // CDN & static assets
+  /^https?:\/\/cdn\./i,
+  /^https?:\/\/static\./i,
+  /\.json$/i,
+  /\.xml$/i,
+
+  // Generic dev tools
+  /postman\.com/i,
+  /insomnia\.rest/i,
+
+  // Financial data APIs & aggregators (not real articles)
+  /rapidapi\.com/i,
+  /jsonstreet/i,
+  /financialdatasets/i,
+  /alphavantage/i,
+  /polygon\.io/i,
+  /iexcloud/i,
+  /quandl/i,
+  /intrinio/i,
+  /marketstack/i,
+  /finnhub/i,
+]
+
+// Irrelevant TITLE patterns (for sources where URL looks clean but title reveals it's not useful)
+const IRRELEVANT_TITLE_PATTERNS = [
+  // API & technical documentation
+  /\bapi\s*(guide|docs|reference|documentation)\b/i,
+  /\bapi\b.*\b(endpoint|request|response)\b/i,
+  /\bjson\s*(api|street|data)\b/i,
+  /\brest\s*api\b/i,
+  /\bgraphql\b/i,
+  /\bsdk\b/i,
+  /\bwebhook/i,
+
+  // Data providers & datasets (not articles)
+  /\b(financial|stock|market)\s*dataset/i,
+  /\bdata\s*(provider|feed|api|source)\b/i,
+  /\bagent\s*de\s*recherche\b/i,
+  /\bsearch\s*agent\b/i,
+
+  // Generic tool names
+  /\bchatgpt\s*(for|plugin)\b/i,
+  /\bai\s*(assistant|tool|agent)\b/i,
+
+  // Internal/technical labels
+  /\bdocumentation\s*(interne|technique)\b/i,
+  /\binternal\s*doc/i,
+]
+
+/**
+ * Check if a source is relevant for client display
+ * Returns true if BOTH url and title are pertinent (not API docs, data tools, etc.)
+ */
+function isRelevantSource(url: string, title?: string): boolean {
+  try {
+    // Check URL patterns
+    const urlIrrelevant = IRRELEVANT_URL_PATTERNS.some(pattern => pattern.test(url))
+    if (urlIrrelevant) return false
+
+    // Check title patterns (if title provided)
+    if (title) {
+      const titleIrrelevant = IRRELEVANT_TITLE_PATTERNS.some(pattern => pattern.test(title))
+      if (titleIrrelevant) return false
+    }
+
+    return true
+  } catch {
+    return true // If we can't parse, assume it's relevant
+  }
 }
 
 // Category configuration with icons and colors
@@ -102,6 +204,7 @@ export function SourcesSection({
   sourceLinks,
   sourceLinksStructured,
   sources = [],
+  totalSourcesConsulted,
   className
 }: SourcesSectionProps) {
   const { isDark } = useTheme()
@@ -114,7 +217,7 @@ export function SourcesSection({
   // Priority: structured links (V12.2/V12.1) > parsed legacy > fallback sources
   const structuredLinks = sourceLinksStructured || []
   const parsedLinks = sourceLinks ? parseSourceLinks(sourceLinks) : []
-  const displayLinks: DisplayLink[] = structuredLinks.length > 0
+  const allLinks: DisplayLink[] = structuredLinks.length > 0
     ? structuredLinks.map(link => ({
         url: link.url,
         label: link.title,
@@ -122,13 +225,23 @@ export function SourcesSection({
       }))
     : parsedLinks
 
+  // Filter to only show relevant sources (exclude API docs, dev portals, data tools, etc.)
+  // Checks BOTH url AND title to catch sources like "API Guide | ..." or "JSONStreet API"
+  const displayLinks = allLinks.filter(link => isRelevantSource(link.url, link.label))
+
+  // Badge shows total consulted (if provided) or all links count
+  const badgeCount = totalSourcesConsulted || allLinks.length || sources.length
+
   // "Voir plus" logic
   const hasMore = displayLinks.length > INITIAL_VISIBLE
   const visibleLinks = showAll ? displayLinks : displayLinks.slice(0, INITIAL_VISIBLE)
   const hiddenCount = displayLinks.length - INITIAL_VISIBLE
 
-  // No sources to display
-  if (displayLinks.length === 0 && sources.length === 0) {
+  // Count how many were filtered out
+  const filteredOutCount = allLinks.length - displayLinks.length
+
+  // No sources at all
+  if (allLinks.length === 0 && sources.length === 0) {
     return null
   }
 
@@ -157,9 +270,9 @@ export function SourcesSection({
             </h3>
           </div>
         </div>
-        {/* Badge with count */}
+        {/* Badge with count - shows total consulted, not filtered count */}
         <span className={`px-3 py-1 rounded-full text-xs font-medium ${isDark ? 'bg-cyan-500/15 text-cyan-400' : 'bg-cyan-500/20 text-cyan-600'}`}>
-          {displayLinks.length > 0 ? displayLinks.length : sources.length} sources verifiees
+          {badgeCount} sources consultées
         </span>
       </div>
 
@@ -191,8 +304,8 @@ export function SourcesSection({
                       rel="noopener noreferrer"
                       className={`
                         inline-flex items-center gap-2 px-3 py-2 rounded-lg
-                        text-sm text-[var(--text-secondary)]
-                        ${isDark ? 'bg-white/5 hover:bg-white/10' : 'bg-white/70 hover:bg-white'}
+                        text-base text-[var(--text-primary)]
+                        bg-[var(--glass-bg)] hover:bg-[var(--glass-hover)]
                         border border-[var(--border-light)]
                         hover:border-cyan-500/30
                         transition-all group
@@ -220,10 +333,8 @@ export function SourcesSection({
                   mt-4 w-full flex items-center justify-center gap-2
                   px-4 py-2.5 rounded-lg
                   text-sm font-medium
-                  ${isDark
-                    ? 'bg-white/5 hover:bg-white/10 text-cyan-400'
-                    : 'bg-cyan-50 hover:bg-cyan-100 text-cyan-600'
-                  }
+                  bg-[var(--glass-bg)] hover:bg-[var(--glass-hover)]
+                  ${isDark ? 'text-cyan-400' : 'text-cyan-600'}
                   border border-[var(--border-light)]
                   hover:border-cyan-500/30
                   transition-all
@@ -247,8 +358,17 @@ export function SourcesSection({
           </>
         )}
 
+        {/* Message when all links were filtered (API docs only) */}
+        {displayLinks.length === 0 && allLinks.length > 0 && (
+          <div className={`p-4 rounded-xl text-center ${isDark ? 'bg-white/5' : 'bg-gray-100'}`}>
+            <p className="text-sm text-[var(--text-muted)]">
+              {allLinks.length} source{allLinks.length > 1 ? 's' : ''} consultée{allLinks.length > 1 ? 's' : ''} (documentation technique non affichée)
+            </p>
+          </div>
+        )}
+
         {/* Source Tags (fallback when no links available) */}
-        {displayLinks.length === 0 && sources.length > 0 && (
+        {displayLinks.length === 0 && allLinks.length === 0 && sources.length > 0 && (
           <motion.div
             variants={containerVariants}
             initial="hidden"
@@ -260,16 +380,26 @@ export function SourcesSection({
                 key={index}
                 variants={itemVariants}
                 className={`
-                  px-3 py-1.5 rounded-lg text-sm
-                  ${isDark ? 'bg-white/5' : 'bg-white/70'}
+                  px-3 py-2 rounded-lg text-base
+                  bg-[var(--glass-bg)]
                   border border-[var(--border-light)]
-                  text-[var(--text-secondary)]
+                  text-[var(--text-primary)]
                 `}
               >
                 {source}
               </motion.span>
             ))}
           </motion.div>
+        )}
+
+        {/* Info note when some sources were filtered + RAG mention */}
+        {(filteredOutCount > 0 || displayLinks.length > 0) && (
+          <div className="mt-4 text-sm text-[var(--text-secondary)] text-center space-y-1.5">
+            {filteredOutCount > 0 && (
+              <p>+ {filteredOutCount} source{filteredOutCount > 1 ? 's' : ''} via API (non consultable{filteredOutCount > 1 ? 's' : ''})</p>
+            )}
+            <p>📚 Croisé avec votre base CDS</p>
+          </div>
         )}
       </div>
     </motion.div>

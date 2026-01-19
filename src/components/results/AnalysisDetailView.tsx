@@ -75,12 +75,20 @@ const threatConfig = {
   },
 }
 
-// Count sources from sourceLinks string
-function countSources(sourceLinks?: string): number {
+// Count sources - handles both string (legacy) and array (V12.6.8+) formats
+function countSources(sourceLinks?: string | unknown[]): number {
   if (!sourceLinks) return 0
-  const urlRegex = /https?:\/\/[^\s,]+/g
-  const urls = sourceLinks.match(urlRegex) || []
-  return urls.length
+  // V12.6.8+: sourceLinks is an array of source objects
+  if (Array.isArray(sourceLinks)) {
+    return sourceLinks.length
+  }
+  // Legacy: sourceLinks is a string with URLs
+  if (typeof sourceLinks === 'string') {
+    const urlRegex = /https?:\/\/[^\s,]+/g
+    const urls = sourceLinks.match(urlRegex) || []
+    return urls.length
+  }
+  return 0
 }
 
 export function AnalysisDetailView({ analysis, onClose, isModal = false }: AnalysisDetailViewProps) {
@@ -101,10 +109,13 @@ export function AnalysisDetailView({ analysis, onClose, isModal = false }: Analy
       ? 'Analyse Standard'
       : 'Analyse Rapide'
 
-  // Get sources count
-  const sourcesCount = analysis.sourceLinks
-    ? countSources(analysis.sourceLinks)
-    : analysis.sources.length
+  // Get sources count - priority: sourcesConsulted > sourceLinksStructured > sourceLinks > sources
+  const analysisAny = analysis as unknown as Record<string, unknown>
+  const sourcesCount =
+    (typeof analysisAny.sourcesConsulted === 'number' ? analysisAny.sourcesConsulted : 0) ||
+    analysis.sourceLinksStructured?.length ||
+    countSources(analysis.sourceLinks) ||
+    analysis.sources.length
 
   const handleBack = () => {
     if (onClose) {
@@ -202,9 +213,29 @@ export function AnalysisDetailView({ analysis, onClose, isModal = false }: Analy
         </div>
       </motion.div>
 
-      {/* Content - Scrollable */}
+      {/* Content - Scrollable (PDF-style single column) */}
       <div className="flex-1 overflow-y-auto">
-        <div className="max-w-6xl mx-auto p-6 space-y-6">
+        <div className="max-w-4xl mx-auto p-6 space-y-8">
+          {/* Highlight Legend */}
+          <motion.div
+            variants={itemVariants}
+            className="flex items-center gap-6 px-4 py-3 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-light)]"
+          >
+            <span className="text-sm text-[var(--text-muted)]">Légende:</span>
+            <div className="flex items-center gap-1.5">
+              <span className="w-3 h-3 rounded-full bg-red-500" />
+              <span className="text-sm text-[var(--text-secondary)]">Risque</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="w-3 h-3 rounded-full bg-emerald-500" />
+              <span className="text-sm text-[var(--text-secondary)]">Opportunité</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="w-3 h-3 rounded-full bg-blue-500" />
+              <span className="text-sm text-[var(--text-secondary)]">Comparaison</span>
+            </div>
+          </motion.div>
+
           {/* Row 1: Score Overview (Full Width) */}
           <motion.div variants={itemVariants}>
             <ScoreOverview
@@ -238,26 +269,26 @@ export function AnalysisDetailView({ analysis, onClose, isModal = false }: Analy
             <Section360Overview analysis={analysis} />
           </motion.div>
 
-          {/* Row 5: Recent Activity + Action Required */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <motion.div variants={itemVariants}>
-              <RecentActivityPanel activities={analysis.recentActivity || []} />
-            </motion.div>
+          {/* Row 5: Recent Activity */}
+          <motion.div variants={itemVariants}>
+            <RecentActivityPanel activities={analysis.recentActivity || []} />
+          </motion.div>
 
-            <motion.div variants={itemVariants}>
-              <ActionRequiredPanel
-                action={analysis.actionRequired}
-                onActionClick={() => navigate('/launch-analysis')}
-              />
-            </motion.div>
-          </div>
+          {/* Row 6: Action Required */}
+          <motion.div variants={itemVariants}>
+            <ActionRequiredPanel
+              action={analysis.actionRequired}
+              onActionClick={() => navigate('/launch-analysis')}
+            />
+          </motion.div>
 
-          {/* Row 6: Sources */}
+          {/* Row 7: Sources */}
           <motion.div variants={itemVariants}>
             <SourcesSection
               sourceLinks={analysis.sourceLinks}
               sourceLinksStructured={analysis.sourceLinksStructured}
               sources={analysis.sources}
+              totalSourcesConsulted={sourcesCount}
             />
           </motion.div>
         </div>

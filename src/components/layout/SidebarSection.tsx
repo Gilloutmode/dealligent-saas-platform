@@ -6,7 +6,7 @@ import { ChevronDown } from 'lucide-react'
 
 // =============================================================================
 // LINEAR-STYLE COLLAPSIBLE SIDEBAR SECTION
-// Persistent state via localStorage, keyboard accessible
+// Persistent state via localStorage, keyboard accessible, collapse support
 // =============================================================================
 
 export interface SidebarSectionProps {
@@ -14,6 +14,7 @@ export interface SidebarSectionProps {
   title: string
   children: ReactNode
   defaultOpen?: boolean
+  isCollapsed?: boolean
 }
 
 const STORAGE_KEY = 'dealligent_sidebar_sections'
@@ -44,6 +45,7 @@ export function SidebarSection({
   title,
   children,
   defaultOpen = true,
+  isCollapsed = false,
 }: SidebarSectionProps) {
   // Initialize from localStorage or default
   const [isOpen, setIsOpen] = useState(() => {
@@ -67,6 +69,15 @@ export function SidebarSection({
       toggle()
     }
   }, [toggle])
+
+  // When sidebar is collapsed, just show children without section header
+  if (isCollapsed) {
+    return (
+      <div className="sidebar-section space-y-1" role="region">
+        {children}
+      </div>
+    )
+  }
 
   return (
     <div className="sidebar-section" role="region" aria-labelledby={`section-${id}`}>

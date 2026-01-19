@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { TrendingUp, TrendingDown, CheckCircle, XCircle } from 'lucide-react'
 import { useTheme } from '../../contexts/ThemeContext'
 import { cn } from '../../lib/utils'
+import { highlightText } from '../../utils/highlightText'
 
 // =============================================================================
 // SWOT GRID COMPONENT
@@ -115,10 +116,10 @@ export function SWOTGrid({ strengths, weaknesses, className }: SWOTGridProps) {
                 <motion.li
                   key={index}
                   variants={listItemVariants}
-                  className="flex items-start gap-3 text-sm"
+                  className="flex items-start gap-3 text-base"
                 >
-                  <CheckCircle className={`w-4 h-4 mt-0.5 shrink-0 ${strengthsColors.text}`} />
-                  <span className="text-[var(--text-secondary)]">{item}</span>
+                  <CheckCircle className={`w-4 h-4 mt-1 shrink-0 ${strengthsColors.text}`} />
+                  <span className="text-[var(--text-primary)] leading-relaxed">{highlightText(item)}</span>
                 </motion.li>
               ))}
             </motion.ul>
@@ -171,10 +172,10 @@ export function SWOTGrid({ strengths, weaknesses, className }: SWOTGridProps) {
                 <motion.li
                   key={index}
                   variants={listItemVariants}
-                  className="flex items-start gap-3 text-sm"
+                  className="flex items-start gap-3 text-base"
                 >
-                  <XCircle className={`w-4 h-4 mt-0.5 shrink-0 ${weaknessesColors.text}`} />
-                  <span className="text-[var(--text-secondary)]">{item}</span>
+                  <XCircle className={`w-4 h-4 mt-1 shrink-0 ${weaknessesColors.text}`} />
+                  <span className="text-[var(--text-primary)] leading-relaxed">{highlightText(item)}</span>
                 </motion.li>
               ))}
             </motion.ul>

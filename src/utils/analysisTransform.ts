@@ -183,6 +183,10 @@ export function transformStoredToUI(stored: StoredAnalysis): UIAnalysisResult {
       ? (data.sourceLinks as Array<{ title: string; url: string }>)
       : undefined,
 
+    // Source metrics (n8n V12.3)
+    sourcesConsulted: data?.sourcesConsulted as number | undefined,
+    sourcesCited: data?.sourcesCited as number | undefined,
+
     error: stored.error,
   }
 }

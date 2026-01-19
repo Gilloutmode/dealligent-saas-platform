@@ -1,26 +1,33 @@
 // =============================================================================
 // DEALLIGENT PLATFORM - RESULTS PAGE
 // View completed analysis results with Linear/Vercel style design
+// Custom resizable panels implementation
 // =============================================================================
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   FileText,
   Search,
-  Calendar,
-  Clock,
-  CheckCircle2,
   Play,
   FileSearch,
-  TrendingUp,
+  GripVertical,
 } from 'lucide-react'
 import { useAnalysis } from '../contexts/AnalysisContext'
 import { transformStoredToUI } from '../utils/analysisTransform'
 import { AnalysisDetailView } from '../components/results/AnalysisDetailView'
-import { NumberTicker } from '../components/ui/NumberTicker'
+import { CompetitorCard, type CompetitorCardProps } from '../components/results/CompetitorCard'
 import type { UIAnalysisResult } from '../types/analysis'
+
+// =============================================================================
+// CONSTANTS
+// =============================================================================
+
+const STORAGE_KEY = 'dealligent-results-panel-width'
+const DEFAULT_LEFT_WIDTH = 400 // pixels
+const MIN_LEFT_WIDTH = 280
+const MAX_LEFT_WIDTH_PERCENT = 0.6 // 60% of container
 
 // =============================================================================
 // ANIMATION VARIANTS
@@ -44,33 +51,45 @@ const itemVariants = {
 }
 
 // =============================================================================
-// HELPER FUNCTIONS
+// TRANSFORM ANALYSIS TO CARD PROPS
 // =============================================================================
 
-function formatDate(date: Date): string {
-  return date.toLocaleDateString('fr-FR', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  })
-}
+function transformToCardProps(analysis: UIAnalysisResult): CompetitorCardProps['competitor'] {
+  const confidenceScore = typeof analysis.score === 'number'
+    ? analysis.score
+    : typeof analysis.qualityScore === 'number'
+      ? analysis.qualityScore
+      : 0
 
-const threatConfig = {
-  high: {
-    bg: 'bg-gradient-to-br from-red-500 to-rose-600 shadow-lg shadow-red-500/25',
-    badge: 'bg-red-500/15 text-red-400 border-red-500/20',
-    label: 'Élevée',
-  },
-  medium: {
-    bg: 'bg-gradient-to-br from-amber-500 to-orange-600 shadow-lg shadow-amber-500/25',
-    badge: 'bg-amber-500/15 text-amber-400 border-amber-500/20',
-    label: 'Moyenne',
-  },
-  low: {
-    bg: 'bg-gradient-to-br from-emerald-500 to-cyan-500 shadow-lg shadow-emerald-500/25',
-    badge: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/20',
-    label: 'Faible',
-  },
+  // Get sources count - priority: sourcesConsulted > sourceLinksStructured > sourceLinks array > sources
+  const analysisAny = analysis as unknown as Record<string, unknown>
+  const sourcesCount =
+    (typeof analysisAny.sourcesConsulted === 'number' ? analysisAny.sourcesConsulted : 0) ||
+    (analysis.sourceLinksStructured?.length) ||
+    (Array.isArray(analysis.sourceLinks) ? analysis.sourceLinks.length : 0) ||
+    (analysis.sources?.length || 0)
+
+  const avatarColors = {
+    high: 'from-red-500 to-rose-600',
+    medium: 'from-amber-500 to-orange-600',
+    low: 'from-emerald-500 to-cyan-500',
+  }
+
+  return {
+    name: analysis.competitor,
+    initials: analysis.competitor.slice(0, 2).toUpperCase(),
+    avatarColor: avatarColors[analysis.threatLevel],
+    analysisDate: analysis.createdAt,
+    analysisDuration: analysis.duration,
+    threatLevel: analysis.threatLevel,
+    threatTrend: undefined,
+    confidenceScore,
+    opportunityScore: undefined,
+    sourcesCount,
+    keyInsights: analysis.keyFindings || [],
+    winProbability: undefined,
+    lastActivity: analysis.recentActivity?.[0],
+  }
 }
 
 // =============================================================================
@@ -111,125 +130,66 @@ function EmptyState({ onLaunchClick }: { onLaunchClick: () => void }) {
 }
 
 // =============================================================================
-// ANALYSIS LIST ITEM (Enriched)
-// Premium card with confidence score, tags, and key findings preview
+// CUSTOM RESIZE HANDLE HOOK
 // =============================================================================
 
-interface AnalysisListItemProps {
-  analysis: UIAnalysisResult
-  isSelected: boolean
-  onClick: () => void
-  delay?: number
-}
+function useResizable(initialWidth: number, minWidth: number, maxWidthPercent: number) {
+  const [width, setWidth] = useState(() => {
+    if (typeof window === 'undefined') return initialWidth
+    const saved = localStorage.getItem(STORAGE_KEY)
+    return saved ? parseInt(saved, 10) : initialWidth
+  })
 
-function AnalysisListItem({ analysis, isSelected, onClick, delay = 0 }: AnalysisListItemProps) {
-  const threat = threatConfig[analysis.threatLevel]
-  const confidenceScore = typeof analysis.score === 'number'
-    ? analysis.score
-    : typeof analysis.qualityScore === 'number'
-      ? analysis.qualityScore
-      : 0
+  const [isDragging, setIsDragging] = useState(false)
+  const containerRef = useRef<HTMLDivElement>(null)
 
-  // Get first 2 key findings
-  const previewFindings = analysis.keyFindings?.slice(0, 2) || []
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    e.preventDefault()
+    setIsDragging(true)
+  }, [])
 
-  // Get score color
-  const getScoreColor = (score: number) => {
-    if (score >= 80) return 'text-emerald-400'
-    if (score >= 60) return 'text-amber-400'
-    return 'text-red-400'
-  }
+  useEffect(() => {
+    if (!isDragging) return
 
-  return (
-    <motion.div
-      variants={itemVariants}
-      onClick={onClick}
-      className={`
-        relative overflow-hidden rounded-2xl cursor-pointer transition-all duration-300
-        bg-[var(--bg-card)] border group
-        ${isSelected
-          ? 'border-[var(--accent-primary)] shadow-[var(--shadow-glow)]'
-          : 'border-[var(--border-default)] hover:border-[var(--border-hover)]'
-        }
-      `}
-      whileHover={{ y: -2, scale: 1.01 }}
-      whileTap={{ scale: 0.98 }}
-    >
-      {/* Glow effect on hover */}
-      <div className={`
-        absolute -inset-1 bg-gradient-to-br ${threat.bg.replace('shadow-lg', '')} opacity-0
-        group-hover:opacity-10 blur-xl transition-opacity duration-500 -z-10
-      `} />
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!containerRef.current) return
 
-      <div className="p-4">
-        {/* Header Row */}
-        <div className="flex items-center gap-3 mb-3">
-          {/* Logo */}
-          <div className={`w-11 h-11 rounded-xl ${threat.bg} flex items-center justify-center text-white font-bold text-sm shrink-0`}>
-            {analysis.competitor.slice(0, 2).toUpperCase()}
-          </div>
+      const containerRect = containerRef.current.getBoundingClientRect()
+      const maxWidth = containerRect.width * maxWidthPercent
+      const newWidth = Math.min(Math.max(e.clientX - containerRect.left, minWidth), maxWidth)
 
-          {/* Name + Date */}
-          <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-[var(--text-primary)] truncate text-sm">
-              {analysis.competitor}
-            </h3>
-            <div className="flex items-center gap-2 text-xs text-[var(--text-muted)]">
-              <Calendar className="w-3 h-3" />
-              {formatDate(analysis.createdAt)}
-              <span className="text-[var(--border-default)]">•</span>
-              <Clock className="w-3 h-3" />
-              {analysis.duration}
-            </div>
-          </div>
+      setWidth(newWidth)
+    }
 
-          {/* Threat Badge */}
-          <div className={`px-2 py-0.5 rounded-lg text-xs font-semibold border ${threat.badge}`}>
-            {threat.label}
-          </div>
-        </div>
+    const handleMouseUp = () => {
+      setIsDragging(false)
+      // Save to localStorage
+      localStorage.setItem(STORAGE_KEY, width.toString())
+    }
 
-        {/* Confidence Score + Insights Count */}
-        <div className="flex items-center justify-between mb-3 py-2 px-3 rounded-lg bg-[var(--bg-secondary)] border border-[var(--border-light)]">
-          <div className="flex items-center gap-2">
-            <CheckCircle2 className={`w-3.5 h-3.5 ${getScoreColor(confidenceScore)}`} />
-            <span className="text-xs text-[var(--text-secondary)]">Confiance</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="flex items-baseline gap-0.5">
-              <NumberTicker
-                value={confidenceScore}
-                delay={delay}
-                className={`text-lg font-bold ${getScoreColor(confidenceScore)}`}
-              />
-              <span className="text-xs text-[var(--text-muted)]">%</span>
-            </div>
-            {analysis.insights > 0 && (
-              <>
-                <div className="w-px h-4 bg-[var(--border-light)]" />
-                <div className="flex items-center gap-1 text-xs text-[var(--text-muted)]">
-                  <TrendingUp className="w-3 h-3" />
-                  {analysis.insights}
-                </div>
-              </>
-            )}
-          </div>
-        </div>
+    document.addEventListener('mousemove', handleMouseMove)
+    document.addEventListener('mouseup', handleMouseUp)
 
-        {/* Key Findings Preview */}
-        {previewFindings.length > 0 && (
-          <div className="space-y-1.5 mb-2">
-            {previewFindings.map((finding, index) => (
-              <div key={index} className="flex items-start gap-2 text-xs">
-                <div className="w-1 h-1 rounded-full bg-[var(--accent-primary)] mt-1.5 shrink-0" />
-                <span className="text-[var(--text-secondary)] line-clamp-1">{finding}</span>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    </motion.div>
-  )
+    // Prevent text selection while dragging
+    document.body.style.userSelect = 'none'
+    document.body.style.cursor = 'col-resize'
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove)
+      document.removeEventListener('mouseup', handleMouseUp)
+      document.body.style.userSelect = ''
+      document.body.style.cursor = ''
+    }
+  }, [isDragging, width, minWidth, maxWidthPercent])
+
+  // Save width on change (debounced via mouseup)
+  useEffect(() => {
+    if (!isDragging) {
+      localStorage.setItem(STORAGE_KEY, width.toString())
+    }
+  }, [width, isDragging])
+
+  return { width, isDragging, handleMouseDown, containerRef }
 }
 
 // =============================================================================
@@ -240,6 +200,13 @@ export function ResultsPage() {
   const navigate = useNavigate()
   const { analysisId } = useParams<{ analysisId?: string }>()
   const { completedAnalyses } = useAnalysis()
+
+  // Custom resizable hook
+  const { width: leftPanelWidth, isDragging, handleMouseDown, containerRef } = useResizable(
+    DEFAULT_LEFT_WIDTH,
+    MIN_LEFT_WIDTH,
+    MAX_LEFT_WIDTH_PERCENT
+  )
 
   // Transform stored analyses to UI format
   const analyses = useMemo(
@@ -297,7 +264,6 @@ export function ResultsPage() {
         animate="visible"
         className="p-8 max-w-4xl mx-auto"
       >
-        {/* Header */}
         <motion.div variants={itemVariants} className="mb-8">
           <div className="flex items-center gap-4 mb-2">
             <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--accent-primary)] to-[#8B5CF6] flex items-center justify-center shadow-lg shadow-[var(--accent-primary)]/25">
@@ -324,13 +290,141 @@ export function ResultsPage() {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="h-full flex flex-col lg:flex-row"
+      className="h-screen overflow-hidden"
     >
-      {/* Left Panel - List */}
-      <div className="w-full lg:w-96 lg:border-r border-[var(--border-light)] flex flex-col">
-        {/* Header */}
-        <div className="p-6 border-b border-[var(--border-light)]">
-          <div className="flex items-center gap-3 mb-4">
+      {/* Desktop: Custom Resizable Panels */}
+      <div
+        ref={containerRef}
+        className="hidden lg:flex h-full"
+      >
+        {/* Left Panel - Results List */}
+        <div
+          className="flex flex-col h-full border-r border-[var(--border-light)]"
+          style={{ width: leftPanelWidth, minWidth: MIN_LEFT_WIDTH }}
+        >
+          {/* Header */}
+          <div className="p-6 border-b border-[var(--border-light)]">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--accent-primary)] to-[#8B5CF6] flex items-center justify-center shadow-lg shadow-[var(--accent-primary)]/25">
+                <FileText className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h1 className="text-lg font-bold text-[var(--text-primary)]">
+                  Résultats
+                </h1>
+                <p className="text-xs text-[var(--text-muted)]">
+                  {analyses.length} analyse{analyses.length > 1 ? 's' : ''} terminée{analyses.length > 1 ? 's' : ''}
+                </p>
+              </div>
+            </div>
+
+            {/* Search */}
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]" />
+              <input
+                type="text"
+                placeholder="Rechercher..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-light)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:border-[var(--accent-primary)]/50 focus:ring-2 focus:ring-[var(--accent-primary)]/20 transition-all text-sm"
+              />
+            </div>
+          </div>
+
+          {/* List with Stagger Animations */}
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="flex-1 overflow-y-auto p-4 space-y-3"
+          >
+            {filteredAnalyses.length > 0 ? (
+              filteredAnalyses.map((analysis, index) => (
+                <CompetitorCard
+                  key={analysis.id}
+                  competitor={transformToCardProps(analysis)}
+                  isSelected={selectedAnalysis?.id === analysis.id}
+                  onClick={() => handleSelect(analysis)}
+                  delay={index}
+                />
+              ))
+            ) : (
+              <div className="p-8 text-center">
+                <p className="text-sm text-[var(--text-muted)]">
+                  Aucune analyse trouvée
+                </p>
+              </div>
+            )}
+          </motion.div>
+        </div>
+
+        {/* Resize Handle */}
+        <div
+          onMouseDown={handleMouseDown}
+          className={`
+            w-2 cursor-col-resize flex items-center justify-center
+            transition-colors relative group
+            ${isDragging
+              ? 'bg-[var(--accent-primary)]'
+              : 'bg-transparent hover:bg-[var(--accent-primary)]/30'
+            }
+          `}
+        >
+          {/* Visual grip indicator */}
+          <div className={`
+            absolute top-1/2 -translate-y-1/2
+            flex flex-col items-center gap-0.5
+            transition-opacity
+            ${isDragging ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}
+          `}>
+            <GripVertical className="w-4 h-4 text-[var(--accent-primary)]" />
+          </div>
+
+          {/* Hover line indicator */}
+          <div className={`
+            absolute inset-y-0 left-1/2 -translate-x-1/2 w-0.5
+            transition-all
+            ${isDragging
+              ? 'bg-[var(--accent-primary)] shadow-[0_0_8px_var(--accent-primary)]'
+              : 'bg-transparent group-hover:bg-[var(--accent-primary)]/50'
+            }
+          `} />
+        </div>
+
+        {/* Right Panel - Analysis Detail */}
+        <div className="flex-1 bg-[var(--bg-secondary)] flex flex-col overflow-hidden">
+          <AnimatePresence mode="wait">
+            {selectedAnalysis ? (
+              <AnalysisDetailView
+                key={selectedAnalysis.id}
+                analysis={selectedAnalysis}
+                onClose={handleClose}
+              />
+            ) : (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="h-full flex items-center justify-center"
+              >
+                <div className="text-center">
+                  <div className="w-16 h-16 rounded-2xl bg-[var(--bg-tertiary)] flex items-center justify-center mx-auto mb-4">
+                    <FileText className="w-8 h-8 text-[var(--text-muted)]" />
+                  </div>
+                  <p className="text-[var(--text-muted)]">
+                    Sélectionnez une analyse pour voir les détails
+                  </p>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
+
+      {/* Mobile: Stack Layout */}
+      <div className="lg:hidden h-full flex flex-col">
+        {/* Mobile Header */}
+        <div className="p-4 border-b border-[var(--border-light)]">
+          <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--accent-primary)] to-[#8B5CF6] flex items-center justify-center shadow-lg shadow-[var(--accent-primary)]/25">
               <FileText className="w-5 h-5 text-white" />
             </div>
@@ -357,7 +451,7 @@ export function ResultsPage() {
           </div>
         </div>
 
-        {/* List with Stagger Animations */}
+        {/* Mobile List */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
@@ -366,12 +460,12 @@ export function ResultsPage() {
         >
           {filteredAnalyses.length > 0 ? (
             filteredAnalyses.map((analysis, index) => (
-              <AnalysisListItem
+              <CompetitorCard
                 key={analysis.id}
-                analysis={analysis}
+                competitor={transformToCardProps(analysis)}
                 isSelected={selectedAnalysis?.id === analysis.id}
                 onClick={() => handleSelect(analysis)}
-                delay={index * 0.06}
+                delay={index}
               />
             ))
           ) : (
@@ -382,34 +476,6 @@ export function ResultsPage() {
             </div>
           )}
         </motion.div>
-      </div>
-
-      {/* Right Panel - Detail */}
-      <div className="flex-1 bg-[var(--bg-secondary)] hidden lg:block">
-        <AnimatePresence mode="wait">
-          {selectedAnalysis ? (
-            <AnalysisDetailView
-              key={selectedAnalysis.id}
-              analysis={selectedAnalysis}
-              onClose={handleClose}
-            />
-          ) : (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="h-full flex items-center justify-center"
-            >
-              <div className="text-center">
-                <div className="w-16 h-16 rounded-2xl bg-[var(--bg-tertiary)] flex items-center justify-center mx-auto mb-4">
-                  <FileText className="w-8 h-8 text-[var(--text-muted)]" />
-                </div>
-                <p className="text-[var(--text-muted)]">
-                  Sélectionnez une analyse pour voir les détails
-                </p>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </div>
 
       {/* Mobile Detail Modal */}

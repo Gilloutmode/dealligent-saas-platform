@@ -122,6 +122,16 @@ export interface CompetitorAnalysisData {
   recommendedMessaging?: string
 
   // ===========================================
+  // SOURCES METRICS - Phase 4.1 (n8n V12.3)
+  // ===========================================
+
+  /** Total number of sources consulted during analysis */
+  sourcesConsulted?: number
+
+  /** Number of sources with extracted URLs (cited) */
+  sourcesCited?: number
+
+  // ===========================================
   // SOURCES - Phase 4 (n8n V12.1 → V12.2)
   // ===========================================
 

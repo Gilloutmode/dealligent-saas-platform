@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { Bell, ArrowRight } from 'lucide-react'
 import { useTheme } from '../../contexts/ThemeContext'
 import { cn } from '../../lib/utils'
+import { highlightText } from '../../utils/highlightText'
 
 // =============================================================================
 // ACTION REQUIRED PANEL COMPONENT
@@ -52,8 +53,8 @@ export function ActionRequiredPanel({ action, className, onActionClick }: Action
 
       {/* Content */}
       <div className="p-5">
-        <p className="text-sm text-[var(--text-secondary)] mb-4">
-          {action}
+        <p className="text-lg leading-relaxed text-[var(--text-primary)] mb-4">
+          {highlightText(action)}
         </p>
 
         {onActionClick && (

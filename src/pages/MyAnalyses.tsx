@@ -312,7 +312,7 @@ export function MyAnalysesPage() {
         <StatCard
           label="En cours"
           value={runningAnalyses.length}
-          icon={<Loader2 className="w-6 h-6 text-white animate-spin" />}
+          icon={<Loader2 className={`w-6 h-6 text-white ${runningAnalyses.length > 0 ? 'animate-spin' : ''}`} />}
           colorClass="text-blue-primary"
           bgClass="bg-gradient-to-br from-blue-primary to-cyan-400"
         />

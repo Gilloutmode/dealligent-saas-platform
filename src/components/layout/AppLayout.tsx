@@ -5,6 +5,7 @@ import { Outlet, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Sidebar } from './Sidebar'
 import { MobileNav } from './MobileNav'
+import { useSidebar } from '../../contexts/SidebarContext'
 
 // =============================================================================
 // DEALLIGENT APP LAYOUT WITH AURORA COSMIC GLASS DESIGN
@@ -31,15 +32,37 @@ function PageTransition({ children }: { children: React.ReactNode }) {
   )
 }
 
+// Sidebar width constants (must match Sidebar.tsx)
+const SIDEBAR_WIDTH_EXPANDED = 240
+const SIDEBAR_WIDTH_COLLAPSED = 72
+const SIDEBAR_MARGIN = 48 // 3rem = 48px
+const MD_BREAKPOINT = 768 // Tailwind md breakpoint
+
 // Main Layout Component
 export function AppLayout() {
+  // Sidebar state from context
+  const { isCollapsed } = useSidebar()
+
   // Performance optimization: Pause animations when tab is not visible
   const [isTabVisible, setIsTabVisible] = useState(true)
+
+  // Desktop detection for responsive marginLeft
+  const [isDesktop, setIsDesktop] = useState(false)
 
   useEffect(() => {
     const handleVisibilityChange = () => setIsTabVisible(!document.hidden)
     document.addEventListener('visibilitychange', handleVisibilityChange)
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
+  }, [])
+
+  // Media query for desktop detection
+  useEffect(() => {
+    const mediaQuery = window.matchMedia(`(min-width: ${MD_BREAKPOINT}px)`)
+    setIsDesktop(mediaQuery.matches)
+
+    const handleChange = (e: MediaQueryListEvent) => setIsDesktop(e.matches)
+    mediaQuery.addEventListener('change', handleChange)
+    return () => mediaQuery.removeEventListener('change', handleChange)
   }, [])
 
   return (
@@ -99,20 +122,34 @@ export function AppLayout() {
       </div>
 
       {/* Aurora Floating Sidebar (Desktop) */}
-      <div className="hidden md:block fixed top-6 bottom-6 left-6 w-[var(--sidebar-width)] z-40">
+      <motion.div
+        className="hidden md:block fixed top-6 bottom-6 left-6 z-40"
+        initial={false}
+        animate={{
+          width: isCollapsed ? SIDEBAR_WIDTH_COLLAPSED : SIDEBAR_WIDTH_EXPANDED
+        }}
+        transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+      >
         <Sidebar />
-      </div>
+      </motion.div>
 
       {/* Main Content Area */}
-      <main
+      <motion.main
         id="main-content"
-        className="flex-1 relative z-10 md:ml-[calc(var(--sidebar-width)+3rem)] md:mr-6 md:my-6 pt-16 md:pt-0 overflow-y-auto overflow-x-hidden min-h-[calc(100vh-3rem)] rounded-[var(--radius-panel)]"
+        className="flex-1 relative z-10 md:mr-6 md:my-6 pt-16 md:pt-0 overflow-y-auto overflow-x-hidden min-h-[calc(100vh-3rem)] rounded-[var(--radius-panel)]"
         role="main"
+        initial={false}
+        animate={{
+          marginLeft: isDesktop
+            ? `${(isCollapsed ? SIDEBAR_WIDTH_COLLAPSED : SIDEBAR_WIDTH_EXPANDED) + SIDEBAR_MARGIN}px`
+            : 0
+        }}
+        transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
       >
         <PageTransition>
           <Outlet />
         </PageTransition>
-      </main>
+      </motion.main>
     </div>
   )
 }

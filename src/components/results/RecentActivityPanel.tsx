@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { Activity, Clock } from 'lucide-react'
 import { useTheme } from '../../contexts/ThemeContext'
 import { cn } from '../../lib/utils'
+import { highlightText } from '../../utils/highlightText'
 
 // =============================================================================
 // RECENT ACTIVITY PANEL COMPONENT
@@ -80,12 +81,12 @@ export function RecentActivityPanel({ activities, className }: RecentActivityPan
               <motion.li
                 key={index}
                 variants={itemVariants}
-                className="flex items-start gap-3 text-sm group"
+                className="flex items-start gap-3 group"
               >
-                <div className="w-6 h-6 rounded-lg bg-purple-500/10 flex items-center justify-center shrink-0 mt-0.5">
+                <div className="w-6 h-6 rounded-lg bg-purple-500/10 flex items-center justify-center shrink-0 mt-1">
                   <Clock className={`w-3.5 h-3.5 ${isDark ? 'text-purple-400' : 'text-purple-500'}`} />
                 </div>
-                <span className="text-[var(--text-secondary)] flex-1">{activity}</span>
+                <span className="text-lg leading-relaxed text-[var(--text-primary)] flex-1">{highlightText(activity)}</span>
               </motion.li>
             ))}
           </motion.ul>

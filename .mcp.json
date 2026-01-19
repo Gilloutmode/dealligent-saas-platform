@@ -1,41 +1,19 @@
 {
   "mcpServers": {
-    "magic": {
-      "command": "npx",
-      "args": ["-y", "@21st-dev/magic@latest"],
-      "env": {
-        "API_KEY": "96cd57f7cc02f02e3c83e537bb5e9eb2b01138545e6725209da8ed1e2f7ad41b"
-      },
-      "purpose": "UI component generation from 21st.dev"
-    },
     "github": {
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-github"],
       "purpose": "Gestion repo, PRs, issues"
-    },
-    "playwright": {
-      "command": "npx",
-      "args": ["-y", "@playwright/mcp"],
-      "purpose": "Tests E2E automatises"
-    },
-    "sequential-thinking": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"],
-      "purpose": "Raisonnement complexe"
     }
   },
   "profiles": {
-    "saas-dev": {
-      "description": "Developpement quotidien",
-      "servers": ["magic", "github", "playwright"]
-    },
-    "saas-research": {
-      "description": "Recherche et exploration",
-      "servers": ["sequential-thinking"]
-    },
     "minimal": {
-      "description": "Aucun MCP",
+      "description": "Aucun MCP projet",
       "servers": []
+    },
+    "full": {
+      "description": "GitHub seulement - autres via mcp-gateway",
+      "servers": ["github"]
     }
   }
 }

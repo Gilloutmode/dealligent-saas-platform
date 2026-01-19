@@ -195,6 +195,19 @@
   --foreground: oklch(1 0 0);
   --popover: oklch(0 0 0);
   --destructive: oklch(0.396 0.141 25.723);
+
+  /* ═══════════════════════════════════════════════════════════
+     GLASS & HIGHLIGHT TOKENS (Dark Mode)
+     ═══════════════════════════════════════════════════════════ */
+  --glass-bg: rgba(255, 255, 255, 0.05);
+
+  /* Highlight colors - 3 types: Risk (red), Opportunity (green), Compare (blue) */
+  --highlight-risk-bg: rgba(239, 68, 68, 0.15);
+  --highlight-risk-text: var(--error-text);
+  --highlight-opportunity-bg: rgba(16, 185, 129, 0.15);
+  --highlight-opportunity-text: var(--success-text);
+  --highlight-compare-bg: rgba(99, 102, 241, 0.15);
+  --highlight-compare-text: var(--info-text);
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -267,6 +280,19 @@
   --glass-hover: rgba(0, 0, 0, 0.05);
 
   --border-subtle: rgba(0, 0, 0, 0.08);
+
+  /* ═══════════════════════════════════════════════════════════
+     GLASS & HIGHLIGHT TOKENS (Light Mode)
+     ═══════════════════════════════════════════════════════════ */
+  --glass-bg: rgba(0, 0, 0, 0.03);
+
+  /* Highlight colors - 3 types: Risk (red), Opportunity (green), Compare (blue) */
+  --highlight-risk-bg: rgba(239, 68, 68, 0.15);
+  --highlight-risk-text: var(--error-text);
+  --highlight-opportunity-bg: rgba(16, 185, 129, 0.15);
+  --highlight-opportunity-text: var(--success-text);
+  --highlight-compare-bg: rgba(99, 102, 241, 0.15);
+  --highlight-compare-text: var(--info-text);
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -1984,6 +2010,55 @@
   color: #52A4EF;
   border: 1px solid rgba(21, 134, 255, 0.3);
   box-shadow: 0 0 12px rgba(21, 134, 255, 0.2);
+}
+
+/* Semantic badge colors for threat levels and KPIs */
+.badge-glow-red {
+  @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold;
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(220, 38, 38, 0.15) 100%);
+  color: #F87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.2);
+}
+
+.badge-glow-orange {
+  @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(217, 119, 6, 0.15) 100%);
+  color: #FBBF24;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.2);
+}
+
+.badge-glow-green {
+  @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold;
+  background: linear-gradient(135deg, rgba(21, 255, 171, 0.2) 0%, rgba(16, 185, 129, 0.15) 100%);
+  color: #15FFAB;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.2);
+}
+
+.badge-glow-blue {
+  @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold;
+  background: linear-gradient(135deg, rgba(21, 134, 255, 0.2) 0%, rgba(82, 164, 239, 0.15) 100%);
+  color: #52A4EF;
+  border: 1px solid rgba(21, 134, 255, 0.3);
+  box-shadow: 0 0 12px rgba(21, 134, 255, 0.2);
+}
+
+.badge-glow-purple {
+  @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold;
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(124, 58, 237, 0.15) 100%);
+  color: #A78BFA;
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  box-shadow: 0 0 12px rgba(139, 92, 246, 0.2);
+}
+
+.badge-glow-cyan {
+  @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold;
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.2) 0%, rgba(34, 211, 238, 0.15) 100%);
+  color: #22D3EE;
+  border: 1px solid rgba(6, 182, 212, 0.3);
+  box-shadow: 0 0 12px rgba(6, 182, 212, 0.2);
 }
 
 /* ═══════════════════════════════════════════════════════════════

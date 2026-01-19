@@ -13,9 +13,13 @@ import {
   RotateCcw,
   Trash2,
   ChevronRight,
+  FileDown,
+  Target,
+  Lightbulb,
+  Shield,
+  BookOpen,
 } from 'lucide-react'
 import type { StoredAnalysis } from '../../types/n8n'
-import ThreatBadge from './ThreatBadge'
 
 // =============================================================================
 // TYPES
@@ -32,6 +36,8 @@ export interface AnalysisStatusCardProps {
   onRetry?: (analysis: StoredAnalysis) => void
   /** Callback when "Delete" is clicked */
   onDelete?: (analysis: StoredAnalysis) => void
+  /** Callback when "Export PDF" is clicked (future feature) */
+  onExportPDF?: (analysis: StoredAnalysis) => void
 }
 
 // =============================================================================
@@ -67,6 +73,32 @@ function formatDuration(startedAt?: string, completedAt?: string): string {
     return `${minutes}m ${remainingSeconds}s`
   }
   return `${seconds}s`
+}
+
+/**
+ * Parse quality score string to percentage number
+ * Handles formats: "11/12 (92%)" or just "92"
+ */
+function parseConfidenceScore(qualityScore?: string): number {
+  if (!qualityScore) return 0
+
+  // Try to extract percentage from "(XX%)" format
+  const percentMatch = qualityScore.match(/\((\d+)%\)/)
+  if (percentMatch) {
+    return parseInt(percentMatch[1], 10)
+  }
+
+  // Try to extract first number from "X/Y" format
+  const fractionMatch = qualityScore.match(/^(\d+)\/(\d+)/)
+  if (fractionMatch) {
+    const numerator = parseInt(fractionMatch[1], 10)
+    const denominator = parseInt(fractionMatch[2], 10)
+    return denominator > 0 ? Math.round((numerator / denominator) * 100) : 0
+  }
+
+  // Fallback: try to parse as plain number
+  const plainNumber = parseInt(qualityScore, 10)
+  return isNaN(plainNumber) ? 0 : plainNumber
 }
 
 // =============================================================================
@@ -122,12 +154,40 @@ function RunningState({
 function CompletedState({
   analysis,
   onViewResults,
+  onExportPDF,
 }: {
   analysis: StoredAnalysis
   onViewResults?: (analysis: StoredAnalysis) => void
+  onExportPDF?: (analysis: StoredAnalysis) => void
 }): React.ReactElement {
-  const score = analysis.response?.data?.strengths?.length || 0
-  const threatLevel = analysis.response?.data?.threatLevel
+  const data = analysis.response?.data
+  const threatLevel = data?.threatLevel
+  const confidenceScore = parseConfidenceScore(data?.qualityScore)
+
+  // Calculate total insights: strengths + weaknesses
+  const strengthsCount = data?.strengths?.length || 0
+  const weaknessesCount = data?.weaknessesvsCDS?.length || 0
+  const totalInsights = strengthsCount + weaknessesCount
+
+  // Source metrics (n8n V12.3)
+  const sourcesConsulted = data?.sourcesConsulted as number | undefined
+  const sourcesCited = data?.sourcesCited as number | undefined
+
+  // Threat level badge config
+  const getThreatConfig = (level?: string) => {
+    switch (level?.toUpperCase()) {
+      case 'HIGH':
+        return { badge: 'badge-glow-red', label: 'Élevée' }
+      case 'MEDIUM':
+        return { badge: 'badge-glow-orange', label: 'Moyenne' }
+      case 'LOW':
+        return { badge: 'badge-glow-green', label: 'Faible' }
+      default:
+        return { badge: 'badge-glow-info', label: 'N/A' }
+    }
+  }
+
+  const threatConfig = getThreatConfig(threatLevel)
 
   return (
     <>
@@ -142,27 +202,80 @@ function CompletedState({
         </span>
       </div>
 
-      {/* Results summary */}
-      <div className="flex items-center gap-4 mb-4">
-        {threatLevel && <ThreatBadge level={threatLevel} size="sm" />}
-        <span className="text-xs text-secondary">
-          {score} insight{score > 1 ? 's' : ''} identifié{score > 1 ? 's' : ''}
-        </span>
+      {/* KPI Badges Row */}
+      <div className="flex flex-wrap items-center gap-2 mb-4">
+        {/* Threat Level Badge */}
+        {threatLevel && (
+          <motion.span
+            className={`${threatConfig.badge} text-xs`}
+            whileHover={{ scale: 1.05 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+          >
+            <Shield className="w-3 h-3" />
+            Menace: {threatConfig.label}
+          </motion.span>
+        )}
+
+        {/* Confidence Score Badge */}
+        <motion.span
+          className="badge-glow-blue text-xs"
+          whileHover={{ scale: 1.05 }}
+          transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+        >
+          <Target className="w-3 h-3" />
+          Conf: {confidenceScore}%
+        </motion.span>
+
+        {/* Insights Count Badge */}
+        <motion.span
+          className="badge-glow-purple text-xs"
+          whileHover={{ scale: 1.05 }}
+          transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+        >
+          <Lightbulb className="w-3 h-3" />
+          {totalInsights} insight{totalInsights > 1 ? 's' : ''}
+        </motion.span>
+
+        {/* Sources Consulted Badge */}
+        {(sourcesConsulted !== undefined || sourcesCited !== undefined) && (
+          <motion.span
+            className="badge-glow-cyan text-xs"
+            whileHover={{ scale: 1.05 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+          >
+            <BookOpen className="w-3 h-3" />
+            {sourcesConsulted ?? '-'} consultées → {sourcesCited ?? '-'} citées
+          </motion.span>
+        )}
       </div>
 
-      {/* View results button */}
-      {onViewResults && (
+      {/* Action Buttons Row */}
+      <div className="flex items-center gap-2">
+        {/* View Results Button - Primary */}
+        {onViewResults && (
+          <motion.button
+            onClick={() => onViewResults(analysis)}
+            className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl btn-premium text-sm font-medium"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <Eye className="w-4 h-4" />
+            Voir les résultats
+            <ChevronRight className="w-4 h-4" />
+          </motion.button>
+        )}
+
+        {/* Export PDF Button - Disabled */}
         <motion.button
-          onClick={() => onViewResults(analysis)}
-          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl btn-premium text-sm font-medium"
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
+          onClick={onExportPDF ? () => onExportPDF(analysis) : undefined}
+          className="flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-secondary text-sm font-medium opacity-50 cursor-not-allowed"
+          title="Bientôt disponible"
+          disabled
         >
-          <Eye className="w-4 h-4" />
-          Voir les résultats
-          <ChevronRight className="w-4 h-4" />
+          <FileDown className="w-4 h-4" />
+          PDF
         </motion.button>
-      )}
+      </div>
     </>
   )
 }
@@ -221,8 +334,17 @@ export function AnalysisStatusCard({
   onViewResults,
   onRetry,
   onDelete,
+  onExportPDF,
 }: AnalysisStatusCardProps): React.ReactElement {
   const { status, competitor, analysisType, sources } = analysis
+
+  // Get source count: for completed analyses, prefer response data over request sources
+  const data = analysis.response?.data
+  const displaySourcesCount =
+    (data?.sourcesConsulted as number | undefined) ||
+    (data?.sourceLinksStructured as unknown[] | undefined)?.length ||
+    (Array.isArray(data?.sourceLinks) ? (data.sourceLinks as unknown[]).length : undefined) ||
+    sources.length
 
   return (
     <motion.div
@@ -247,7 +369,7 @@ export function AnalysisStatusCard({
             {analysisType === 'standard' && 'Analyse standard'}
             {analysisType === 'deep' && 'Analyse approfondie'}
             {!analysisType && 'Analyse'}
-            {sources.length > 0 && ` • ${sources.length} source${sources.length > 1 ? 's' : ''}`}
+            {displaySourcesCount > 0 && ` • ${displaySourcesCount} source${displaySourcesCount > 1 ? 's' : ''}`}
           </p>
         </div>
 
@@ -267,7 +389,7 @@ export function AnalysisStatusCard({
 
       {/* State-specific content */}
       {status === 'running' && <RunningState analysis={analysis} progress={progress} />}
-      {status === 'completed' && <CompletedState analysis={analysis} onViewResults={onViewResults} />}
+      {status === 'completed' && <CompletedState analysis={analysis} onViewResults={onViewResults} onExportPDF={onExportPDF} />}
       {status === 'failed' && <FailedState analysis={analysis} onRetry={onRetry} />}
       {status === 'pending' && (
         <div className="flex items-center gap-2 text-secondary">
