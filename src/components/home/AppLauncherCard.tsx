@@ -1,6 +1,6 @@
 // =============================================================================
 // DEALLIGENT PLATFORM - APP LAUNCHER CARD
-// Premium glassmorphism card for intelligence module navigation
+// Premium glassmorphism card for application navigation
 // =============================================================================
 
 "use client"
@@ -227,7 +227,7 @@ export function AppLauncherCard({
                   animate={{ x: isHovered ? 4 : 0 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <span>{isActive ? 'Accéder au module' : 'Accès Beta'}</span>
+                  <span>{isActive ? 'Accéder à l\'application' : 'Accès Beta'}</span>
                   <ChevronRight className="w-4 h-4" />
                 </motion.div>
               ) : (

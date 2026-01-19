@@ -136,9 +136,9 @@ export function Sidebar() {
         {/* Separator */}
         <div className="h-px bg-[var(--glass-border)] mx-2 my-4" />
 
-        {/* Market Intelligence Section */}
+        {/* Market Section */}
         <div>
-          <SidebarSection id="market-intelligence" title="MARKET INTELLIGENCE" defaultOpen={true} isCollapsed={isCollapsed}>
+          <SidebarSection id="market" title="MARKET" defaultOpen={true} isCollapsed={isCollapsed}>
             <SidebarItem
               icon={<PlayCircle className="w-5 h-5" />}
               label="Lancer Analyse"

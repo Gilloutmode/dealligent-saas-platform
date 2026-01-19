@@ -1,6 +1,6 @@
 // =============================================================================
 // DEALLIGENT PLATFORM - HOME / LANDING PAGE
-// App Launcher hub presenting all intelligence modules
+// App Launcher hub presenting all applications
 // =============================================================================
 
 "use client"
@@ -27,14 +27,14 @@ import {
 } from '../components/home'
 
 // =============================================================================
-// INTELLIGENCE MODULES CONFIGURATION
+// APPLICATIONS CONFIGURATION
 // =============================================================================
 
 type ModuleConfig = Omit<AppLauncherCardProps, 'delay' | 'stats'>
 
 const intelligenceModules: ModuleConfig[] = [
   {
-    title: 'Market Intelligence',
+    title: 'Market',
     description: 'Analysez vos concurrents en profondeur. Insights stratégiques, SWOT automatisés et veille continue.',
     icon: <TrendingUp className="w-7 h-7" />,
     gradientFrom: 'from-blue-500',
@@ -44,7 +44,7 @@ const intelligenceModules: ModuleConfig[] = [
     route: '/competitors',
   },
   {
-    title: 'Product Intelligence',
+    title: 'Product',
     description: 'Comparez vos produits avec la concurrence. Benchmark features et analyse de positionnement.',
     icon: <Package className="w-7 h-7" />,
     gradientFrom: 'from-emerald-500',
@@ -54,7 +54,7 @@ const intelligenceModules: ModuleConfig[] = [
     route: '/product-analysis',
   },
   {
-    title: 'Sales Intelligence',
+    title: 'Sales',
     description: 'Identifiez les opportunités commerciales. Scoring de leads et signaux d\'achat.',
     icon: <DollarSign className="w-7 h-7" />,
     gradientFrom: 'from-orange-500',
@@ -64,7 +64,7 @@ const intelligenceModules: ModuleConfig[] = [
     route: '/sales-analysis',
   },
   {
-    title: 'Marketing Intelligence',
+    title: 'Marketing',
     description: 'Surveillez les campagnes concurrentes. Analyse de positionnement et stratégies marketing.',
     icon: <Megaphone className="w-7 h-7" />,
     gradientFrom: 'from-pink-500',
@@ -74,7 +74,7 @@ const intelligenceModules: ModuleConfig[] = [
     route: '/marketing-analysis',
   },
   {
-    title: 'Technology Intelligence',
+    title: 'Technology',
     description: 'Analysez les stacks technologiques. Veille innovation et tendances tech.',
     icon: <Cpu className="w-7 h-7" />,
     gradientFrom: 'from-indigo-500',
@@ -84,7 +84,7 @@ const intelligenceModules: ModuleConfig[] = [
     route: '/tech-analysis',
   },
   {
-    title: 'Talent Intelligence',
+    title: 'Talent',
     description: 'Suivez les mouvements RH concurrents. Recrutements clés et évolutions d\'équipes.',
     icon: <Users className="w-7 h-7" />,
     gradientFrom: 'from-cyan-500',
@@ -187,7 +187,7 @@ export function HomePage() {
       {/* Hero Section */}
       <HeroSection />
 
-      {/* Intelligence Modules Grid */}
+      {/* Applications Grid */}
       <motion.section variants={sectionVariants} className="py-8 px-8">
         <div className="max-w-6xl mx-auto">
           {/* Section Header */}
@@ -198,7 +198,7 @@ export function HomePage() {
             className="mb-8"
           >
             <h2 className="text-sm font-semibold uppercase tracking-wider text-[var(--text-muted)] mb-2">
-              Modules d'Intelligence
+              Applications
             </h2>
             <div className="h-px bg-gradient-to-r from-[var(--border-light)] to-transparent max-w-xs" />
           </motion.div>
@@ -242,7 +242,7 @@ export function HomePage() {
         className="py-8 px-8 text-center"
       >
         <p className="text-sm text-[var(--text-muted)]">
-          Plus de modules d'intelligence à venir.{' '}
+          Plus d'applications à venir.{' '}
           <span className="text-blue-600">Restez à l'écoute.</span>
         </p>
       </motion.div>

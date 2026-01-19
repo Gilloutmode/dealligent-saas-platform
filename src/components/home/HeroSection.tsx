@@ -55,7 +55,7 @@ export function HeroSection() {
             <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full border border-[var(--c-brand)]/30 bg-[var(--c-brand)]/10 backdrop-blur-2xl shadow-[0_0_20px_var(--c-brand-glow)]">
               <Sparkles className="w-3.5 h-3.5 text-[var(--c-brand)]" />
               <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[var(--text-primary)]">
-                INTELLIGENCE COMPETITIVE <span className="opacity-50 text-[8px]">PLATFORM v4.0</span>
+                AGENTIC COMPETITIVE <span className="opacity-50 text-[8px]">PLATFORM v4.0</span>
               </span>
             </div>
           </motion.div>
@@ -67,7 +67,7 @@ export function HeroSection() {
           >
             Dealligent{' '}
             <span className="text-glow">
-              Intelligence <span className="text-white/20">Platform</span>
+              Platform
             </span>
           </motion.h1>
 
@@ -118,7 +118,7 @@ export function HeroSection() {
 
           {/* Tactical Labels */}
           <div className="absolute right-4 top-1/4 px-3 py-1 bg-black/40 backdrop-blur-md border border-white/10 text-[8px] font-black uppercase tracking-widest text-[var(--c-brand)] rounded">
-            Global Intelligence
+            Global Analysis
           </div>
           <div className="absolute left-4 bottom-1/4 px-3 py-1 bg-black/40 backdrop-blur-md border border-white/10 text-[8px] font-black uppercase tracking-widest text-[var(--c-brand)] rounded">
             Market Analysis
