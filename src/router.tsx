@@ -3,6 +3,8 @@ import { AppLayout } from './components/layout'
 
 // Pages
 import { HomePage } from './pages/Home'
+import { HomepageVisionPage } from './pages/HomepageVision'
+import { HomeVisionPage } from './pages/HomeVision'
 import { DashboardPage } from './pages/Dashboard'
 import { MyCompanyPage } from './pages/MyCompany'
 import { CompetitorsPage } from './pages/Competitors'
@@ -16,6 +18,11 @@ import { SettingsPage } from './pages/Settings'
 import { HelpPage } from './pages/Help'
 
 const router = createBrowserRouter([
+  // Vision landing page (standalone, no sidebar)
+  {
+    path: '/vision',
+    element: <HomepageVisionPage />,
+  },
   {
     path: '/',
     element: <AppLayout />,
@@ -27,6 +34,10 @@ const router = createBrowserRouter([
       {
         path: 'home',
         element: <HomePage />,
+      },
+      {
+        path: 'home-vision',
+        element: <HomeVisionPage />,
       },
       {
         path: 'dashboard',

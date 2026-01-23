@@ -47,11 +47,11 @@ const listItemVariants = {
 export function SWOTGrid({ strengths, weaknesses, className }: SWOTGridProps) {
   const { isDark } = useTheme()
 
-  // Theme-aware colors
+  // Theme-aware colors - Enhanced light mode opacity for visibility (0.06→0.12, 0.12→0.15)
   const strengthsColors = {
-    bg: isDark ? 'rgba(16, 185, 129, 0.08)' : 'rgba(16, 185, 129, 0.06)',
+    bg: isDark ? 'rgba(16, 185, 129, 0.08)' : 'rgba(16, 185, 129, 0.12)',
     border: isDark ? 'rgba(16, 185, 129, 0.2)' : 'rgba(16, 185, 129, 0.25)',
-    headerBg: isDark ? 'rgba(16, 185, 129, 0.15)' : 'rgba(16, 185, 129, 0.12)',
+    headerBg: isDark ? 'rgba(16, 185, 129, 0.15)' : 'rgba(16, 185, 129, 0.15)',
     dot: 'bg-emerald-500',
     text: isDark ? 'text-emerald-400' : 'text-emerald-600',
     icon: 'from-emerald-500 to-cyan-500',
@@ -59,9 +59,9 @@ export function SWOTGrid({ strengths, weaknesses, className }: SWOTGridProps) {
   }
 
   const weaknessesColors = {
-    bg: isDark ? 'rgba(239, 68, 68, 0.08)' : 'rgba(239, 68, 68, 0.06)',
+    bg: isDark ? 'rgba(239, 68, 68, 0.08)' : 'rgba(239, 68, 68, 0.12)',
     border: isDark ? 'rgba(239, 68, 68, 0.2)' : 'rgba(239, 68, 68, 0.25)',
-    headerBg: isDark ? 'rgba(239, 68, 68, 0.15)' : 'rgba(239, 68, 68, 0.12)',
+    headerBg: isDark ? 'rgba(239, 68, 68, 0.15)' : 'rgba(239, 68, 68, 0.15)',
     dot: 'bg-red-500',
     text: isDark ? 'text-red-400' : 'text-red-600',
     icon: 'from-red-500 to-rose-600',

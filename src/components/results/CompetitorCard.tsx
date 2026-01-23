@@ -89,7 +89,7 @@ const trendConfig = {
   },
   stable: {
     icon: Minus,
-    color: 'text-gray-400',
+    color: 'text-[var(--text-muted)]',
     bg: 'bg-gray-500/10 border-gray-500/20',
     label: 'Stable',
   },

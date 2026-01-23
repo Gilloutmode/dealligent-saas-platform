@@ -120,27 +120,27 @@ export function ConfirmAnalysisModal({
 
   const threat = threatConfig[competitor.threatLevel]
 
-  // Theme-aware style classes
+  // Theme-aware style classes - CSS variables for WCAG AA compliance
   const styles = {
     backdrop: isDark ? 'bg-black/70' : 'bg-black/50',
     modal: isDark
       ? 'bg-gray-900 border-gray-700'
-      : 'bg-white border-gray-200',
+      : 'bg-white border-[var(--border-default)]',
     closeBtn: isDark
       ? 'bg-gray-800 hover:bg-gray-700 border-gray-600'
-      : 'bg-gray-100 hover:bg-gray-200 border-gray-200',
-    closeBtnIcon: isDark ? 'text-gray-400' : 'text-gray-500',
-    title: isDark ? 'text-white' : 'text-gray-900',
-    subtitle: isDark ? 'text-gray-300' : 'text-gray-600',
-    sectionTitle: isDark ? 'text-gray-200' : 'text-gray-700',
+      : 'bg-[var(--bg-secondary)] hover:bg-[var(--bg-tertiary)] border-[var(--border-default)]',
+    closeBtnIcon: 'text-[var(--text-muted)]',
+    title: 'text-[var(--text-primary)]',
+    subtitle: 'text-[var(--text-secondary)]',
+    sectionTitle: isDark ? 'text-gray-200' : 'text-[var(--text-secondary)]',
     sparklesIcon: isDark ? 'text-purple-400' : 'text-purple-600',
     sourceBadge: isDark
       ? 'bg-gray-800 border-gray-700 hover:border-gray-600 hover:bg-gray-750'
-      : 'bg-gray-50 border-gray-200 hover:border-gray-300 hover:bg-gray-100',
+      : 'bg-[var(--bg-secondary)] border-[var(--border-default)] hover:border-[var(--border-hover)] hover:bg-[var(--bg-tertiary)]',
     sourceIconBg: isDark ? 'bg-blue-500/20' : 'bg-blue-100',
     sourceIcon: isDark ? 'text-blue-400' : 'text-blue-600',
-    sourceName: isDark ? 'text-white' : 'text-gray-900',
-    sourceDesc: isDark ? 'text-gray-400' : 'text-gray-500',
+    sourceName: 'text-[var(--text-primary)]',
+    sourceDesc: 'text-[var(--text-muted)]',
     verifiedBg: isDark ? 'bg-emerald-500/20' : 'bg-emerald-100',
     verifiedIcon: isDark ? 'text-emerald-400' : 'text-emerald-600',
     durationBox: isDark
@@ -148,11 +148,11 @@ export function ConfirmAnalysisModal({
       : 'bg-amber-50 border-amber-200',
     durationIconBg: isDark ? 'bg-amber-500/20' : 'bg-amber-100',
     durationIcon: isDark ? 'text-amber-400' : 'text-amber-600',
-    durationTitle: isDark ? 'text-white' : 'text-gray-900',
-    durationText: isDark ? 'text-gray-300' : 'text-gray-600',
+    durationTitle: 'text-[var(--text-primary)]',
+    durationText: 'text-[var(--text-secondary)]',
     cancelBtn: isDark
       ? 'bg-gray-800 border-gray-600 text-gray-200 hover:bg-gray-700 hover:border-gray-500'
-      : 'bg-gray-100 border-gray-300 text-gray-700 hover:bg-gray-200 hover:border-gray-400',
+      : 'bg-[var(--bg-secondary)] border-[var(--border-default)] text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] hover:border-[var(--border-hover)]',
   }
 
   return (

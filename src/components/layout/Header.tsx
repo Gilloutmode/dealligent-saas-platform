@@ -96,7 +96,7 @@ const NotificationDropdown = ({
       <div className="fixed inset-0 z-40" onClick={onClose} />
       <div className="absolute right-0 top-full mt-2 w-80 rounded-lg border border-gray-200 bg-white shadow-lg z-50">
         <div className="flex items-center justify-between border-b border-gray-100 px-4 py-3">
-          <h3 className="font-semibold text-gray-900">Notifications</h3>
+          <h3 className="font-semibold text-[var(--text-primary)]">Notifications</h3>
           {unreadCount > 0 && (
             <span className="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-600">
               {unreadCount} nouvelles
@@ -113,11 +113,11 @@ const NotificationDropdown = ({
             >
               <div className={`mt-1 h-2 w-2 rounded-full shrink-0 ${getTypeColor(notification.type)}`} />
               <div className="flex-1 min-w-0">
-                <p className={`text-sm ${!notification.read ? "font-medium text-gray-900" : "text-gray-700"}`}>
+                <p className={`text-sm ${!notification.read ? "font-medium text-[var(--text-primary)]" : "text-[var(--text-secondary)]"}`}>
                   {notification.title}
                 </p>
-                <p className="text-xs text-gray-500 truncate">{notification.description}</p>
-                <p className="text-xs text-gray-400 mt-1">{notification.time}</p>
+                <p className="text-xs text-[var(--text-muted)] truncate">{notification.description}</p>
+                <p className="text-xs text-[var(--text-muted)] mt-1">{notification.time}</p>
               </div>
             </div>
           ))}
@@ -154,8 +154,8 @@ const UserMenuDropdown = ({
       <div className="absolute right-0 top-full mt-2 w-56 rounded-lg border border-gray-200 bg-white shadow-lg z-50">
         {/* User Info */}
         <div className="border-b border-gray-100 px-4 py-3">
-          <p className="font-medium text-gray-900">Gil Moussailon</p>
-          <p className="text-sm text-gray-500">gil@company.com</p>
+          <p className="font-medium text-[var(--text-primary)]">Gil Moussailon</p>
+          <p className="text-sm text-[var(--text-muted)]">gil@company.com</p>
           <span className="mt-2 inline-flex items-center rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700">
             Admin
           </span>
@@ -167,9 +167,9 @@ const UserMenuDropdown = ({
             <a
               key={item.label}
               href={item.href}
-              className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+              className="flex items-center gap-3 px-4 py-2 text-sm text-[var(--text-secondary)] hover:bg-gray-50 transition-colors"
             >
-              <item.icon className="h-4 w-4 text-gray-400" />
+              <item.icon className="h-4 w-4 text-[var(--text-muted)]" />
               {item.label}
             </a>
           ))}
@@ -199,11 +199,11 @@ const SearchBar = () => {
       <input
         type="text"
         placeholder="Rechercher..."
-        className="h-9 w-full rounded-lg border border-gray-200 bg-gray-50 pl-9 pr-4 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 transition-all"
+        className="h-9 w-full rounded-lg border border-gray-200 bg-gray-50 pl-9 pr-4 text-sm placeholder:text-[var(--text-muted)] focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 transition-all"
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
       />
-      <kbd className="absolute right-3 hidden rounded bg-gray-100 px-1.5 py-0.5 text-[10px] font-medium text-gray-400 lg:inline">
+      <kbd className="absolute right-3 hidden rounded bg-gray-100 px-1.5 py-0.5 text-[10px] font-medium text-[var(--text-muted)] lg:inline">
         ⌘K
       </kbd>
     </div>
@@ -217,7 +217,7 @@ const ThemeToggle = () => {
   return (
     <button
       onClick={() => setIsDark(!isDark)}
-      className="flex h-9 w-9 items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors"
+      className="flex h-9 w-9 items-center justify-center rounded-lg text-[var(--text-muted)] hover:bg-gray-100 hover:text-[var(--text-secondary)] transition-colors"
       aria-label="Toggle theme"
     >
       {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
@@ -244,16 +244,16 @@ const Header = ({
         {/* Mobile Menu Button */}
         <button
           onClick={onMenuClick}
-          className="flex h-9 w-9 items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100 lg:hidden"
+          className="flex h-9 w-9 items-center justify-center rounded-lg text-[var(--text-muted)] hover:bg-gray-100 lg:hidden"
         >
           <Menu className="h-5 w-5" />
         </button>
 
         {/* Page Title */}
         <div>
-          <h1 className="text-lg font-semibold text-gray-900">{title}</h1>
+          <h1 className="text-lg font-semibold text-[var(--text-primary)]">{title}</h1>
           {subtitle && (
-            <p className="text-sm text-gray-500">{subtitle}</p>
+            <p className="text-sm text-[var(--text-muted)]">{subtitle}</p>
           )}
         </div>
       </div>
@@ -273,7 +273,7 @@ const Header = ({
               setNotificationsOpen(!notificationsOpen)
               setUserMenuOpen(false)
             }}
-            className="relative flex h-9 w-9 items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors"
+            className="relative flex h-9 w-9 items-center justify-center rounded-lg text-[var(--text-muted)] hover:bg-gray-100 hover:text-[var(--text-secondary)] transition-colors"
           >
             <Bell className="h-5 w-5" />
             <NotificationBadge count={unreadCount} />
@@ -297,8 +297,8 @@ const Header = ({
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-blue-600 text-sm font-medium text-white">
               GM
             </div>
-            <span className="hidden text-sm font-medium text-gray-700 md:inline">Gil</span>
-            <ChevronDown className="h-4 w-4 text-gray-400" />
+            <span className="hidden text-sm font-medium text-[var(--text-secondary)] md:inline">Gil</span>
+            <ChevronDown className="h-4 w-4 text-[var(--text-muted)]" />
           </button>
           <UserMenuDropdown 
             isOpen={userMenuOpen} 

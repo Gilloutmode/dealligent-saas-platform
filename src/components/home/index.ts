@@ -1,4 +1,8 @@
 export { HeroSection } from './HeroSection'
 export { AppLauncherCard, type AppLauncherCardProps, type AppStatus } from './AppLauncherCard'
+export { AgentCard, type AgentCardProps, type AgentCardCapabilities } from './AgentCard'
+export { AgentAvatar, type AgentType } from './AgentAvatar'
+export { AgentsSection } from './AgentsSection'
+export { RoadmapSection } from './RoadmapSection'
 export { QuickStats, type QuickStatsProps } from './QuickStats'
 export { RecentActivity, type RecentActivityProps, type ActivityItem } from './RecentActivity'

@@ -73,41 +73,42 @@ const variantColorsDark = {
 }
 
 // Variant colors - Light mode (colored backgrounds)
+// Enhanced opacity for better visibility (0.06 → 0.12 bg, 0.2 → 0.25 border)
 const variantColorsLight = {
   default: {
-    glow: 'rgba(100, 116, 139, 0.1)',
-    border: 'rgba(15, 23, 42, 0.1)',
+    glow: 'rgba(100, 116, 139, 0.15)',
+    border: 'rgba(15, 23, 42, 0.12)',
     bg: 'rgba(248, 250, 252, 1)',
   },
   blue: {
-    glow: 'rgba(59, 130, 246, 0.15)',
-    border: 'rgba(59, 130, 246, 0.2)',
-    bg: 'rgba(59, 130, 246, 0.06)',
+    glow: 'rgba(59, 130, 246, 0.2)',
+    border: 'rgba(59, 130, 246, 0.25)',
+    bg: 'rgba(59, 130, 246, 0.12)',
   },
   green: {
-    glow: 'rgba(16, 185, 129, 0.15)',
-    border: 'rgba(16, 185, 129, 0.2)',
-    bg: 'rgba(16, 185, 129, 0.06)',
+    glow: 'rgba(16, 185, 129, 0.2)',
+    border: 'rgba(16, 185, 129, 0.25)',
+    bg: 'rgba(16, 185, 129, 0.12)',
   },
   orange: {
-    glow: 'rgba(245, 158, 11, 0.15)',
-    border: 'rgba(245, 158, 11, 0.2)',
-    bg: 'rgba(249, 115, 22, 0.06)',
+    glow: 'rgba(245, 158, 11, 0.2)',
+    border: 'rgba(245, 158, 11, 0.25)',
+    bg: 'rgba(249, 115, 22, 0.12)',
   },
   purple: {
-    glow: 'rgba(139, 92, 246, 0.15)',
-    border: 'rgba(139, 92, 246, 0.2)',
-    bg: 'rgba(139, 92, 246, 0.06)',
+    glow: 'rgba(139, 92, 246, 0.2)',
+    border: 'rgba(139, 92, 246, 0.25)',
+    bg: 'rgba(139, 92, 246, 0.12)',
   },
   cyan: {
-    glow: 'rgba(6, 182, 212, 0.15)',
-    border: 'rgba(6, 182, 212, 0.2)',
-    bg: 'rgba(6, 182, 212, 0.06)',
+    glow: 'rgba(6, 182, 212, 0.2)',
+    border: 'rgba(6, 182, 212, 0.25)',
+    bg: 'rgba(6, 182, 212, 0.12)',
   },
   red: {
-    glow: 'rgba(239, 68, 68, 0.15)',
-    border: 'rgba(239, 68, 68, 0.2)',
-    bg: 'rgba(239, 68, 68, 0.06)',
+    glow: 'rgba(239, 68, 68, 0.2)',
+    border: 'rgba(239, 68, 68, 0.25)',
+    bg: 'rgba(239, 68, 68, 0.12)',
   },
 }
 

@@ -87,42 +87,43 @@ const variantColorsDark = {
 }
 
 // Variant colors for glow and sparkline - Light mode (colored backgrounds)
+// Enhanced opacity for better visibility (0.08 → 0.15 bg, 0.25 → 0.35 border)
 const variantColorsLight = {
   blue: {
-    glow: 'rgba(59, 130, 246, 0.2)',
+    glow: 'rgba(59, 130, 246, 0.25)',
     sparkline: '#2563eb',
-    border: 'rgba(59, 130, 246, 0.25)',
-    bg: 'rgba(59, 130, 246, 0.08)',
+    border: 'rgba(59, 130, 246, 0.35)',
+    bg: 'rgba(59, 130, 246, 0.15)',
   },
   green: {
-    glow: 'rgba(16, 185, 129, 0.2)',
+    glow: 'rgba(16, 185, 129, 0.25)',
     sparkline: '#059669',
-    border: 'rgba(16, 185, 129, 0.25)',
-    bg: 'rgba(16, 185, 129, 0.08)',
+    border: 'rgba(16, 185, 129, 0.35)',
+    bg: 'rgba(16, 185, 129, 0.15)',
   },
   orange: {
-    glow: 'rgba(245, 158, 11, 0.2)',
+    glow: 'rgba(245, 158, 11, 0.25)',
     sparkline: '#d97706',
-    border: 'rgba(245, 158, 11, 0.25)',
-    bg: 'rgba(249, 115, 22, 0.08)',
+    border: 'rgba(245, 158, 11, 0.35)',
+    bg: 'rgba(249, 115, 22, 0.15)',
   },
   purple: {
-    glow: 'rgba(139, 92, 246, 0.2)',
+    glow: 'rgba(139, 92, 246, 0.25)',
     sparkline: '#7c3aed',
-    border: 'rgba(139, 92, 246, 0.25)',
-    bg: 'rgba(139, 92, 246, 0.08)',
+    border: 'rgba(139, 92, 246, 0.35)',
+    bg: 'rgba(139, 92, 246, 0.15)',
   },
   cyan: {
-    glow: 'rgba(6, 182, 212, 0.2)',
+    glow: 'rgba(6, 182, 212, 0.25)',
     sparkline: '#0891b2',
-    border: 'rgba(6, 182, 212, 0.25)',
-    bg: 'rgba(6, 182, 212, 0.08)',
+    border: 'rgba(6, 182, 212, 0.35)',
+    bg: 'rgba(6, 182, 212, 0.15)',
   },
   red: {
-    glow: 'rgba(239, 68, 68, 0.2)',
+    glow: 'rgba(239, 68, 68, 0.25)',
     sparkline: '#dc2626',
-    border: 'rgba(239, 68, 68, 0.25)',
-    bg: 'rgba(239, 68, 68, 0.08)',
+    border: 'rgba(239, 68, 68, 0.35)',
+    bg: 'rgba(239, 68, 68, 0.15)',
   },
 }
 
@@ -285,11 +286,11 @@ const TrendBadge = ({
     if (isDark) {
       if (isPositive) return 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/25'
       if (isNegative) return 'bg-red-500/15 text-red-400 border border-red-500/25'
-      return 'bg-gray-500/15 text-gray-400 border border-gray-500/25'
+      return 'bg-gray-500/15 text-[var(--text-muted)] border border-gray-500/25'
     } else {
       if (isPositive) return 'bg-emerald-50 text-emerald-600 border border-emerald-200'
       if (isNegative) return 'bg-red-50 text-red-600 border border-red-200'
-      return 'bg-gray-100 text-gray-600 border border-gray-200'
+      return 'bg-gray-100 text-[var(--text-secondary)] border border-gray-200'
     }
   }
 
@@ -370,10 +371,10 @@ export const EnrichedKPICard = memo(function EnrichedKPICard({
     setRotation({ x: 0, y: 0 })
   }
 
-  // Theme-aware styles
-  const textPrimaryClass = isDark ? 'text-white' : 'text-gray-900'
-  const textSecondaryClass = isDark ? 'text-gray-400' : 'text-gray-500'
-  const textMutedClass = isDark ? 'text-gray-500' : 'text-gray-400'
+  // Theme-aware styles - using CSS variables for WCAG compliance
+  const textPrimaryClass = 'text-[var(--text-primary)]'
+  const textSecondaryClass = 'text-[var(--text-secondary)]'
+  const textMutedClass = 'text-[var(--text-muted)]'
 
   // Glass overlay gradient based on theme
   const glassOverlay = isDark

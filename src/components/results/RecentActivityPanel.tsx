@@ -36,9 +36,10 @@ const itemVariants = {
 export function RecentActivityPanel({ activities, className }: RecentActivityPanelProps) {
   const { isDark } = useTheme()
 
-  const cardBg = isDark ? 'rgba(139, 92, 246, 0.08)' : 'rgba(139, 92, 246, 0.06)'
+  // Enhanced light mode opacity for visibility (0.06→0.12, 0.12→0.15)
+  const cardBg = isDark ? 'rgba(139, 92, 246, 0.08)' : 'rgba(139, 92, 246, 0.12)'
   const cardBorder = isDark ? 'rgba(139, 92, 246, 0.2)' : 'rgba(139, 92, 246, 0.25)'
-  const headerBg = isDark ? 'rgba(139, 92, 246, 0.15)' : 'rgba(139, 92, 246, 0.12)'
+  const headerBg = isDark ? 'rgba(139, 92, 246, 0.15)' : 'rgba(139, 92, 246, 0.15)'
 
   return (
     <motion.div

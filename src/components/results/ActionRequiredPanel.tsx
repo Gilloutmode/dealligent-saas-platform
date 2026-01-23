@@ -20,9 +20,10 @@ export interface ActionRequiredPanelProps {
 export function ActionRequiredPanel({ action, className, onActionClick }: ActionRequiredPanelProps) {
   const { isDark } = useTheme()
 
-  const cardBg = isDark ? 'rgba(245, 158, 11, 0.08)' : 'rgba(245, 158, 11, 0.06)'
+  // Enhanced light mode opacity for visibility (0.06→0.12, 0.12→0.15)
+  const cardBg = isDark ? 'rgba(245, 158, 11, 0.08)' : 'rgba(245, 158, 11, 0.12)'
   const cardBorder = isDark ? 'rgba(245, 158, 11, 0.2)' : 'rgba(245, 158, 11, 0.25)'
-  const headerBg = isDark ? 'rgba(245, 158, 11, 0.15)' : 'rgba(245, 158, 11, 0.12)'
+  const headerBg = isDark ? 'rgba(245, 158, 11, 0.15)' : 'rgba(245, 158, 11, 0.15)'
 
   if (!action) {
     return null

@@ -210,9 +210,10 @@ export function SourcesSection({
   const { isDark } = useTheme()
   const [showAll, setShowAll] = useState(false)
 
-  const cardBg = isDark ? 'rgba(6, 182, 212, 0.08)' : 'rgba(6, 182, 212, 0.06)'
+  // Enhanced light mode opacity for visibility (0.06→0.12, 0.12→0.15)
+  const cardBg = isDark ? 'rgba(6, 182, 212, 0.08)' : 'rgba(6, 182, 212, 0.12)'
   const cardBorder = isDark ? 'rgba(6, 182, 212, 0.2)' : 'rgba(6, 182, 212, 0.25)'
-  const headerBg = isDark ? 'rgba(6, 182, 212, 0.15)' : 'rgba(6, 182, 212, 0.12)'
+  const headerBg = isDark ? 'rgba(6, 182, 212, 0.15)' : 'rgba(6, 182, 212, 0.15)'
 
   // Priority: structured links (V12.2/V12.1) > parsed legacy > fallback sources
   const structuredLinks = sourceLinksStructured || []

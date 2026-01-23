@@ -37,8 +37,8 @@ export function CompanyInfoPanel({
 }: CompanyInfoPanelProps) {
   const { isDark } = useTheme()
 
-  // Theme-aware colors
-  const cardBg = isDark ? 'rgba(59, 130, 246, 0.08)' : 'rgba(59, 130, 246, 0.06)'
+  // Theme-aware colors - Enhanced light mode opacity for visibility (0.06→0.12)
+  const cardBg = isDark ? 'rgba(59, 130, 246, 0.08)' : 'rgba(59, 130, 246, 0.12)'
   const cardBorder = isDark ? 'rgba(59, 130, 246, 0.2)' : 'rgba(59, 130, 246, 0.25)'
   const itemBg = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(255, 255, 255, 0.7)'
   const itemBorder = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(59, 130, 246, 0.15)'

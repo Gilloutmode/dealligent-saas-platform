@@ -65,9 +65,9 @@ export function HeroSection() {
             variants={itemVariants}
             className="text-5xl md:text-7xl text-display mb-6 tracking-tighter font-black"
           >
-            Dealligent{' '}
+            Votre équipe d'agents IA{' '}
             <span className="text-glow">
-              Platform
+              pour dominer votre marché
             </span>
           </motion.h1>
 
@@ -76,8 +76,9 @@ export function HeroSection() {
             variants={itemVariants}
             className="text-xl text-[var(--text-secondary)] mb-10 leading-relaxed max-w-xl font-medium"
           >
-            Votre plateforme d'intelligence competitive alimentee par l'IA.
-            Transformez la donnee en <span className="text-[var(--text-primary)] font-bold italic underline decoration-[var(--c-brand)]/50">avantage strategique decisif</span>.
+            <span className="text-[var(--text-primary)] font-bold">6 agents spécialisés</span> analysent en continu votre écosystème concurrentiel.
+            Transformez <span className="line-through opacity-50">40 heures</span> de veille en{' '}
+            <span className="text-[var(--c-brand)] font-bold">4 heures</span> d'insights actionnables.
           </motion.p>
 
           {/* CTA Buttons */}

@@ -59,10 +59,10 @@ function StatCard({ label, value, suffix, icon: Icon, iconBg, delay }: StatCardP
 
         {/* Content */}
         <div>
-          <p className="text-sm text-[var(--text-muted)] mb-0.5">{label}</p>
+          <p className="text-sm text-[var(--text-secondary)] font-medium mb-0.5">{label}</p>
           <div className="text-2xl font-bold text-[var(--text-primary)] flex items-baseline gap-0.5">
             <NumberTicker value={value} delay={delay + 0.3} />
-            {suffix && <span className="text-lg text-[var(--text-muted)]">{suffix}</span>}
+            {suffix && <span className="text-lg text-[var(--text-secondary)] font-medium">{suffix}</span>}
           </div>
         </div>
       </div>
@@ -83,12 +83,15 @@ export function QuickStats({ competitors, analyses, avgScore, alerts }: QuickSta
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
-          className="mb-6"
+          className="mb-8 text-center"
         >
-          <h2 className="text-sm font-semibold uppercase tracking-wider text-[var(--text-muted)]">
-            Aperçu Rapide
+          <h2 className="text-sm font-bold uppercase tracking-[0.2em] text-blue-600 mb-2">
+            Performance
           </h2>
-          <div className="h-px mt-2 bg-gradient-to-r from-[var(--border-light)] to-transparent max-w-xs" />
+          <p className="text-[var(--text-primary)] text-3xl font-bold tracking-tight mb-4">
+            Aperçu Stratégique
+          </p>
+          <div className="h-1 w-20 bg-blue-600 mx-auto rounded-full" />
         </motion.div>
 
         {/* Stats Grid */}

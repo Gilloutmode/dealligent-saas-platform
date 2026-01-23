@@ -7,93 +7,16 @@
 
 import { useMemo } from 'react'
 import { motion } from 'framer-motion'
-import {
-  TrendingUp,
-  Package,
-  DollarSign,
-  Megaphone,
-  Cpu,
-  Users,
-} from 'lucide-react'
 import { useAnalysis } from '../contexts/AnalysisContext'
 import { competitors, recentActivity as staticRecentActivity } from '../data/clientData'
 import {
   HeroSection,
-  AppLauncherCard,
+  AgentsSection,
+  RoadmapSection,
   QuickStats,
   RecentActivity,
-  type AppLauncherCardProps,
   type ActivityItem,
 } from '../components/home'
-
-// =============================================================================
-// APPLICATIONS CONFIGURATION
-// =============================================================================
-
-type ModuleConfig = Omit<AppLauncherCardProps, 'delay' | 'stats'>
-
-const intelligenceModules: ModuleConfig[] = [
-  {
-    title: 'Market',
-    description: 'Analysez vos concurrents en profondeur. Insights stratégiques, SWOT automatisés et veille continue.',
-    icon: <TrendingUp className="w-7 h-7" />,
-    gradientFrom: 'from-blue-500',
-    gradientTo: 'to-purple-500',
-    glowColor: 'rgba(59, 130, 246, 0.35)',
-    status: 'active',
-    route: '/competitors',
-  },
-  {
-    title: 'Product',
-    description: 'Comparez vos produits avec la concurrence. Benchmark features et analyse de positionnement.',
-    icon: <Package className="w-7 h-7" />,
-    gradientFrom: 'from-emerald-500',
-    gradientTo: 'to-teal-500',
-    glowColor: 'rgba(16, 185, 129, 0.35)',
-    status: 'coming-soon',
-    route: '/product-analysis',
-  },
-  {
-    title: 'Sales',
-    description: 'Identifiez les opportunités commerciales. Scoring de leads et signaux d\'achat.',
-    icon: <DollarSign className="w-7 h-7" />,
-    gradientFrom: 'from-orange-500',
-    gradientTo: 'to-amber-500',
-    glowColor: 'rgba(249, 115, 22, 0.35)',
-    status: 'coming-soon',
-    route: '/sales-analysis',
-  },
-  {
-    title: 'Marketing',
-    description: 'Surveillez les campagnes concurrentes. Analyse de positionnement et stratégies marketing.',
-    icon: <Megaphone className="w-7 h-7" />,
-    gradientFrom: 'from-pink-500',
-    gradientTo: 'to-rose-500',
-    glowColor: 'rgba(236, 72, 153, 0.35)',
-    status: 'coming-soon',
-    route: '/marketing-analysis',
-  },
-  {
-    title: 'Technology',
-    description: 'Analysez les stacks technologiques. Veille innovation et tendances tech.',
-    icon: <Cpu className="w-7 h-7" />,
-    gradientFrom: 'from-indigo-500',
-    gradientTo: 'to-violet-500',
-    glowColor: 'rgba(99, 102, 241, 0.35)',
-    status: 'coming-soon',
-    route: '/tech-analysis',
-  },
-  {
-    title: 'Talent',
-    description: 'Suivez les mouvements RH concurrents. Recrutements clés et évolutions d\'équipes.',
-    icon: <Users className="w-7 h-7" />,
-    gradientFrom: 'from-cyan-500',
-    gradientTo: 'to-sky-500',
-    glowColor: 'rgba(6, 182, 212, 0.35)',
-    status: 'coming-soon',
-    route: '/talent-analysis',
-  },
-]
 
 // =============================================================================
 // ANIMATION VARIANTS
@@ -187,39 +110,15 @@ export function HomePage() {
       {/* Hero Section */}
       <HeroSection />
 
-      {/* Applications Grid */}
-      <motion.section variants={sectionVariants} className="py-8 px-8">
-        <div className="max-w-6xl mx-auto">
-          {/* Section Header */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-            className="mb-8"
-          >
-            <h2 className="text-sm font-semibold uppercase tracking-wider text-[var(--text-muted)] mb-2">
-              Applications
-            </h2>
-            <div className="h-px bg-gradient-to-r from-[var(--border-light)] to-transparent max-w-xs" />
-          </motion.div>
+      {/* Agents Section */}
+      <motion.div variants={sectionVariants}>
+        <AgentsSection />
+      </motion.div>
 
-          {/* Modules Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {intelligenceModules.map((module, index) => (
-              <AppLauncherCard
-                key={module.title}
-                {...module}
-                delay={index * 0.1}
-                stats={
-                  module.status === 'active'
-                    ? { label: 'concurrents', value: stats.competitors }
-                    : undefined
-                }
-              />
-            ))}
-          </div>
-        </div>
-      </motion.section>
+      {/* Roadmap Section */}
+      <motion.div variants={sectionVariants}>
+        <RoadmapSection />
+      </motion.div>
 
       {/* Quick Stats */}
       <motion.div variants={sectionVariants}>

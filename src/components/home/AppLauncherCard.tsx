@@ -161,10 +161,10 @@ export function AppLauncherCard({
 
         {/* Main card container */}
         <div className="relative bg-[var(--bg-card)] backdrop-blur-xl border border-[var(--border-default)] rounded-2xl p-6 shadow-xl">
-          {/* Gradient overlay */}
+          {/* Gradient overlay - enhanced for light mode visibility */}
           <motion.div
             className={`absolute inset-0 bg-gradient-to-br ${gradientFrom} ${gradientTo} rounded-2xl`}
-            animate={{ opacity: isHovered && isClickable ? 0.15 : 0.08 }}
+            animate={{ opacity: isHovered && isClickable ? 0.18 : 0.12 }}
             transition={{ duration: 0.3 }}
           />
 

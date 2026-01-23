@@ -176,10 +176,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
       {/* Page Header */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
-          <h1 className="text-2xl lg:text-3xl font-bold text-gray-900">
+          <h1 className="text-2xl lg:text-3xl font-bold text-[var(--text-primary)]">
             Tableau de bord
           </h1>
-          <p className="text-gray-500 mt-1">
+          <p className="text-[var(--text-muted)] mt-1">
             Bienvenue, voici un aperçu de votre veille concurrentielle
           </p>
         </div>
@@ -279,20 +279,20 @@ export const Dashboard: React.FC<DashboardProps> = ({
                       )}
                     </div>
                     <div>
-                      <p className="font-medium text-gray-900">
+                      <p className="font-medium text-[var(--text-primary)]">
                         {analysis.companyName}
                       </p>
-                      <p className="text-sm text-gray-500">{analysis.date}</p>
+                      <p className="text-sm text-[var(--text-muted)]">{analysis.date}</p>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-3">
                     {analysis.score && (
                       <div className="text-right">
-                        <p className="text-sm font-medium text-gray-900">
+                        <p className="text-sm font-medium text-[var(--text-primary)]">
                           {analysis.score}%
                         </p>
-                        <p className="text-xs text-gray-500">Score</p>
+                        <p className="text-xs text-[var(--text-muted)]">Score</p>
                       </div>
                     )}
                     <StatusBadge
@@ -336,20 +336,20 @@ export const Dashboard: React.FC<DashboardProps> = ({
                         index === 0
                           ? "bg-amber-100 text-amber-700"
                           : index === 1
-                          ? "bg-gray-100 text-gray-600"
+                          ? "bg-gray-100 text-[var(--text-secondary)]"
                           : index === 2
                           ? "bg-orange-100 text-orange-700"
-                          : "bg-gray-50 text-gray-500"
+                          : "bg-gray-50 text-[var(--text-muted)]"
                       }`}
                     >
                       {index + 1}
                     </span>
-                    <span className="font-medium text-gray-900">
+                    <span className="font-medium text-[var(--text-primary)]">
                       {competitor.name}
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="font-semibold text-gray-900">
+                    <span className="font-semibold text-[var(--text-primary)]">
                       {competitor.score}
                     </span>
                     <Badge
@@ -392,14 +392,14 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 >
                   <Avatar name={item.user.name} size="sm" />
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm text-gray-900">
+                    <p className="text-sm text-[var(--text-primary)]">
                       <span className="font-medium">{item.user.name}</span>{" "}
                       {item.action}{" "}
                       <span className="font-medium text-primary">
                         {item.target}
                       </span>
                     </p>
-                    <p className="text-xs text-gray-500 mt-0.5">{item.time}</p>
+                    <p className="text-xs text-[var(--text-muted)] mt-0.5">{item.time}</p>
                   </div>
                 </div>
               ))}
@@ -448,7 +448,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
             {/* Team Members Preview */}
             <div className="mt-6 pt-6 border-t border-gray-100">
               <div className="flex items-center justify-between mb-3">
-                <p className="text-sm font-medium text-gray-700">Équipe active</p>
+                <p className="text-sm font-medium text-[var(--text-secondary)]">Équipe active</p>
                 <Badge variant="primary" size="sm">
                   4 en ligne
                 </Badge>
