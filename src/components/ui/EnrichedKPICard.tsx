@@ -1,6 +1,6 @@
 "use client"
 
-import { memo, useRef, useState, useEffect, useMemo } from 'react'
+import { memo, useRef, useState, useEffect, useMemo, useId } from 'react'
 import { motion } from 'framer-motion'
 import {
   ArrowUpRight,
@@ -186,15 +186,18 @@ const NumberTicker = ({
 
 // =============================================================================
 // SPARKLINE CHART - Animated SVG chart
+// Performance: gradientId passed as prop to avoid recreation on each render
 // =============================================================================
 const SparklineChart = ({
   data,
   color = '#8b5cf6',
   delay = 0,
+  gradientId,
 }: {
   data: number[]
   color?: string
   delay?: number
+  gradientId: string
 }) => {
   const width = 120
   const height = 40
@@ -212,8 +215,6 @@ const SparklineChart = ({
 
   const lastX = (data.length - 1) / (data.length - 1) * (width - padding * 2) + padding
   const lastY = height - padding - ((data[data.length - 1] - min) / range) * (height - padding * 2)
-
-  const gradientId = `sparklineGradient-${Math.random().toString(36).substr(2, 9)}`
 
   return (
     <svg
@@ -315,6 +316,12 @@ const TrendBadge = ({
 // =============================================================================
 // MAIN COMPONENT
 // =============================================================================
+// =============================================================================
+// STABLE FALLBACK DATA - Generated once per component instance via useRef
+// =============================================================================
+const generateFallbackSparkline = (): number[] =>
+  Array.from({ length: 12 }, () => Math.floor(Math.random() * 50) + 30)
+
 export const EnrichedKPICard = memo(function EnrichedKPICard({
   label,
   value,
@@ -333,10 +340,19 @@ export const EnrichedKPICard = memo(function EnrichedKPICard({
   const [isHovered, setIsHovered] = useState(false)
   const [rotation, setRotation] = useState({ x: 0, y: 0 })
 
-  // Generate sparkline data if not provided
+  // Stable gradient ID using React 18's useId hook
+  const gradientId = useId()
+
+  // Stable fallback sparkline data - only generated once per component instance
+  const fallbackDataRef = useRef<number[] | null>(null)
+  if (!fallbackDataRef.current) {
+    fallbackDataRef.current = generateFallbackSparkline()
+  }
+
+  // Use provided data or stable fallback
   const chartData = useMemo(() => {
     if (sparklineData && sparklineData.length > 0) return sparklineData
-    return Array.from({ length: 12 }, () => Math.floor(Math.random() * 50) + 30)
+    return fallbackDataRef.current!
   }, [sparklineData])
 
   // Determine trend direction
@@ -523,6 +539,7 @@ export const EnrichedKPICard = memo(function EnrichedKPICard({
               data={chartData}
               color={colors.sparkline}
               delay={delay}
+              gradientId={`sparkline-${gradientId}`}
             />
           </motion.div>
         </div>

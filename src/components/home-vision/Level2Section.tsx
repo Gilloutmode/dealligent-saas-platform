@@ -1,255 +1,375 @@
+// =============================================================================
 // LEVEL 2 SECTION - External Sources
 // "6 AI agents monitoring your competitive landscape"
-// ANIMATED with cycling working states using Framer Motion
+// Phase 4/5: Scroll animations with blur + scale
+// Performance: Visual types stored as enums, not JSX instances
+// =============================================================================
 
-import { useState, useEffect, useCallback } from 'react'
-import { motion } from 'framer-motion'
-import { Radar, Search, Globe, BarChart3, Brain } from 'lucide-react'
-import { LevelCard } from './LevelCard'
-import { AgentCardVision } from './AgentCardVision'
+"use client"
 
-// Agent messages for each role
-const agentMessages: Record<string, string[]> = {
-  'Mia': [
-    'Scanning market data...',
-    'Found 15 competitors',
-    'Analyzing market trends...',
-    'Mapping competitive landscape...',
-    'Complete!'
-  ],
-  'Pia': [
-    'Comparing product features...',
-    'Analyzing 23 features',
-    'Benchmarking pricing...',
-    'Tracking roadmap changes...',
-    'Complete!'
-  ],
-  'Sia': [
-    'Reviewing recent deals...',
-    'Found 8 win/loss patterns',
-    'Extracting objections...',
-    'Building battlecards...',
-    'Complete!'
-  ],
-  'Maia': [
-    'Scanning competitor content...',
-    'Found 12 campaigns',
-    'Analyzing SEO keywords...',
-    'Generating insights...',
-    'Complete!'
-  ],
-  'Tia': [
-    'Analyzing tech stacks...',
-    'Detected 9 integrations',
-    'Reviewing architecture...',
-    'Tracking innovations...',
-    'Complete!'
-  ],
-  'Talia': [
-    'Scanning job postings...',
-    'Found 34 open positions',
-    'Identifying key hires...',
-    'Mapping org structure...',
-    'Complete!'
-  ],
-}
+import { useMemo } from 'react'
+import { motion, useReducedMotion } from 'framer-motion'
+import { AgentCard } from './AgentCard'
+import {
+  MiaMockupAnimated,
+  PiaMockupAnimated,
+  SiaMockupAnimated,
+  MaiaMockupAnimated,
+  TiaMockupAnimated,
+  TaliaMockupAnimated,
+} from './animations'
 
-const agents = [
-  { name: 'Mia', role: 'Market Agent', tagline: 'Market trends & competitive landscape',
-    capabilities: ['Market sizing & growth analysis', 'Competitive landscape mapping', 'Trend identification', 'Segment analysis', 'Opportunity mapping'],
-    invokeCommand: '/market @Mia', accentColor: 'blue' },
-  { name: 'Pia', role: 'Product Agent', tagline: 'Feature comparison & roadmap analysis',
-    capabilities: ['Feature comparison matrices', 'Roadmap tracking', 'Pricing analysis', 'UX/UI benchmarking', 'Integration mapping'],
-    invokeCommand: '/product @Pia', accentColor: 'purple' },
-  { name: 'Sia', role: 'Sales Agent', tagline: 'Win/loss patterns & deal intelligence',
-    capabilities: ['Win/loss pattern analysis', 'Competitive deals tracking', 'Objection handling intel', 'Battlecard creation', 'Pricing intelligence'],
-    invokeCommand: '/sales @Sia', accentColor: 'green' },
-  { name: 'Maia', role: 'Marketing Agent', tagline: 'Content creation, SEO, and GTM intelligence',
-    capabilities: ['SEO-optimized content (articles, briefs)', 'LinkedIn posts & thought leadership', 'Case studies & white papers', 'Outbound prospecting & ICP refinement', 'Campaign intelligence & best practices'],
-    invokeCommand: '/marketing @Maia', accentColor: 'pink' },
-  { name: 'Tia', role: 'Technology Agent', tagline: 'Tech stack & innovation radar',
-    capabilities: ['Tech stack analysis', 'Architecture review', 'Innovation radar', 'Patent/IP tracking', 'Integration assessment'],
-    invokeCommand: '/technology @Tia', accentColor: 'cyan' },
-  { name: 'Talia', role: 'Talent Agent', tagline: 'Team composition & hiring patterns',
-    capabilities: ['Team composition analysis', 'Hiring patterns detection', 'Key hire tracking', 'Org structure mapping', 'Culture signals'],
-    invokeCommand: '/talent @Talia', accentColor: 'orange' },
-]
-
-const invocationMethods = [
-  { method: '/SLASH COMMANDS', description: 'Type /market in chat' },
-  { method: '@MENTIONS', description: 'Use @Mia in your query' },
-  { method: 'SIDEBAR PANEL', description: 'Click agent icon on right' },
-  { method: '+ BUTTON', description: 'Add agent to enrich response' },
-]
-
-const dataSources = [
-  { icon: Search, name: 'Perplexity AI', description: 'Real-time web intelligence' },
-  { icon: Globe, name: 'Exa Search', description: 'Deep web discovery' },
-  { icon: BarChart3, name: 'SerpAPI', description: 'SERP and competitive ads' },
-  { icon: Brain, name: 'Claude Opus 4.5', description: 'Strategic analysis engine' },
-]
+// =============================================================================
+// ANIMATION VARIANTS
+// =============================================================================
 
 const containerVariants = {
   hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.08 } },
-}
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' as const } },
-}
-
-// ============================================================
-// AGENT WORK CYCLE HOOK
-// ============================================================
-function useAgentCycle(agentNames: string[]) {
-  const [activeAgentIndex, setActiveAgentIndex] = useState<number | null>(null)
-  const [progress, setProgress] = useState(0)
-  const [messageIndex, setMessageIndex] = useState(0)
-  const [isWorking, setIsWorking] = useState(false)
-
-  const startWork = useCallback(() => {
-    // Pick a random agent
-    const randomIndex = Math.floor(Math.random() * agentNames.length)
-    setActiveAgentIndex(randomIndex)
-    setIsWorking(true)
-    setProgress(0)
-    setMessageIndex(0)
-  }, [agentNames.length])
-
-  // Progress animation
-  useEffect(() => {
-    if (!isWorking || activeAgentIndex === null) return
-
-    // Animate progress from 0 to 100
-    const progressInterval = setInterval(() => {
-      setProgress(prev => {
-        if (prev >= 100) {
-          return 100
-        }
-        return prev + 2
-      })
-    }, 80) // 4 seconds to complete (50 * 80ms)
-
-    return () => clearInterval(progressInterval)
-  }, [isWorking, activeAgentIndex])
-
-  // Message cycling based on progress
-  useEffect(() => {
-    if (!isWorking || activeAgentIndex === null) return
-
-    if (progress < 20) setMessageIndex(0)
-    else if (progress < 40) setMessageIndex(1)
-    else if (progress < 60) setMessageIndex(2)
-    else if (progress < 80) setMessageIndex(3)
-    else setMessageIndex(4)
-  }, [progress, isWorking, activeAgentIndex])
-
-  // Complete work and cycle
-  useEffect(() => {
-    if (progress >= 100 && isWorking) {
-      const timer = setTimeout(() => {
-        setIsWorking(false)
-        setActiveAgentIndex(null)
-        setProgress(0)
-        setMessageIndex(0)
-      }, 1500)
-      return () => clearTimeout(timer)
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.05,
+      delayChildren: 0.1
     }
-  }, [progress, isWorking])
-
-  // Start cycle
-  useEffect(() => {
-    // Initial delay before first agent starts
-    const initialTimer = setTimeout(startWork, 2000)
-    return () => clearTimeout(initialTimer)
-  }, [startWork])
-
-  // Repeat cycle
-  useEffect(() => {
-    if (!isWorking && activeAgentIndex === null) {
-      const cycleTimer = setTimeout(startWork, 3000)
-      return () => clearTimeout(cycleTimer)
-    }
-  }, [isWorking, activeAgentIndex, startWork])
-
-  return {
-    activeAgentIndex,
-    progress,
-    messageIndex,
-    isWorking
-  }
+  },
 }
 
-// ============================================================
-// LEVEL 2 SECTION - MAIN EXPORT
-// ============================================================
+// Full animation with blur + scale
+const itemVariantsFull = {
+  hidden: {
+    opacity: 0,
+    y: 40,
+    scale: 0.95,
+    filter: 'blur(10px)',
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    filter: 'blur(0px)',
+    transition: {
+      duration: 0.3,
+      ease: [0.25, 0.46, 0.45, 0.94] as const,
+    },
+  },
+}
+
+// Reduced motion variant
+const itemVariantsReduced = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { duration: 0.3 },
+  },
+}
+
+// =============================================================================
+// VISUAL TYPES - Enum instead of JSX to prevent re-renders
+// =============================================================================
+
+type AgentVisualType = 'mia' | 'pia' | 'sia' | 'maia' | 'tia' | 'talia'
+
+// Mapping from visual type to component - called only in render
+const AGENT_VISUAL_COMPONENTS: Record<AgentVisualType, React.ComponentType> = {
+  mia: MiaMockupAnimated,
+  pia: PiaMockupAnimated,
+  sia: SiaMockupAnimated,
+  maia: MaiaMockupAnimated,
+  tia: TiaMockupAnimated,
+  talia: TaliaMockupAnimated,
+}
+
+// =============================================================================
+// AGENTS DATA - Module-level constant (stable reference)
+// =============================================================================
+
+interface AgentData {
+  name: string
+  role: string
+  tagline: string
+  icon: 'mia' | 'pia' | 'sia' | 'maia' | 'tia' | 'talia'
+  accentColor: string
+  capabilities: string[]
+  invokeCommand: string
+  visualType: AgentVisualType
+}
+
+const AGENTS_DATA: readonly AgentData[] = [
+  {
+    name: 'Mia',
+    role: 'Market Agent',
+    tagline: 'Market trends & competitive landscape',
+    icon: 'mia',
+    accentColor: 'blue',
+    capabilities: [
+      'Market sizing & growth projections',
+      'Competitive landscape mapping',
+      'Trend identification & analysis',
+      'Segment deep-dives',
+      'Opportunity mapping',
+    ],
+    invokeCommand: '/market @Mia',
+    visualType: 'mia'
+  },
+  {
+    name: 'Pia',
+    role: 'Product Agent',
+    tagline: 'Feature comparison & roadmap analysis',
+    icon: 'pia',
+    accentColor: 'green',
+    capabilities: [
+      'Feature comparison matrices',
+      'Competitor roadmap tracking',
+      'Pricing analysis',
+      'UX/UI benchmarking',
+      'Integration ecosystem mapping',
+    ],
+    invokeCommand: '/product @Pia',
+    visualType: 'pia'
+  },
+  {
+    name: 'Sia',
+    role: 'Sales Agent',
+    tagline: 'Win/loss patterns & deal intelligence',
+    icon: 'sia',
+    accentColor: 'orange',
+    capabilities: [
+      'Win/loss pattern analysis',
+      'Competitive deals tracking',
+      'Objection handling intelligence',
+      'Battlecard auto-generation',
+      'Pricing intelligence',
+    ],
+    invokeCommand: '/sales @Sia',
+    visualType: 'sia'
+  },
+  {
+    name: 'Maia',
+    role: 'Marketing Agent',
+    tagline: 'Content creation & GTM intelligence',
+    icon: 'maia',
+    accentColor: 'pink',
+    capabilities: [
+      'CONTENT: SEO articles, LinkedIn posts, case studies',
+      'GTM: ICP refinement, persona development',
+      'RESEARCH: Competitor campaigns, best practices',
+    ],
+    invokeCommand: '/marketing @Maia',
+    visualType: 'maia'
+  },
+  {
+    name: 'Tia',
+    role: 'Technology Agent',
+    tagline: 'Tech stack & innovation radar',
+    icon: 'tia',
+    accentColor: 'cyan',
+    capabilities: [
+      'Tech stack analysis',
+      'Architecture reviews',
+      'Innovation radar',
+      'Patent/IP tracking',
+      'Integration assessment',
+    ],
+    invokeCommand: '/technology @Tia',
+    visualType: 'tia'
+  },
+  {
+    name: 'Talia',
+    role: 'Talent Agent',
+    tagline: 'Team composition & hiring patterns',
+    icon: 'talia',
+    accentColor: 'purple',
+    capabilities: [
+      'Team composition analysis',
+      'Hiring patterns detection',
+      'Key hire tracking & alerts',
+      'Org structure mapping',
+      'Culture signals',
+    ],
+    invokeCommand: '/talent @Talia',
+    visualType: 'talia'
+  },
+] as const
+
+// =============================================================================
+// INVOCATION METHODS DATA - Module-level constant
+// =============================================================================
+
+const INVOCATION_METHODS = [
+  { title: '/SLASH COMMANDS', desc: 'Type /market' },
+  { title: '@MENTIONS', desc: 'Use @Mia' },
+  { title: 'SIDEBAR PANEL', desc: 'Click icon' },
+  { title: '+ BUTTON', desc: 'Enrich response' },
+] as const
+
+// =============================================================================
+// MAIN COMPONENT
+// =============================================================================
+
 export function Level2Section() {
-  const agentNames = agents.map(a => a.name)
-  const { activeAgentIndex, progress, messageIndex, isWorking } = useAgentCycle(agentNames)
+  const prefersReducedMotion = useReducedMotion() ?? false
+  const itemVariants = prefersReducedMotion ? itemVariantsReduced : itemVariantsFull
+
+  // Memoized agents with visual components
+  // Only re-computed if AGENTS_DATA changes (never, it's a constant)
+  const agents = useMemo(() =>
+    AGENTS_DATA.map(agent => {
+      const VisualComponent = AGENT_VISUAL_COMPONENTS[agent.visualType]
+      return {
+        name: agent.name,
+        role: agent.role,
+        tagline: agent.tagline,
+        icon: agent.icon,
+        accentColor: agent.accentColor,
+        capabilities: agent.capabilities,
+        invokeCommand: agent.invokeCommand,
+        visual: <VisualComponent />
+      }
+    }),
+    []
+  )
 
   return (
-    <section className="py-16 px-8 border-b border-white/5">
+    <section className="py-24 px-8 bg-[var(--bg-page)] border-b border-[var(--border-light)]">
       <div className="max-w-7xl mx-auto">
-        <LevelCard
-          level={2}
-          title="External Sources"
-          tagline="6 AI agents monitoring your competitive landscape"
-          description="Strategic intelligence on demand. Invoke agents for deep market analysis."
-          icon={Radar}
+        {/* Header */}
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={itemVariants}
+          className="text-center mb-24"
         >
-          <motion.div variants={containerVariants} initial="hidden" animate="visible">
-            {/* 6 Agents Grid */}
-            <motion.div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-              {agents.map((agent, index) => {
-                const isActive = activeAgentIndex === index && isWorking
-                const messages = agentMessages[agent.name] || []
-                const currentMessage = messages[messageIndex] || ''
+          <motion.span
+            className="inline-flex items-center px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest border border-purple-500/30 bg-purple-500/20 text-purple-400 mb-8"
+            animate={prefersReducedMotion ? {} : {
+              boxShadow: [
+                '0 0 15px rgba(139, 92, 246, 0.2)',
+                '0 0 30px rgba(139, 92, 246, 0.4)',
+                '0 0 15px rgba(139, 92, 246, 0.2)',
+              ],
+            }}
+            transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+          >
+            LEVEL 2
+          </motion.span>
+          <h2 className="text-5xl lg:text-6xl font-bold text-[var(--text-primary)] mb-6">
+            External Sources
+          </h2>
+          <p className="text-2xl lg:text-3xl text-[var(--text-secondary)] font-medium italic">
+            6 AI agents monitoring your competitive landscape
+          </p>
+        </motion.div>
 
-                return (
-                  <AgentCardVision 
-                    key={agent.name} 
-                    {...agent}
-                    workingState={{
-                      isWorking: isActive,
-                      progress: isActive ? progress : 0,
-                      message: isActive ? currentMessage : ''
-                    }}
-                  />
-                )
-              })}
-            </motion.div>
+        {/* Problem Statement */}
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-50px" }}
+          variants={itemVariants}
+          className="max-w-4xl mx-auto text-center mb-20 p-12 rounded-3xl bg-red-500/5 border border-red-500/10"
+        >
+          <h3 className="text-sm font-black uppercase tracking-widest text-red-400 mb-6">THE PROBLEM</h3>
+          <p className="text-2xl lg:text-3xl text-[var(--text-primary)] leading-relaxed">
+            Your competitors move fast. New products launch.
+            Prices change. Key people leave. Markets shift.
+            You're always the last to know.
+          </p>
+        </motion.div>
 
-            {/* Invocation Methods */}
-            <motion.div variants={itemVariants} className="mb-12">
-              <h4 className="text-xs uppercase tracking-wider text-[var(--text-muted)] mb-4">Invocation Methods</h4>
-              <div className="flex flex-wrap gap-3">
-                {invocationMethods.map((m) => (
-                  <div key={m.method} className="px-4 py-2 rounded-lg bg-white/5 border border-white/10">
-                    <p className="text-xs font-bold text-[var(--text-primary)]">{m.method}</p>
-                    <p className="text-[10px] text-[var(--text-muted)]">{m.description}</p>
-                  </div>
-                ))}
-              </div>
-            </motion.div>
+        {/* Solution Statement */}
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-50px" }}
+          variants={itemVariants}
+          className="max-w-4xl mx-auto text-center mb-24 p-12 rounded-3xl bg-emerald-500/5 border border-emerald-500/10"
+        >
+          <h3 className="text-sm font-black uppercase tracking-widest text-emerald-400 mb-6">THE SOLUTION</h3>
+          <p className="text-2xl lg:text-3xl text-[var(--text-primary)] leading-relaxed">
+            6 specialized AI agents watching your market 24/7.
+            Invoke them from chat. Get deep strategic analysis on demand.
+          </p>
+        </motion.div>
 
-            {/* Data Sources */}
-            <motion.div variants={itemVariants}>
-              <h4 className="text-xs uppercase tracking-wider text-[var(--text-muted)] mb-4">Data Sources</h4>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {dataSources.map((s) => (
-                  <div key={s.name} className="flex items-center gap-3 p-3 rounded-lg bg-white/5 border border-white/10">
-                    <s.icon className="w-5 h-5 text-[var(--c-brand)]" />
-                    <div>
-                      <p className="text-sm font-medium text-[var(--text-primary)]">{s.name}</p>
-                      <p className="text-[10px] text-[var(--text-muted)]">{s.description}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
+        {/* Agents Grid */}
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-50px" }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-24"
+        >
+          {agents.map((agent, idx) => (
+            <motion.div key={idx} variants={itemVariants}>
+              <AgentCard {...agent} />
             </motion.div>
-          </motion.div>
-        </LevelCard>
+          ))}
+        </motion.div>
+
+        {/* Invocation Methods */}
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-50px" }}
+          variants={containerVariants}
+          className="mb-24"
+        >
+          <h4 className="text-center text-sm font-black uppercase tracking-[0.3em] text-[var(--text-muted)] mb-12">
+            4 WAYS TO INVOKE
+          </h4>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+            {INVOCATION_METHODS.map((m, idx) => (
+              <motion.div
+                key={idx}
+                variants={itemVariants}
+                className="card-glass p-6 rounded-xl border border-[var(--border-light)] text-center"
+              >
+                <p className="text-base font-black text-[var(--text-primary)] mb-1 uppercase tracking-wider">{m.title}</p>
+                <p className="text-sm text-[var(--text-muted)]">{m.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Data Sources */}
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={itemVariants}
+          className="text-center"
+        >
+          <h4 className="text-xs font-black uppercase tracking-[0.3em] text-[var(--text-muted)] mb-8">
+            POWERED BY
+          </h4>
+          <div className="flex flex-wrap justify-center gap-12 text-lg font-bold text-[var(--text-secondary)]">
+            <motion.span
+              whileHover={prefersReducedMotion ? {} : { scale: 1.05 }}
+              className="flex items-center gap-2"
+            >
+              Perplexity AI
+            </motion.span>
+            <motion.span
+              whileHover={prefersReducedMotion ? {} : { scale: 1.05 }}
+              className="flex items-center gap-2"
+            >
+              Exa Search
+            </motion.span>
+            <motion.span
+              whileHover={prefersReducedMotion ? {} : { scale: 1.05 }}
+              className="flex items-center gap-2"
+            >
+              SerpAPI
+            </motion.span>
+            <motion.span
+              whileHover={prefersReducedMotion ? {} : { scale: 1.05 }}
+              className="flex items-center gap-2"
+            >
+              Claude Opus 4.5
+            </motion.span>
+          </div>
+        </motion.div>
       </div>
     </section>
   )

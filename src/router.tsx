@@ -1,27 +1,55 @@
+import { lazy, Suspense } from 'react'
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom'
 import { AppLayout } from './components/layout'
+import { PageLoader } from './components/ui/PageLoader'
 
-// Pages
-import { HomePage } from './pages/Home'
-import { HomepageVisionPage } from './pages/HomepageVision'
-import { HomeVisionPage } from './pages/HomeVision'
-import { DashboardPage } from './pages/Dashboard'
-import { MyCompanyPage } from './pages/MyCompany'
-import { CompetitorsPage } from './pages/Competitors'
-import { LaunchAnalysisPage } from './pages/LaunchAnalysis'
-import { MyAnalysesPage } from './pages/MyAnalyses'
-import { ResultsPage } from './pages/Results'
-import { RAGManagementPage } from './pages/RAGManagement'
-import { ReportsPage } from './pages/Reports'
-import { AlertsPage } from './pages/Alerts'
-import { SettingsPage } from './pages/Settings'
-import { HelpPage } from './pages/Help'
+// =============================================================================
+// LAZY-LOADED PAGES (Code Splitting)
+// Each page is loaded on-demand to reduce initial bundle size
+// =============================================================================
+
+// HomePage is available but not currently used in routes
+// const HomePage = lazy(() => import('./pages/Home'))
+const HomepageVisionPage = lazy(() => import('./pages/HomepageVision'))
+const HomeVisionPage = lazy(() => import('./pages/HomeVision'))
+const DashboardPage = lazy(() => import('./pages/Dashboard'))
+const MyCompanyPage = lazy(() => import('./pages/MyCompany'))
+const CompetitorsPage = lazy(() => import('./pages/Competitors'))
+const LaunchAnalysisPage = lazy(() => import('./pages/LaunchAnalysis'))
+const MyAnalysesPage = lazy(() => import('./pages/MyAnalyses'))
+const ResultsPage = lazy(() => import('./pages/Results'))
+const RAGManagementPage = lazy(() => import('./pages/RAGManagement'))
+const ReportsPage = lazy(() => import('./pages/Reports'))
+const AlertsPage = lazy(() => import('./pages/Alerts'))
+const SettingsPage = lazy(() => import('./pages/Settings'))
+const HelpPage = lazy(() => import('./pages/Help'))
+
+// =============================================================================
+// SUSPENSE WRAPPER
+// Wraps lazy components with loading fallback
+// =============================================================================
+
+function SuspenseWrapper({ children }: { children: React.ReactNode }) {
+  return (
+    <Suspense fallback={<PageLoader />}>
+      {children}
+    </Suspense>
+  )
+}
+
+// =============================================================================
+// ROUTER CONFIGURATION
+// =============================================================================
 
 const router = createBrowserRouter([
   // Vision landing page (standalone, no sidebar)
   {
     path: '/vision',
-    element: <HomepageVisionPage />,
+    element: (
+      <SuspenseWrapper>
+        <HomepageVisionPage />
+      </SuspenseWrapper>
+    ),
   },
   {
     path: '/',
@@ -29,69 +57,121 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <HomePage />,
+        element: (
+          <SuspenseWrapper>
+            <HomeVisionPage />
+          </SuspenseWrapper>
+        ),
       },
       {
         path: 'home',
-        element: <HomePage />,
+        element: <Navigate to="/" replace />,
       },
       {
         path: 'home-vision',
-        element: <HomeVisionPage />,
+        element: <Navigate to="/" replace />,
       },
       {
         path: 'dashboard',
-        element: <DashboardPage />,
+        element: (
+          <SuspenseWrapper>
+            <DashboardPage />
+          </SuspenseWrapper>
+        ),
       },
       {
         path: 'my-company',
-        element: <MyCompanyPage />,
+        element: (
+          <SuspenseWrapper>
+            <MyCompanyPage />
+          </SuspenseWrapper>
+        ),
       },
       {
         path: 'competitors',
-        element: <CompetitorsPage />,
+        element: (
+          <SuspenseWrapper>
+            <CompetitorsPage />
+          </SuspenseWrapper>
+        ),
       },
       {
-        // Legacy redirect: watchlist → competitors
+        // Legacy redirect: watchlist -> competitors
         path: 'watchlist',
         element: <Navigate to="/competitors" replace />,
       },
       {
         path: 'launch-analysis',
-        element: <LaunchAnalysisPage />,
+        element: (
+          <SuspenseWrapper>
+            <LaunchAnalysisPage />
+          </SuspenseWrapper>
+        ),
       },
       {
         path: 'my-analyses',
-        element: <MyAnalysesPage />,
+        element: (
+          <SuspenseWrapper>
+            <MyAnalysesPage />
+          </SuspenseWrapper>
+        ),
       },
       {
         // Keep results page accessible for deep linking
         path: 'results',
-        element: <ResultsPage />,
+        element: (
+          <SuspenseWrapper>
+            <ResultsPage />
+          </SuspenseWrapper>
+        ),
       },
       {
         path: 'results/:analysisId',
-        element: <ResultsPage />,
+        element: (
+          <SuspenseWrapper>
+            <ResultsPage />
+          </SuspenseWrapper>
+        ),
       },
       {
         path: 'rag-management',
-        element: <RAGManagementPage />,
+        element: (
+          <SuspenseWrapper>
+            <RAGManagementPage />
+          </SuspenseWrapper>
+        ),
       },
       {
         path: 'reports',
-        element: <ReportsPage />,
+        element: (
+          <SuspenseWrapper>
+            <ReportsPage />
+          </SuspenseWrapper>
+        ),
       },
       {
         path: 'alerts',
-        element: <AlertsPage />,
+        element: (
+          <SuspenseWrapper>
+            <AlertsPage />
+          </SuspenseWrapper>
+        ),
       },
       {
         path: 'settings',
-        element: <SettingsPage />,
+        element: (
+          <SuspenseWrapper>
+            <SettingsPage />
+          </SuspenseWrapper>
+        ),
       },
       {
         path: 'help',
-        element: <HelpPage />,
+        element: (
+          <SuspenseWrapper>
+            <HelpPage />
+          </SuspenseWrapper>
+        ),
       },
     ],
   },
