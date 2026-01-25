@@ -130,7 +130,7 @@ type VisualType =
 
 // Mapping from visual type to component - called only in render
 const VISUAL_COMPONENTS: Record<VisualType, React.ComponentType> = {
-  upload: UploadMockupAnimated,
+  upload: UploadMockupAnimated, // Framer Motion V3 - Database Integration
   classification: ClassificationMockupAnimated,
   ragChat: RagChatMockupAnimated,
   profileContext: ProfileContextMockupAnimated,
