@@ -30,7 +30,7 @@ export function NotebookMockup() {
                     <div className="w-1/4 border-r border-[var(--border-light)] p-6 bg-white/[0.02]">
                         <p className="text-[10px] font-black uppercase tracking-wider text-blue-400 mb-6 flex items-center gap-2">
                             <span className="w-4 h-4 rounded bg-blue-500/20 flex items-center justify-center text-[10px]">📁</span>
-                            KNOWLEDGE LIBRARY
+                            INSIDE SOURCES
                         </p>
                         <div className="space-y-4 text-xs">
                             <div>
@@ -112,7 +112,7 @@ export function NotebookMockup() {
                     <div className="w-1/4 border-l border-[var(--border-light)] p-6 bg-white/[0.02]">
                         <p className="text-[10px] font-black uppercase tracking-wider text-purple-400 mb-6 flex items-center gap-2">
                             <span className="w-4 h-4 rounded bg-purple-500/20 flex items-center justify-center text-[10px]">🤖</span>
-                            INTELLIGENCE PANEL
+                            OUTSIDE SOURCES
                         </p>
 
                         <div className="space-y-4">

@@ -214,39 +214,55 @@ export function HeroSectionVision() {
       <div className="max-w-7xl mx-auto w-full flex flex-col lg:flex-row items-center justify-between gap-16 relative z-10">
         {/* Left: Text Content (60%) */}
         <div className="lg:w-[60%] text-left">
-          {/* Badge */}
-          <motion.div variants={itemVariants} className="mb-8">
+          {/* Badge - Category label */}
+          <motion.div variants={itemVariants} className="mb-3">
+            <span className="inline-flex items-center text-[11px] font-bold uppercase tracking-[0.25em] text-blue-400/70">
+              ENTERPRISE INTELLIGENCE PLATFORM
+            </span>
+          </motion.div>
+
+          {/* Brand Name - Premium Logo Treatment */}
+          <motion.div variants={itemVariants} className="mb-4">
             <motion.span
-              className="inline-flex items-center px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-[0.25em] border border-blue-500/30 bg-blue-500/10 text-blue-400"
+              className="inline-block text-7xl lg:text-9xl font-black tracking-[-0.015em] leading-none bg-clip-text text-transparent pb-[0.15em]"
+              style={{
+                filter: `drop-shadow(0 0 40px var(--brand-logo-shadow))`,
+                WebkitBackgroundClip: 'text',
+                backgroundImage: 'var(--brand-logo-gradient)',
+              }}
               animate={prefersReducedMotion ? {} : {
-                boxShadow: [
-                  '0 0 20px rgba(59, 130, 246, 0.3)',
-                  '0 0 40px rgba(59, 130, 246, 0.5)',
-                  '0 0 20px rgba(59, 130, 246, 0.3)',
+                filter: [
+                  'drop-shadow(0 0 30px rgba(59, 130, 246, 0.15))',
+                  'drop-shadow(0 0 50px rgba(59, 130, 246, 0.30))',
+                  'drop-shadow(0 0 30px rgba(59, 130, 246, 0.15))',
                 ],
               }}
-              transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+              transition={{
+                duration: 4,
+                repeat: Infinity,
+                ease: 'easeInOut',
+              }}
             >
-              ENTERPRISE INTELLIGENCE PLATFORM
+              Dealligent
             </motion.span>
           </motion.div>
 
-          {/* Title with Text Reveal */}
+          {/* Title - Value proposition */}
           <motion.h1
             variants={itemVariants}
-            className="text-5xl lg:text-7xl font-bold text-[var(--text-primary)] tracking-tight mb-8 leading-[1.1]"
+            className="text-4xl lg:text-5xl font-bold text-[var(--text-primary)] tracking-tight mb-8 leading-[1.15]"
           >
-            <TextRevealWords>Your AI-Powered</TextRevealWords>
+            <TextRevealWords>Your AI Powered Platform</TextRevealWords>
             <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">
               <TextRevealWords>Intelligence Hub</TextRevealWords>
             </span>
           </motion.h1>
 
-          {/* Subtitle */}
+          {/* Subtitle - Description */}
           <motion.p
             variants={itemVariants}
-            className="text-xl lg:text-2xl text-[var(--text-secondary)] max-w-2xl leading-relaxed mb-12"
+            className="text-lg lg:text-xl text-[var(--text-secondary)] max-w-2xl leading-relaxed mb-10"
           >
             Three levels of intelligence. One unified platform.{' '}
             <br />

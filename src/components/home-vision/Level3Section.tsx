@@ -1,6 +1,6 @@
 // =============================================================================
-// LEVEL 3 SECTION - LEARNING & UPSKILLING
-// "Continuous upskilling. Knowledge that sticks."
+// LEVEL 3 SECTION - MEDIA DIGEST ENGINE
+// "Turn the noise into skills -- continuous learning powered by AI digest"
 // Phase 4/5: Scroll animations with blur + scale
 // =============================================================================
 
@@ -151,7 +151,7 @@ export function Level3Section() {
   const slideRightVariants = prefersReducedMotion ? slideVariantsReduced : slideRightVariantsFull
 
   return (
-    <section className="py-24 px-8 bg-[var(--bg-page)] border-b border-[var(--border-light)]">
+    <section id="level-3-section" className="py-24 px-8 bg-[var(--bg-page)] border-b border-[var(--border-light)]">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <motion.div
@@ -175,10 +175,10 @@ export function Level3Section() {
             LEVEL 3
           </motion.span>
           <h2 className="text-5xl lg:text-6xl font-bold text-[var(--text-primary)] mb-6 uppercase tracking-tight">
-            DIGEST - Learning Engine
+            Media Digest Engine
           </h2>
           <p className="text-2xl lg:text-3xl text-[var(--text-secondary)] font-medium italic">
-            Continuous upskilling. Knowledge that sticks.
+            Turn the noise into skills — continuous learning powered by AI digest
           </p>
         </motion.div>
 

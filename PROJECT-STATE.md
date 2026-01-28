@@ -3,7 +3,7 @@
 > 📍 Ce fichier est mis à jour après chaque feature majeure pour maintenir la conscience du projet.
 
 ## Last Updated
-**2026-01-25** - Homepage Animations Overhaul (VC Demo)
+**2026-01-28** - Demo preparation session
 
 ---
 
@@ -49,7 +49,7 @@
 
 | Feature | Status | Assigné | Notes |
 |---------|--------|---------|-------|
-| Homepage Animations VC Demo | 🟡 En cours | frontend-expert | Level 2 & 3 restants |
+| Homepage Animations VC Demo | 🟡 En cours | frontend-expert | Level 2 & 3 animations restantes |
 
 ### Plan: Homepage Animations & Copy Overhaul
 **Objectif**: Refaire TOUTES les animations des cartes (sauf NotebookMockup = OK)
@@ -59,10 +59,12 @@
 #### Progress Tracker
 | Level | Section | Cards | Status |
 |-------|---------|-------|--------|
-| Level 1 | Internal Sources | 6/6 | ✅ DONE |
-| Level 2 | External Sources (Agents) | 1/6 | 🟡 MIA done |
-| Level 3 | DIGEST Learning | 0/4 | ⏳ Pending |
-| Copy | VC-level texts | 0/3 | ⏳ Pending |
+| Level 1 | Inside Sources | 6/6 | ✅ DONE |
+| Level 2 | Outside Sources (Agents) | 1/6 | 🟡 MIA done |
+| Level 3 | Media Digest Engine | 0/4 | ⏳ Pending |
+| Copy | VC-level texts | 3/3 | ✅ DONE |
+| Branding | Hero Section | - | ✅ DONE |
+| Navigation | Levels Overview | 3/3 | ✅ DONE |
 
 #### Level 1 Animations (COMPLETED)
 - [x] UploadMockupAnimated - Multi-format upload avec DataCore vortex
@@ -73,12 +75,12 @@
 - [x] ReportsMockupAnimated - Report template filling in real-time
 
 #### Level 2 Animations (IN PROGRESS)
-- [x] MIA (Market Agent) - 3-column: Sources → Agent Processing → PDF Report
-- [ ] PIA (Product Agent)
-- [ ] SIA (Sales Agent)
-- [ ] MAIA (Marketing Agent)
-- [ ] TIA (Technology Agent)
-- [ ] TALIA (Talent Agent)
+- [x] MIA (Competition Agentic) - 3-column: Sources → Agent Processing → PDF Report
+- [ ] PIA (Product Agentic)
+- [ ] SIA (Account Agentic)
+- [ ] MAIA (Marketing Agentic)
+- [ ] TIA (Technology Agentic)
+- [ ] TALIA (Talent Agentic)
 
 #### Level 3 Animations (PENDING)
 - [ ] TopicSelector (amélioration)
@@ -142,6 +144,68 @@
 ---
 
 ## 📝 Historique des Sessions
+
+### 2026-01-28 - Demo Preparation: Branding, Navigation & Renaming
+**Focus**: Préparer la homepage pour la démo investisseurs du 29 janvier
+
+**Branding Hero Section**:
+- [x] Ajout "Dealligent" en tant que brand name premium (text-9xl, gradient, glow animé)
+- [x] Typographie hiérarchisée: Brand 1x → Title 0.55x → Subtitle 0.35x
+- [x] Fix descender clipping (lettre "g") avec `pb-[0.15em]`
+- [x] CSS variables `--brand-logo-gradient` et `--brand-logo-shadow` pour dark/light mode
+- [x] Light mode: bleu `#1268CC` (proche du btn-premium `#1586FF`)
+
+**Levels Overview Section (NOUVEAU)**:
+- [x] `LevelsOverviewSection.tsx` - 3 cartes glass avec scroll-to-section
+- [x] "HOW IT WORKS" + "Three Levels of Intelligence"
+- [x] Animations: stagger entrance, spring hover, glow on hover
+- [x] Couleurs coordonnées avec les sections: L1=blue, L2=purple, L3=emerald
+
+**Renommage Global des 3 Levels**:
+- [x] Level 1: "Internal Sources" → "Inside Sources"
+- [x] Level 2: "External Sources" → "Outside Sources"
+- [x] Level 3: "DIGEST - Learning Engine" → "Media Digest Engine"
+- [x] Nouveaux subtitles pour chaque level
+- [x] IDs de scroll ajoutés (`level-1-section`, `level-2-section`, `level-3-section`)
+
+**Mockup Labels**:
+- [x] NotebookMockupAnimated: "KNOWLEDGE LIBRARY" → "INSIDE SOURCES"
+- [x] NotebookMockupAnimated: "INTELLIGENCE PANEL" → "OUTSIDE SOURCES"
+- [x] NotebookMockup.tsx: mêmes renommages
+
+**Level 1 Card Titles**:
+- [x] "Multi-Format Upload" → "Multi-format upload in RAG"
+- [x] "Auto-Classification" → "RAG content auto-classification in pre-defined high-level categories"
+- [x] "RAG-Powered Q&A" → "Chat interface with agents"
+- [x] "Profile-Based Context" → "Profile Based Agents"
+- [x] "Automated Reports" → "Templated Report"
+- [x] "Source Traceability" → inchangé
+
+**Level 2 Agent Roles (→ "Agentic")**:
+- [x] Mia: "Market Agent" → "Competition Agentic"
+- [x] Pia: "Product Agent" → "Product Agentic"
+- [x] Sia: "Sales Agent" → "Account Agentic"
+- [x] Maia: "Marketing Agent" → "Marketing Agentic"
+- [x] Tia: "Technology Agent" → "Technology Agentic"
+- [x] Talia: "Talent Agent" → "Talent Agentic"
+
+**Problem Section Text**:
+- [x] "Finding what you need takes hours" → "Finding aggregated information takes hours"
+- [x] "Critical insights are lost or forgotten" → "Critical insights are missed"
+
+**Fichiers modifiés**:
+- `src/components/home-vision/HeroSectionVision.tsx`
+- `src/components/home-vision/LevelsOverviewSection.tsx` (NOUVEAU)
+- `src/components/home-vision/Level1Section.tsx`
+- `src/components/home-vision/Level2Section.tsx`
+- `src/components/home-vision/Level3Section.tsx`
+- `src/components/home-vision/index.ts`
+- `src/components/home-vision/animations/level1/NotebookMockupAnimated.tsx`
+- `src/components/home-vision/mockups/NotebookMockup.tsx`
+- `src/pages/HomeVision.tsx`
+- `src/styles/globals.css`
+
+---
 
 ### 2026-01-25 - Homepage Animations VC Demo
 **Focus**: Refonte complète des animations homepage pour démo investisseurs

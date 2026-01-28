@@ -1,6 +1,6 @@
 // =============================================================================
-// LEVEL 2 SECTION - External Sources
-// "6 AI agents monitoring your competitive landscape"
+// LEVEL 2 SECTION - Outside Sources
+// "Deep-dive agents that think like your best analysts -- combined"
 // Phase 4/5: Scroll animations with blur + scale
 // Performance: Visual types stored as enums, not JSX instances
 // =============================================================================
@@ -97,7 +97,7 @@ interface AgentData {
 const AGENTS_DATA: readonly AgentData[] = [
   {
     name: 'Mia',
-    role: 'Market Agent',
+    role: 'Competition Agentic',
     tagline: 'Market trends & competitive landscape',
     icon: 'mia',
     accentColor: 'blue',
@@ -113,7 +113,7 @@ const AGENTS_DATA: readonly AgentData[] = [
   },
   {
     name: 'Pia',
-    role: 'Product Agent',
+    role: 'Product Agentic',
     tagline: 'Feature comparison & roadmap analysis',
     icon: 'pia',
     accentColor: 'green',
@@ -129,7 +129,7 @@ const AGENTS_DATA: readonly AgentData[] = [
   },
   {
     name: 'Sia',
-    role: 'Sales Agent',
+    role: 'Account Agentic',
     tagline: 'Win/loss patterns & deal intelligence',
     icon: 'sia',
     accentColor: 'orange',
@@ -145,7 +145,7 @@ const AGENTS_DATA: readonly AgentData[] = [
   },
   {
     name: 'Maia',
-    role: 'Marketing Agent',
+    role: 'Marketing Agentic',
     tagline: 'Content creation & GTM intelligence',
     icon: 'maia',
     accentColor: 'pink',
@@ -159,7 +159,7 @@ const AGENTS_DATA: readonly AgentData[] = [
   },
   {
     name: 'Tia',
-    role: 'Technology Agent',
+    role: 'Technology Agentic',
     tagline: 'Tech stack & innovation radar',
     icon: 'tia',
     accentColor: 'cyan',
@@ -175,7 +175,7 @@ const AGENTS_DATA: readonly AgentData[] = [
   },
   {
     name: 'Talia',
-    role: 'Talent Agent',
+    role: 'Talent Agentic',
     tagline: 'Team composition & hiring patterns',
     icon: 'talia',
     accentColor: 'purple',
@@ -230,7 +230,7 @@ export function Level2Section() {
   )
 
   return (
-    <section className="py-24 px-8 bg-[var(--bg-page)] border-b border-[var(--border-light)]">
+    <section id="level-2-section" className="py-24 px-8 bg-[var(--bg-page)] border-b border-[var(--border-light)]">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <motion.div
@@ -254,10 +254,10 @@ export function Level2Section() {
             LEVEL 2
           </motion.span>
           <h2 className="text-5xl lg:text-6xl font-bold text-[var(--text-primary)] mb-6">
-            External Sources
+            Outside Sources
           </h2>
           <p className="text-2xl lg:text-3xl text-[var(--text-secondary)] font-medium italic">
-            6 AI agents monitoring your competitive landscape
+            Deep-dive agents that think like your best analysts — combined
           </p>
         </motion.div>
 

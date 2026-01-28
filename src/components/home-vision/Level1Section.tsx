@@ -1,6 +1,6 @@
 // =============================================================================
-// LEVEL 1 SECTION - Internal Sources
-// "Your company's knowledge, instantly accessible"
+// LEVEL 1 SECTION - Inside Sources
+// "Upload, organize and query all your data through AI-Chat agents"
 // Phase 4/5: Scroll animations with blur + scale
 // Performance: Visual types stored as enums, not JSX instances
 // =============================================================================
@@ -152,25 +152,25 @@ interface ApplicationData {
 const APPLICATIONS_DATA: readonly ApplicationData[] = [
   {
     icon: Upload,
-    title: 'Multi-Format Upload',
+    title: 'Multi-format upload in RAG',
     description: 'Import all your business documents into the knowledge base.\n\nPDF, Word, Excel, PowerPoint, emails, meeting transcripts.\nDrag & drop. Automatic text extraction with OCR.',
     visualType: 'upload'
   },
   {
     icon: FolderTree,
-    title: 'Auto-Classification',
+    title: 'RAG content auto-classification in pre-defined high-level categories',
     description: 'AI-powered organization. Documents sorted automatically.\n\nClient Cases • Support Cases • Product Cases • Meetings\nSmart tagging: entities, sentiment, priority flags.',
     visualType: 'classification'
   },
   {
     icon: MessageSquare,
-    title: 'RAG-Powered Q&A',
+    title: 'Chat interface with agents',
     description: 'Ask questions in natural language. Get answers with sources.\n\n"What did we promise to Client X in the last meeting?"\n"What pricing did we discuss with Company Z?"\n\nEvery answer cites its sources with confidence scores.',
     visualType: 'ragChat'
   },
   {
     icon: Users,
-    title: 'Profile-Based Context',
+    title: 'Profile Based Agents',
     description: 'Same question, tailored answers based on your role.\n\nSALES: Pricing, objections, client history\nSUPPORT: Issue resolution, similar cases\nPRODUCT: Feature requests, roadmap items\nDEVELOPER: Technical specs, API details\nLEADERSHIP: Strategic insights, trends',
     visualType: 'profileContext'
   },
@@ -182,7 +182,7 @@ const APPLICATIONS_DATA: readonly ApplicationData[] = [
   },
   {
     icon: BarChart3,
-    title: 'Automated Reports',
+    title: 'Templated Report',
     description: 'Generate instant reports from your knowledge base.\n\nCLIENT REPORTS: Project status, account summaries\nINDUSTRY REPORTS: Requirements by sector, use cases\nPRODUCT REPORTS: Feature requests, technical issues\nSUPPORT REPORTS: Issue patterns, resolution trends',
     visualType: 'reports'
   },
@@ -214,7 +214,7 @@ export function Level1Section() {
   )
 
   return (
-    <section className="py-24 px-8 bg-[var(--bg-page)] border-b border-[var(--border-light)]">
+    <section id="level-1-section" className="py-24 px-8 bg-[var(--bg-page)] border-b border-[var(--border-light)]">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <motion.div
@@ -238,10 +238,10 @@ export function Level1Section() {
             LEVEL 1
           </motion.span>
           <h2 className="text-5xl lg:text-6xl font-bold text-[var(--text-primary)] mb-6">
-            Internal Sources
+            Inside Sources
           </h2>
           <p className="text-2xl lg:text-3xl text-[var(--text-secondary)] font-medium italic">
-            Your company's knowledge, instantly accessible
+            Upload, organize and query all your data through AI-Chat agents
           </p>
         </motion.div>
 
@@ -268,8 +268,8 @@ export function Level1Section() {
             <h3 className="text-sm font-black uppercase tracking-widest text-red-400 mb-6 underline decoration-2 underline-offset-8">THE PROBLEM</h3>
             <p className="text-2xl lg:text-3xl text-[var(--text-primary)] leading-relaxed font-medium">
               Your team knowledge is scattered across emails, meetings,
-              documents and Slack. Finding what you need takes hours.
-              Critical insights are lost or forgotten.
+              documents and Slack. Finding aggregated information takes hours.
+              Critical insights are missed.
             </p>
           </motion.div>
 

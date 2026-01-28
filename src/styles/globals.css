@@ -31,6 +31,10 @@
   --transition-base: 250ms ease;
   --transition-slow: 350ms ease;
 
+  /* Premium Typography - Plus Jakarta Sans */
+  --font-display: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
+
   /* ═══════════════════════════════════════════════════════════════
      AURORA DESIGN SYSTEM TOKENS
      ═══════════════════════════════════════════════════════════════ */
@@ -40,6 +44,10 @@
   --c-brand-dark: #4f46e5;
   --c-brand-light: #818cf8;
   --c-brand-glow: rgba(99, 102, 241, 0.4);
+
+  /* Brand logo gradient (dark mode default) */
+  --brand-logo-gradient: linear-gradient(to bottom, #ffffff, #dbeafe, rgba(255, 255, 255, 0.8));
+  --brand-logo-shadow: rgba(59, 130, 246, 0.25);
   --c-accent: #8b5cf6;
   --c-success: #10b981;
   --c-warning: #f59e0b;
@@ -112,6 +120,7 @@
   --bg-elevated: #1f1f1f;
   --bg-input: #0d0d0d;
   --bg-glass: rgba(20, 20, 20, 0.8);
+  --bg-page: #030612;  /* Page background for home-vision */
 
   /* Premium KPI Card Background */
   --card-premium-bg: #0f0f13;
@@ -120,8 +129,8 @@
      TEXT - High Contrast (WCAG AA Compliant)
      ═══════════════════════════════════════════════════════════ */
   --text-primary: #fafafa;
-  --text-secondary: #a1a1a1;
-  --text-muted: #666666;
+  --text-secondary: #B4BCD0;  /* Plus clair pour meilleure lisibilité */
+  --text-muted: #94A3B8;  /* slate-400 - Contraste ~5:1 sur fond sombre (WCAG AA) */
   --text-disabled: #444444;
 
   /* ═══════════════════════════════════════════════════════════
@@ -130,7 +139,20 @@
   --border-default: rgba(255, 255, 255, 0.1);
   --border-light: rgba(255, 255, 255, 0.06);
   --border-hover: rgba(255, 255, 255, 0.15);
+
+  /* Glass/Overlay Variables - Theme-aware */
+  --glass-bg-elevated: rgba(255, 255, 255, 0.08);
+  --overlay-bg: rgba(0, 0, 0, 0.3);
+  --overlay-bg-light: rgba(0, 0, 0, 0.2);
   --border-active: #0070f3;
+
+  /* Mockup theming - Dark (AMÉLIORER LISIBILITÉ) */
+  --mockup-bg: #0F172A;
+  --mockup-surface: #1E293B;
+  --mockup-elevated: #334155;
+  --mockup-border: rgba(255, 255, 255, 0.15);  /* Plus visible: 0.15 au lieu de 0.1 */
+  --mockup-text: #FFFFFF;
+  --mockup-text-muted: #CBD5E1;  /* Plus clair: slate-300 pour meilleure lisibilité */
 
   /* ═══════════════════════════════════════════════════════════
      SIDEBAR - Linear App Style
@@ -175,6 +197,16 @@
   --shadow-glow: 0 0 20px rgba(0, 112, 243, 0.3);
 
   /* ═══════════════════════════════════════════════════════════
+     PREMIUM GLOW EFFECTS - Intensified 2-3x (Limova-inspired)
+     ═══════════════════════════════════════════════════════════ */
+  --glow-blue: 0 0 40px rgba(59, 130, 246, 0.5), 0 0 80px rgba(59, 130, 246, 0.3);
+  --glow-green: 0 0 40px rgba(16, 185, 129, 0.5), 0 0 80px rgba(16, 185, 129, 0.3);
+  --glow-purple: 0 0 40px rgba(139, 92, 246, 0.5), 0 0 80px rgba(139, 92, 246, 0.3);
+  --glow-orange: 0 0 40px rgba(245, 158, 11, 0.5), 0 0 80px rgba(245, 158, 11, 0.3);
+  --glow-pink: 0 0 40px rgba(236, 72, 153, 0.5), 0 0 80px rgba(236, 72, 153, 0.3);
+  --glow-cyan: 0 0 40px rgba(6, 182, 212, 0.5), 0 0 80px rgba(6, 182, 212, 0.3);
+
+  /* ═══════════════════════════════════════════════════════════
      AURORA DARK MODE ADDITIONS
      ═══════════════════════════════════════════════════════════ */
   --bg-void: #010103;
@@ -215,6 +247,10 @@
    ═══════════════════════════════════════════════════════════════ */
 
 .light {
+  /* Brand logo gradient (light mode) - matches btn-premium blue */
+  --brand-logo-gradient: linear-gradient(to bottom, #1268CC, #1a5faa);
+  --brand-logo-shadow: rgba(18, 104, 204, 0.12);
+
   /* Backgrounds - Refined off-white palette */
   --bg-primary: #F8FAFC;
   --bg-secondary: #FFFFFF;
@@ -224,11 +260,12 @@
   --bg-input: #F1F5F9;
   --bg-tertiary: #E2E8F0;
   --bg-glass: rgba(255, 255, 255, 0.85);
+  --bg-page: #F8FAFC;  /* Page background for home-vision (light) */
 
   /* Text Colors - HIGH CONTRAST (WCAG AAA) */
   --text-primary: #0F172A;
-  --text-secondary: #334155;
-  --text-muted: #475569;
+  --text-secondary: #475569;  /* slate-600 - Plus foncé pour meilleur contraste */
+  --text-muted: #64748B;  /* slate-500 - Meilleur contraste sur fond clair (WCAG AA) */
   --text-disabled: #94A3B8;
 
   /* Borders - More visible */
@@ -236,6 +273,19 @@
   --border-light: rgba(15, 23, 42, 0.08);
   --border-hover: rgba(15, 23, 42, 0.2);
   --border-active: var(--blue-primary);
+
+  /* Glass/Overlay Variables - Theme-aware */
+  --glass-bg-elevated: rgba(255, 255, 255, 0.95);
+  --overlay-bg: rgba(15, 23, 42, 0.1);
+  --overlay-bg-light: rgba(15, 23, 42, 0.05);
+
+  /* Mockup theming - Light (AMÉLIORER CONTRASTE) */
+  --mockup-bg: #FFFFFF;                     /* Blanc pur pour distinction des cards */
+  --mockup-surface: #F8FAFC;                /* Légèrement gris pour surfaces internes */
+  --mockup-elevated: #F1F5F9;
+  --mockup-border: rgba(15, 23, 42, 0.15);  /* Plus visible: 0.15 au lieu de 0.1 */
+  --mockup-text: #0F172A;
+  --mockup-text-muted: #475569;             /* Plus foncé: slate-600 pour meilleur contraste */
 
   /* Sidebar - Premium light (enhanced visibility for CFO/VC demo) */
   --sidebar-bg: #FFFFFF;
@@ -1354,7 +1404,6 @@
   /* Aurora Sidebar Dock */
   .glass-dock {
     background: linear-gradient(180deg, var(--bg-surface) 0%, var(--bg-deep) 100%);
-    backdrop-filter: blur(40px);
     border-right: 1px solid var(--glass-border-bright);
     box-shadow:
       20px 0 80px -20px rgba(0, 0, 0, 1),
@@ -1527,6 +1576,36 @@
 .animate-slide-down { animation: slide-down 0.3s ease-out; }
 .animate-scale-in { animation: scale-in 0.2s ease-out; }
 .animate-pulse-subtle { animation: pulse-subtle 2s ease-in-out infinite; }
+
+/* ═══════════════════════════════════════════════════════════════
+   PREMIUM ANIMATIONS - Limova-inspired
+   ═══════════════════════════════════════════════════════════════ */
+
+@keyframes border-rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.05); }
+}
+
+@keyframes gradient-flow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-border-rotate { animation: border-rotate 4s linear infinite; }
+.animate-float { animation: float 6s ease-in-out infinite; }
+.animate-pulse-glow { animation: pulse-glow 3s ease-in-out infinite; }
+.animate-gradient-flow { animation: gradient-flow 8s ease infinite; background-size: 200% 200%; }
 
 /* ═══════════════════════════════════════════════════════════════
    AURORA ANIMATIONS

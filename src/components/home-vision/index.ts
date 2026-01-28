@@ -9,6 +9,7 @@ export { AgentCard } from './AgentCard'
 export { RoleCard } from './RoleCard'
 
 // Section components
+export { LevelsOverviewSection } from './LevelsOverviewSection'
 export { HeroSectionVision } from './HeroSectionVision'
 export { Level1Section } from './Level1Section'
 export { Level2Section } from './Level2Section'
